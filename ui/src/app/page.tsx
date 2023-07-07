@@ -18,7 +18,7 @@ const HomePage: React.FC = () => {
       )}>
         <div className="p-4 mt-14">
           <div className="flex flex-wrap justify-center">
-            {Array.from(Array(14)).map((i) => (
+            {Array.from(Array(14)).map((_, i) => (
               <Card key={i} title="Learn NextJS" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit." />
             ))}
           </div>
