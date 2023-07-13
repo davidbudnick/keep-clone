@@ -1,6 +1,9 @@
 name: UI
 
-on: [push]
+on:
+  push:
+    paths:
+      - 'ui/**'
 
 jobs:
   build:
