@@ -6,7 +6,6 @@ interface NavIconProps {
     iconSize?: number;
 }
 
-
 const NavIcon: React.FC<NavIconProps> = ({ icon, iconSize = 24 }) => {
     return (
         <a type="button" className='dark:hover:bg-gray-700 p-3 rounded-full cursor-pointer'>

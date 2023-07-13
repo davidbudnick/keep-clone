@@ -1,31 +1,23 @@
-"use client";
-import React, { useState } from 'react';
-import { Card, Sidebar, Navbar } from './components';
-import classNames from 'classnames';
+import React from 'react';
+import { Card, AddNote, Navbar, Sidebar } from 'src/components';
+import { ROUTES } from 'src/constants/routes';
 
-const HomePage: React.FC = () => {
-  const [open, setOpen] = useState<boolean>(false);
+const Notes: React.FC = () => {
   return (
     <div>
-      <Navbar open={open} setOpen={setOpen} />
-      <Sidebar open={open} />
-      <div className={classNames(
-        "p-4",
-        {
-          "ml-64": open,
-          "ml-16": !open
-        }
-      )}>
-        <div className="p-4 mt-14">
-          <div className="flex flex-wrap justify-center">
-            {Array.from(Array(14)).map((_, i) => (
-              <Card key={i} title="Learn NextJS" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit." />
-            ))}
-          </div>
+      <Navbar />
+      <Sidebar currentRoute={ROUTES.NOTES} />
+      <div className="p-4 mt-14 ml-10">
+        <AddNote />
+        <div className="flex flex-wrap justify-center">
+          {Array.from(Array(12).keys()).map((i) => (
+            <Card key={i} title='Learn Next JS' description='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.s' />
+          ))}
         </div>
       </div>
     </div>
+
   );
 };
 
-export default HomePage;
+export default Notes;
