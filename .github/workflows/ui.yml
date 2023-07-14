@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +19,9 @@ jobs:
         node-version: '20.x'
 
     - name: Install Dependencies
-      run: cd ui && yarn install
+      run: yarn install
+      working-directory: ui
 
     - name: Build
-      run: cd ui && yarn build
+      run: yarn build
+      working-directory: ui
