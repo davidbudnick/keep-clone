@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'ui/**'
+      - '.github/workflows/ui.yml'
 
 jobs:
   build:
