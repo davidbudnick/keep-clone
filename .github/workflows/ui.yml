@@ -18,8 +18,20 @@ jobs:
       with:
         node-version: '20.x'
 
+    - name: Cache node modules
+      uses: actions/cache@v3
+      with:
+        path: ui/node_modules
+        key: ${{ runner.OS }}-node-${{ hashFiles('ui/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.OS }}-node-
+
     - name: Install Dependencies
       run: yarn install
+      working-directory: ui
+
+    - name: Lint
+      run: yarn lint
       working-directory: ui
 
     - name: Build

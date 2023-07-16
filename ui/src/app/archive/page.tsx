@@ -7,7 +7,7 @@ const ArchivePage: React.FC = () => {
         <div>
             <Navbar />
             <Sidebar currentRoute={ROUTES.ARCHIVE} />
-            <div className="p-4 mt-14">
+            <div className="mt-14 p-4">
                 <div className="flex flex-wrap justify-center">
                     {"archive"}
                 </div>

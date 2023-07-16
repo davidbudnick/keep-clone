@@ -7,7 +7,7 @@ const Notes: React.FC = () => {
     <div>
       <Navbar />
       <Sidebar currentRoute={ROUTES.NOTES} />
-      <div className="p-4 mt-14 ml-10">
+      <div className="ml-10 mt-14 p-4">
         <AddNote />
         <div className="flex flex-wrap justify-center">
           {Array.from(Array(12).keys()).map((i) => (

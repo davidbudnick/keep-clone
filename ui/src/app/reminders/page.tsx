@@ -7,7 +7,7 @@ const RemindersPage: React.FC = () => {
         <div>
             <Navbar />
             <Sidebar currentRoute={ROUTES.REMINDERS} />
-            <div className="p-4 mt-14 ml-10">
+            <div className="ml-10 mt-14 p-4">
                 <AddNote />
             </div>
         </div>
