@@ -16,7 +16,6 @@ const Notes: React.FC = () => {
         </div>
       </div>
     </div>
-
   );
 };
 
