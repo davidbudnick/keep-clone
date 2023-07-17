@@ -2,7 +2,6 @@ package notes
 
 import (
 	"context"
-	"log"
 	"server/internal/db"
 	"time"
 
@@ -23,9 +22,10 @@ const (
 )
 
 type NotesRepo interface {
-	List(ctx context.Context, userID string) ([]Note, error)
+	List(ctx context.Context, userID string, status string) ([]Note, error)
 	Get(ctx context.Context, userID string, noteID string) (*Note, error)
 	Save(ctx context.Context, note *Note) error
+	Update(ctx context.Context, note *Note) error
 }
 
 type notesRepo struct {
@@ -48,10 +48,11 @@ type Note struct {
 	UpdatedAt time.Time          `bson:"updated_at" json:"updated_at"`
 }
 
-func (r *notesRepo) List(ctx context.Context, userID string) ([]Note, error) {
+func (r *notesRepo) List(ctx context.Context, userID string, status string) ([]Note, error) {
 	notesCollection := r.Client.Database(db.DATABASE_NAME).Collection(NOTES_COLLECTION)
 	cursor, err := notesCollection.Find(ctx, bson.M{
 		"user_id": userID,
+		"status":  status,
 	})
 	if err != nil {
 		slog.ErrorContext(ctx, "Error listing notes", "error", err)
@@ -73,7 +74,7 @@ func (r *notesRepo) Get(ctx context.Context, userID string, noteID string) (*Not
 
 	objectId, err := primitive.ObjectIDFromHex(noteID)
 	if err != nil {
-		log.Println("Error converting noteID to objectId", err)
+		slog.ErrorContext(ctx, "Error decoding NoteID", "error", err)
 		return nil, err
 	}
 
@@ -95,6 +96,28 @@ func (r *notesRepo) Save(ctx context.Context, note *Note) error {
 	_, err := notesCollection.InsertOne(ctx, note)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error saving note", "error", err)
+		return err
+	}
+
+	return nil
+}
+
+func (r *notesRepo) Update(ctx context.Context, note *Note) error {
+	notesCollection := r.Client.Database(db.DATABASE_NAME).Collection(NOTES_COLLECTION)
+
+	_, err := notesCollection.UpdateOne(ctx, bson.M{
+		"_id":     note.ID,
+		"user_id": note.UserID,
+	}, bson.M{
+		"$set": bson.M{
+			"title":      note.Title,
+			"body":       note.Body,
+			"status":     note.Status,
+			"updated_at": time.Now(),
+		},
+	})
+	if err != nil {
+		slog.ErrorContext(ctx, "Error updating note", "error", err)
 		return err
 	}
 

@@ -4,14 +4,16 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"server/internal/app/handlers"
+	"server/internal/app/notes"
 	"server/internal/config"
 	"server/internal/db"
-	"server/internal/handlers"
 	"server/internal/lib/log"
-	"server/internal/notes"
 
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/exp/slog"
 )
 
@@ -39,6 +41,17 @@ func main() {
 	}))
 	slog.SetDefault(l)
 
+	notesCollection := databaseService.Client().Database(db.DATABASE_NAME).Collection(notes.NOTES_COLLECTION)
+	_, err = notesCollection.Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys: bson.D{
+			{Key: "user_id", Value: 1},
+			{Key: "status", Value: 1},
+		},
+	})
+	if err != nil {
+		slog.ErrorContext(ctx, "Error creating index", "error", err)
+	}
+
 	r := gin.New()
 	r.Use(sloggin.New(l))
 	r.Use(gin.Recovery())
@@ -50,8 +63,11 @@ func main() {
 	handlerService := handlers.NewHandlerService(notesService)
 
 	r.GET(fmt.Sprintf("%s/%s/%s", V1, handlers.NOTES, handlers.LIST), handlerService.List)
-	r.GET(fmt.Sprintf("%s/%s/%s/:id", V1, handlers.NOTES, handlers.GET), handlerService.Get)
+	r.GET(fmt.Sprintf("%s/%s/%s", V1, handlers.NOTES, handlers.LIST_ARCHIVED), handlerService.ListArchived)
+	r.GET(fmt.Sprintf("%s/%s/%s", V1, handlers.NOTES, handlers.LIST_DELETED), handlerService.ListDeleted)
+	r.GET(fmt.Sprintf("%s/%s/%s", V1, handlers.NOTES, handlers.GET), handlerService.Get)
 	r.POST(fmt.Sprintf("%s/%s/%s", V1, handlers.NOTES, handlers.SAVE), handlerService.Save)
+	r.POST(fmt.Sprintf("%s/%s/%s", V1, handlers.NOTES, handlers.UPDATE), handlerService.Update)
 
 	slog.Info("Starting GIN server", "port", c.Ports.HTTP)
 	if err = r.Run(fmt.Sprintf(":%d", c.Ports.HTTP)); err != nil {
