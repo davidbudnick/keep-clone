@@ -3,4 +3,4 @@ database:
   username: root
   password: password
 ports:
-  http: 3000
+  http: 3300

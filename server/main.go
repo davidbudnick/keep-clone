@@ -10,6 +10,7 @@ import (
 	"server/internal/db"
 	"server/internal/lib/log"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -55,6 +56,12 @@ func main() {
 	r := gin.New()
 	r.Use(sloggin.New(l))
 	r.Use(gin.Recovery())
+
+	config := cors.DefaultConfig()
+	//TODO: change to frontend url
+	config.AllowOrigins = []string{"*"}
+	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization", handlers.X_USER_ID}
+	r.Use(cors.New(config))
 
 	notesService := notes.NewNotesService(
 		notes.NewNotesRepo(databaseService.Client()),

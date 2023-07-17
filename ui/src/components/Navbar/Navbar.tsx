@@ -1,3 +1,4 @@
+'use client';
 import React from 'react'
 import Image from 'next/image'
 import { Search } from 'src/components/Search';
@@ -10,10 +11,8 @@ import { AiOutlineMenu } from 'react-icons/ai'
 import Link from 'next/link';
 import { ROUTES } from 'src/constants/routes';
 
-interface NavbarProps {
-}
 
-const Navbar: React.FC<NavbarProps> = () => {
+const Navbar: React.FC = () => {
     return (
         <nav className="fixed top-0 z-50 w-full border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
             <div className="">
@@ -36,7 +35,9 @@ const Navbar: React.FC<NavbarProps> = () => {
                     <div className="flex items-center">
                         <div className="ml-3 mt-1 flex items-center">
                             <div className="mr-1">
-                                <NavIcon icon={IoRefreshOutline} />
+                                <NavIcon onClick={() => {
+                                    window.location.reload()
+                                }} icon={IoRefreshOutline} />
                             </div>
                             <div className='mr-1'>
                                 <NavIcon icon={IoSettings} />
