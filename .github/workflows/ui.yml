@@ -26,14 +26,6 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-${{ hashFiles('ui/yarn.lock') }}
 
-    - name: Cache nextJS build
-      uses: actions/cache@v3
-      with:
-        path: ui/.next/cache
-        key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.ts', '**/*.tsx') }}
-        restore-keys: |
-          ${{ runner.os }}-nextjs-${{ hashFiles('ui/yarn.lock') }}
-
     - name: Install Dependencies
       run: yarn install
       working-directory: ui
