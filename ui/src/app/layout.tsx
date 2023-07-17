@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Google Keep',
-  body: 'Notes app built with NextJS and TailwindCSS',
+  description: 'Notes app built with NextJS and TailwindCSS',
 }
 
 const RootLayout = ({ children, }: { children: React.ReactNode }) => {
