@@ -7,6 +7,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+const (
+	DATABASE_NAME = "keep"
+)
+
 type DatabaseService interface {
 	Client() *mongo.Client
 }

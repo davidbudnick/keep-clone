@@ -2,3 +2,5 @@ database:
   connection: mongodb://localhost:27017
   username: root
   password: password
+ports:
+  http: 3000

@@ -1,2 +1,4 @@
 database
 config.yml
+tmp
+__debug_bin*

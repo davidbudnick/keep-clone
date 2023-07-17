@@ -9,12 +9,17 @@ import (
 
 type Config struct {
 	Database Database
+	Ports    Ports
 }
 
 type Database struct {
 	Connection string
 	Username   string
 	Password   string
+}
+
+type Ports struct {
+	HTTP int
 }
 
 var (
