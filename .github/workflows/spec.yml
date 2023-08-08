@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'keep-clone.yaml'
-      - '.github/workflows/spec.yaml'
+      - '.github/workflows/spec.yml'
 
 jobs:
   validate:
