@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'keep-clone.yaml'
+      - '.github/workflows/spec.yaml'
 
 jobs:
   validate:
@@ -19,4 +20,4 @@ jobs:
         node-version: '20.x'
 
     - name: Validate OpenAPI Specification using Speccy
-      run: npx speccy lint keep-clone.yaml
+      run: npx @apidevtools/swagger-cli validate keep-clone.yaml
