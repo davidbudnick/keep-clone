@@ -37,6 +37,7 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
+    "src/client",
     "node_modules"
   ]
 }

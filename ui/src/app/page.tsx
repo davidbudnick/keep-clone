@@ -1,7 +1,7 @@
 import React from 'react';
 import { NotesList, AddNote, Navbar, Sidebar } from 'src/components';
 import { ROUTES } from 'src/constants/routes';
-import { NotesApi, Configuration, Note } from 'src/client';
+import { NotesApi, Configuration } from 'src/client';
 
 const Notes: React.FC = async () => {
   //TODO: - move this to a service
