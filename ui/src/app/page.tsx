@@ -1,10 +1,13 @@
 import React from 'react';
 import { NotesList, AddNote, Navbar, Sidebar } from 'src/components';
 import { ROUTES } from 'src/constants/routes';
-import { ListNotes, Note } from 'src/api/notes';
+import { NotesApi, Configuration, Note } from 'src/client';
 
 const Notes: React.FC = async () => {
-  const notes = await ListNotes("1");
+  //TODO: - move this to a service
+  const configuration = new Configuration({ basePath: "http://localhost:3333/v1", apiKey: "1" })
+  const API = new NotesApi(configuration)
+  const notes = await API.listActiveNotes()
 
   return (
     <div>
@@ -12,7 +15,7 @@ const Notes: React.FC = async () => {
       <Sidebar currentRoute={ROUTES.NOTES} />
       <div className="ml-10 mt-14 p-4">
         <AddNote />
-        <NotesList n={notes} />
+        <NotesList n={notes.data} />
       </div>
     </div>
   );

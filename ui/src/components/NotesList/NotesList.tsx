@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react'
-import { Note } from 'src/api/notes';
+import { Note } from 'src/client';
 import Card from 'src/components/Card/Card';
 
 interface INotesListProps {

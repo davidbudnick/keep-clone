@@ -11,18 +11,18 @@ info:
 servers:
   - url: http://localhost:3300/v1
 tags:
-  - name: list
-    description: Everything about your Lists
+  - name: notes
+    description: Everything about your Notes
 paths:
   /notes/list:
     get:
       tags:
-        - list
+        - notes
       summary: Get a list of active notes
       security:
         - UserIDAuth: []
       description: List notes by UserID
-      operationId: getNotesList
+      operationId: ListActiveNotes
       responses:
         "200":
           description: Successful operation
@@ -39,12 +39,12 @@ paths:
   /notes/list/archived:
     get:
       tags:
-        - list
+        - notes
       summary: Get a list of archived notes
       security:
         - UserIDAuth: []
       description: List notes by UserID
-      operationId: getNotesListArchived
+      operationId: ListArchivedNotes
       responses:
         "200":
           description: Successful operation
@@ -61,12 +61,12 @@ paths:
   /notes/list/deleted:
     get:
       tags:
-        - list
+        - notes
       summary: Get a list of deleted notes
       security:
         - UserIDAuth: []
       description: List notes by UserID
-      operationId: getNotesListDeleted
+      operationId: ListDeletedNotes
       responses:
         "200":
           description: Successful operation
@@ -83,12 +83,12 @@ paths:
   /notes/get/{noteID}:
     get:
       tags:
-        - list
+        - notes
       summary: Retrieve a specific note
       security:
         - UserIDAuth: []
       description: Retrieve the details of a specific note by its noteID
-      operationId: getNoteByID
+      operationId: GetNoteByID
       parameters:
         - name: noteID
           in: path
@@ -110,12 +110,12 @@ paths:
   /notes/create:
     post:
       tags:
-        - list
+        - notes
       summary: Create a new note
       security:
         - UserIDAuth: []
       description: Create a new note for a given userID.
-      operationId: createNote
+      operationId: CreateNote
       requestBody:
         required: true
         content:
@@ -136,12 +136,12 @@ paths:
   /notes/update/{noteID}:
     post:
       tags:
-        - list
+        - notes
       summary: Update an existing note
       security:
         - UserIDAuth: []
       description: Update the details of an existing note by its noteID
-      operationId: updateNote
+      operationId: UpdateNote
       parameters:
         - name: userID
           in: header
@@ -176,6 +176,14 @@ components:
   schemas:
     Note:
       type: object
+      required:
+        - id
+        - user_id
+        - title
+        - body
+        - status
+        - created_at
+        - updated_at
       properties:
         id:
           type: string

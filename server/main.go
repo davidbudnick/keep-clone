@@ -69,12 +69,14 @@ func main() {
 
 	handlerService := handlers.NewHandlerService(notesService)
 
-	r.GET(fmt.Sprintf("%s/%s/%s", V1, handlers.NOTES, handlers.LIST), handlerService.List)
-	r.GET(fmt.Sprintf("%s/%s/%s", V1, handlers.NOTES, handlers.LIST_ARCHIVED), handlerService.ListArchived)
-	r.GET(fmt.Sprintf("%s/%s/%s", V1, handlers.NOTES, handlers.LIST_DELETED), handlerService.ListDeleted)
-	r.GET(fmt.Sprintf("%s/%s/%s", V1, handlers.NOTES, handlers.GET), handlerService.Get)
-	r.POST(fmt.Sprintf("%s/%s/%s", V1, handlers.NOTES, handlers.SAVE), handlerService.Save)
-	r.POST(fmt.Sprintf("%s/%s/%s", V1, handlers.NOTES, handlers.UPDATE), handlerService.Update)
+	V1Notes := r.Group(fmt.Sprintf("/%s/%s", V1, handlers.NOTES))
+
+	V1Notes.GET(handlers.LIST, handlerService.List)
+	V1Notes.GET(handlers.LIST_ARCHIVED, handlerService.ListArchived)
+	V1Notes.GET(handlers.LIST_DELETED, handlerService.ListDeleted)
+	V1Notes.GET(handlers.GET, handlerService.Get)
+	V1Notes.POST(handlers.SAVE, handlerService.Save)
+	V1Notes.POST(handlers.UPDATE, handlerService.Update)
 
 	slog.Info("Starting GIN server", "port", c.Ports.HTTP)
 	if err = r.Run(fmt.Sprintf(":%d", c.Ports.HTTP)); err != nil {
