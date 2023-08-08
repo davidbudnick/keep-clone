@@ -20,4 +20,4 @@ jobs:
         node-version: '20.x'
 
     - name: Validate OpenAPI Specification using Speccy
-      run: npx @apidevtools/swagger-cli validate keep-clone.yaml
+      run: npx @apidevtools/swagger-cli@4.0.4 validate keep-clone.yaml
