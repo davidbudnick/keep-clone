@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-const AddNote = () => {
+const AddNote: React.FC = () => {
     // const [newNoteOpen, setNewNoteOpen] = useState<boolean>(false)
     return (
         <form className='mb-3 mt-4 flex flex-col items-center justify-center'>
