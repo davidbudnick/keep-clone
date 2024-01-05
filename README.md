@@ -1,7 +1,13 @@
 # keep-clone
 
 ## Description
-Purpose of this project is to create a clone of the [Google Keep](https://keep.google.com) notes app using ReactJS, Golang and MongoDB.
+Purpose of this project is to create a clone of the [Google Keep](https://keep.google.com) notes app using the following technology
+- [ReactJS](https://reactjs.org/)
+- [GraphQL](https://graphql.org/)
+- [Golang](https://golang.org/)
+- [MongoDB](https://www.mongodb.com/)
+
+---
 
 ![image](./.assets/images/keep.png)
 
