@@ -1,0 +1,44 @@
+type Note {
+  id: String!
+  userId: String!
+  title: String!
+  body: String!
+  status: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type NoteMutationResponse {
+  success: Boolean!
+  id: ID!
+}
+
+enum Status {
+  ACTIVE
+  ARCHIVED
+  DELETED
+}
+
+type Query {
+  notes(status: Status): [Note!]!
+  note(id: String!): Note!
+}
+
+input NewNote {
+  title: String!
+  body: String!
+  status: String!
+}
+
+input UpdateNote {
+  id: String!
+  title: String!
+  body: String!
+  status: String!
+}
+
+type Mutation {
+  createNote(input: NewNote!): Note!
+  updateNote(input: UpdateNote!): NoteMutationResponse!
+  deleteNote(id: String!): NoteMutationResponse!
+}

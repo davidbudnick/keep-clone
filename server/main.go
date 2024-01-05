@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"server/internal/app/handlers"
+	"server/graph"
 	"server/internal/app/notes"
 	"server/internal/config"
 	"server/internal/db"
 	"server/internal/lib/log"
 
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"
@@ -18,23 +20,13 @@ import (
 	"golang.org/x/exp/slog"
 )
 
-const (
-	V1 = "v1"
-)
-
 func main() {
 	ctx := context.Background()
 
-	c, err := config.GetConf("config.yml")
+	c, err := config.GetConfig("config.yml")
 	if err != nil {
 		panic(err)
 	}
-
-	databaseService, err := db.NewDatabaseService(ctx, c.Database.Connection, c.Database.Username, c.Database.Password)
-	if err != nil {
-		panic(err)
-	}
-	defer databaseService.Client().Disconnect(ctx)
 
 	l := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		ReplaceAttr: log.ReplaceLevelWithSeverity,
@@ -42,15 +34,28 @@ func main() {
 	}))
 	slog.SetDefault(l)
 
-	notesCollection := databaseService.Client().Database(db.DATABASE_NAME).Collection(notes.NOTES_COLLECTION)
+	databaseService, err := db.NewDatabaseService(ctx, c.Database.Connection, c.Database.Username, c.Database.Password)
+	if err != nil {
+		slog.Error("Error creating database service", "error", err)
+		panic(err)
+	}
+	defer databaseService.Client().Disconnect(ctx)
+
+	notesCollection := databaseService.Client().Database(db.NAME).Collection(notes.NOTES_COLLECTION)
 	_, err = notesCollection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys: bson.D{
-			{Key: "user_id", Value: 1},
-			{Key: "status", Value: 1},
+			{
+				Key:   db.USER_INDEX,
+				Value: 1,
+			},
+			{
+				Key:   db.STATUS_INDEX,
+				Value: 1,
+			},
 		},
 	})
 	if err != nil {
-		slog.ErrorContext(ctx, "Error creating index", "error", err)
+		slog.ErrorContext(ctx, "Error creating indexes", "error", err)
 	}
 
 	r := gin.New()
@@ -58,28 +63,39 @@ func main() {
 	r.Use(gin.Recovery())
 
 	config := cors.DefaultConfig()
+
 	//TODO: change to frontend url
 	config.AllowOrigins = []string{"*"}
-	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization", handlers.X_USER_ID}
+	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type"} // "Authorization", handlers.X_USER_ID,
+
 	r.Use(cors.New(config))
-
-	notesService := notes.NewNotesService(
-		notes.NewNotesRepo(databaseService.Client()),
-	)
-
-	handlerService := handlers.NewHandlerService(notesService)
-
-	V1Notes := r.Group(fmt.Sprintf("/%s/%s", V1, handlers.NOTES))
-
-	V1Notes.GET(handlers.LIST, handlerService.List)
-	V1Notes.GET(handlers.LIST_ARCHIVED, handlerService.ListArchived)
-	V1Notes.GET(handlers.LIST_DELETED, handlerService.ListDeleted)
-	V1Notes.GET(handlers.GET, handlerService.Get)
-	V1Notes.POST(handlers.SAVE, handlerService.Save)
-	V1Notes.POST(handlers.UPDATE, handlerService.Update)
+	r.POST("/query", graphqlHandler(
+		notes.NewNotesService(
+			notes.NewNotesRepo(databaseService.Client()),
+		),
+	))
+	r.GET("/", playgroundHandler())
 
 	slog.Info("Starting GIN server", "port", c.Ports.HTTP)
 	if err = r.Run(fmt.Sprintf(":%d", c.Ports.HTTP)); err != nil {
 		slog.Error("Error starting GIN server", "error", err)
+	}
+}
+
+func graphqlHandler(notesService notes.NotesService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		handler.NewDefaultServer(graph.NewExecutableSchema(
+			graph.Config{
+				Resolvers: &graph.Resolver{
+					NotesService: notesService,
+				},
+			},
+		)).ServeHTTP(c.Writer, c.Request)
+	}
+}
+
+func playgroundHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		playground.Handler("GraphQL", "/query").ServeHTTP(c.Writer, c.Request)
 	}
 }

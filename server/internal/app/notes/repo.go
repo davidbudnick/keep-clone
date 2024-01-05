@@ -2,6 +2,7 @@ package notes
 
 import (
 	"context"
+	"server/graph/model"
 	"server/internal/db"
 	"time"
 
@@ -22,10 +23,10 @@ const (
 )
 
 type NotesRepo interface {
-	List(ctx context.Context, userID string, status string) ([]Note, error)
+	List(ctx context.Context, userID string, status model.Status) ([]Note, error)
 	Get(ctx context.Context, userID string, noteID string) (*Note, error)
-	Save(ctx context.Context, note *Note) error
-	Update(ctx context.Context, note *Note) error
+	Create(ctx context.Context, userID string, note model.NewNote) (*mongo.InsertOneResult, error)
+	Update(ctx context.Context, userID string, note model.UpdateNote) (*mongo.UpdateResult, error)
 }
 
 type notesRepo struct {
@@ -39,20 +40,29 @@ func NewNotesRepo(client *mongo.Client) NotesRepo {
 }
 
 type Note struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	UserID    string             `bson:"user_id" json:"user_id"`
-	Title     string             `bson:"title" json:"title"`
-	Body      string             `bson:"body" json:"body"`
-	Status    string             `bson:"status" json:"status"`
-	CreatedAt time.Time          `bson:"created_at" json:"created_at"`
-	UpdatedAt time.Time          `bson:"updated_at" json:"updated_at"`
+	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	UserID    string             `bson:"user_id"`
+	Title     string             `bson:"title"`
+	Body      string             `bson:"body"`
+	Status    string             `bson:"status"`
+	CreatedAt time.Time          `bson:"created_at"`
+	UpdatedAt time.Time          `bson:"updated_at"`
 }
 
-func (r *notesRepo) List(ctx context.Context, userID string, status string) ([]Note, error) {
-	notesCollection := r.Client.Database(db.DATABASE_NAME).Collection(NOTES_COLLECTION)
-	cursor, err := notesCollection.Find(ctx, bson.M{
-		"user_id": userID,
-		"status":  status,
+type ListFilter struct {
+	UserID string       `bson:"user_id"`
+	Status model.Status `bson:"status"`
+}
+
+type GetFilter struct {
+	ID     primitive.ObjectID `bson:"_id"`
+	UserID string             `bson:"user_id"`
+}
+
+func (r *notesRepo) List(ctx context.Context, userID string, status model.Status) ([]Note, error) {
+	cursor, err := r.Client.Database(db.NAME).Collection(NOTES_COLLECTION).Find(ctx, ListFilter{
+		UserID: userID,
+		Status: status,
 	})
 	if err != nil {
 		slog.ErrorContext(ctx, "Error listing notes", "error", err)
@@ -70,8 +80,6 @@ func (r *notesRepo) List(ctx context.Context, userID string, status string) ([]N
 }
 
 func (r *notesRepo) Get(ctx context.Context, userID string, noteID string) (*Note, error) {
-	notesCollection := r.Client.Database(db.DATABASE_NAME).Collection(NOTES_COLLECTION)
-
 	objectId, err := primitive.ObjectIDFromHex(noteID)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error decoding NoteID", "error", err)
@@ -79,10 +87,12 @@ func (r *notesRepo) Get(ctx context.Context, userID string, noteID string) (*Not
 	}
 
 	var note Note
-	err = notesCollection.FindOne(ctx, bson.M{
-		"_id":     objectId,
-		"user_id": userID,
-	}).Decode(&note)
+	err = r.Client.Database(db.NAME).Collection(NOTES_COLLECTION).FindOne(ctx,
+		GetFilter{
+			ID:     objectId,
+			UserID: userID,
+		},
+	).Decode(&note)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error getting note", "error", err)
 		return nil, err
@@ -91,23 +101,37 @@ func (r *notesRepo) Get(ctx context.Context, userID string, noteID string) (*Not
 	return &note, nil
 }
 
-func (r *notesRepo) Save(ctx context.Context, note *Note) error {
-	notesCollection := r.Client.Database(db.DATABASE_NAME).Collection(NOTES_COLLECTION)
-	_, err := notesCollection.InsertOne(ctx, note)
+func (r *notesRepo) Create(ctx context.Context, userID string, note model.NewNote) (*mongo.InsertOneResult, error) {
+	notesCollection := r.Client.Database(db.NAME).Collection(NOTES_COLLECTION)
+	res, err := notesCollection.InsertOne(ctx, Note{
+		ID:        primitive.NewObjectID(),
+		UserID:    userID,
+		Title:     note.Title,
+		Body:      note.Body,
+		Status:    note.Status,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	})
 	if err != nil {
 		slog.ErrorContext(ctx, "Error saving note", "error", err)
-		return err
+		return nil, err
 	}
 
-	return nil
+	return res, nil
 }
 
-func (r *notesRepo) Update(ctx context.Context, note *Note) error {
-	notesCollection := r.Client.Database(db.DATABASE_NAME).Collection(NOTES_COLLECTION)
+func (r *notesRepo) Update(ctx context.Context, userID string, note model.UpdateNote) (*mongo.UpdateResult, error) {
+	notesCollection := r.Client.Database(db.NAME).Collection(NOTES_COLLECTION)
 
-	_, err := notesCollection.UpdateOne(ctx, bson.M{
-		"_id":     note.ID,
-		"user_id": note.UserID,
+	objectId, err := primitive.ObjectIDFromHex(note.ID)
+	if err != nil {
+		slog.ErrorContext(ctx, "Error decoding NoteID", "error", err)
+		return nil, err
+	}
+
+	res, err := notesCollection.UpdateOne(ctx, GetFilter{
+		ID:     objectId,
+		UserID: userID,
 	}, bson.M{
 		"$set": bson.M{
 			"title":      note.Title,
@@ -118,8 +142,8 @@ func (r *notesRepo) Update(ctx context.Context, note *Note) error {
 	})
 	if err != nil {
 		slog.ErrorContext(ctx, "Error updating note", "error", err)
-		return err
+		return nil, err
 	}
 
-	return nil
+	return res, nil
 }

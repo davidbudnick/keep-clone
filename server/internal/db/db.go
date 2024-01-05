@@ -2,13 +2,16 @@ package db
 
 import (
 	"context"
+	"log/slog"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const (
-	DATABASE_NAME = "keep"
+	NAME         = "keep"
+	USER_INDEX   = "user_id"
+	STATUS_INDEX = "status"
 )
 
 type DatabaseService interface {
@@ -30,6 +33,13 @@ func NewDatabaseService(ctx context.Context, connection string, username string,
 				},
 			))
 	if err != nil {
+		slog.Error("Error creating database connection", "error", err)
+		return nil, err
+	}
+
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		slog.Error("Error pinging database", "error", err)
 		return nil, err
 	}
 

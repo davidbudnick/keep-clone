@@ -23,12 +23,12 @@ type Ports struct {
 }
 
 var (
-	ErrConfigFileNameEmpty = errors.New("config file is empty")
+	ErrConfigFileNameEmpty = errors.New("error config file is empty")
 	ErrReadingConfigFile   = errors.New("error reading config file")
 	ErrDecodingConfigFile  = errors.New("error decoding config file")
 )
 
-func GetConf(fileName string) (*Config, error) {
+func GetConfig(fileName string) (*Config, error) {
 	v := viper.New()
 	if fileName == "" {
 		slog.Error(ErrConfigFileNameEmpty.Error())
