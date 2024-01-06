@@ -1,6 +1,7 @@
 import React from 'react';
 import { IconType } from 'react-icons';
 import classNames from 'classnames';
+import { Link } from 'react-router-dom';
 
 interface SidebarItemProps {
     route?: string;
@@ -13,12 +14,12 @@ interface SidebarItemProps {
 const SidebarItem: React.FC<SidebarItemProps> = ({ route = "", currentRoute = "", icon, iconSize = 24 }) => {
     return (
         <li>
-            <a href={route} className={classNames("flex items-center text-gray-900 rounded-full p-3 m-1 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer",
+            <Link to={route} className={classNames("flex items-center text-gray-900 rounded-full p-3 m-1 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 group cursor-pointer",
                 {
-                    "dark:bg-gray-700": route === currentRoute,
+                    "dark:bg-gray-700 bg-gray-200": route === currentRoute,
                 })}>
                 {React.createElement(icon, { size: iconSize })}
-            </a>
+            </Link>
         </li>
     )
 }

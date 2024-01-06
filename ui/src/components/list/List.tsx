@@ -1,21 +1,40 @@
 import { gql, useQuery } from '@apollo/client'
 import Card from '@/components/Card/Card';
 import { Note } from '@/types/Note';
+import { SkeletonList } from '@/components/List/SkeletonList';
 
-const List = () => {
+
+interface ListProps {
+    status: string
+}
+
+
+const List: React.FC<ListProps> = ({ status }) => {
     const { loading, error, data } = useQuery(
         gql`
-    query {
-    notes(status: ACTIVE){
+    
+    query getNotes($status: Status!) {
+    notes(status: $status){
       id
       body
       title
       status
-      createdAt
-  }}`)
+      updatedAt 
+      }
+}`,
+        {
+            variables:
+            {
+                status
+            }
+        },
+    )
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error</p>;
+    if (loading || error) {
+        return (
+            <SkeletonList />
+        );
+    }
 
     return (
         <div className="flex flex-wrap justify-center">

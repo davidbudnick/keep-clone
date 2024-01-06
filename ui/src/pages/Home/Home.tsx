@@ -1,15 +1,11 @@
-import { Navbar, List, Sidebar } from "@/components";
-import { ROUTES } from "@/constants/routes";
+import { List } from "@/components";
+import { NoteStatus } from "@/constants/status";
 
 const Home = () => {
     return (
-        <>
-            <Navbar />
-            <Sidebar currentRoute={ROUTES.NOTES} />
-            <div className="ml-10 mt-14 p-4">
-                <List />
-            </div>
-        </>
+        <div className="ml-10 mt-14 p-4">
+            <List status={NoteStatus.ACTIVE} />
+        </div>
     )
 }
 

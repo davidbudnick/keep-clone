@@ -1,25 +1,22 @@
 import React from 'react';
 import { BiTrash } from 'react-icons/bi';
-import { MdOutlineArchive, MdOutlineEdit, MdOutlineLightbulb } from 'react-icons/md';
-import { AiOutlineBell } from 'react-icons/ai';
+import { MdOutlineArchive, MdOutlineLightbulb } from 'react-icons/md';
 import { SidebarItem } from './SidebarItem';
 import { ROUTES } from '@/constants/routes';
+import { useLocation } from 'react-router-dom';
 
 
-interface SidebarProps {
-    currentRoute: string
-}
 
-const Sidebar: React.FC<SidebarProps> = ({ currentRoute }) => {
+const Sidebar: React.FC = () => {
+    const location = useLocation();
+
     return (
-        <aside id="logo-sidebar" className="fixed left-0 top-2 z-40  h-screen -translate-x-full border-r  transition-transform  sm:translate-x-0 mt-16" aria-label="Sidebar">
+        <aside id="logo-sidebar" className="fixed left-0 top-2 z-40  h-screen -translate-x-full border-r transition-transform sm:translate-x-0 pt-16 dark:bg-black bg-white" aria-label="Sidebar">
             <div className="h-full overflow-y-aut">
                 <ul className="space-y-2 font-medium">
-                    <SidebarItem route={ROUTES.NOTES} currentRoute={currentRoute} icon={MdOutlineLightbulb} label="Notes" />
-                    <SidebarItem route={ROUTES.REMINDERS} currentRoute={currentRoute} icon={AiOutlineBell} label="Reminders" />
-                    <SidebarItem route={ROUTES.EDIT_LABELS} currentRoute={currentRoute} icon={MdOutlineEdit} label="Edit Labels" />
-                    <SidebarItem route={ROUTES.ARCHIVE} currentRoute={currentRoute} icon={MdOutlineArchive} label="Archive" />
-                    <SidebarItem route={ROUTES.TRASH} currentRoute={currentRoute} icon={BiTrash} label="Trash" />
+                    <SidebarItem route={ROUTES.HOME} currentRoute={location.pathname} icon={MdOutlineLightbulb} label="Notes" />
+                    <SidebarItem route={ROUTES.ARCHIVED} currentRoute={location.pathname} icon={MdOutlineArchive} label="Archive" />
+                    <SidebarItem route={ROUTES.TRASH} currentRoute={location.pathname} icon={BiTrash} label="Trash" />
                 </ul>
             </div>
         </aside>

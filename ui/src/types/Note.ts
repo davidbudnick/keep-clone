@@ -3,5 +3,5 @@ export interface Note {
     body: string;
     title: string;
     status: string;
-    createdAt: string;
+    updatedAt: string;
 }

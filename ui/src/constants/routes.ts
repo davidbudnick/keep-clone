@@ -1,7 +1,7 @@
 export const ROUTES = {
-    NOTES: '/',
+    HOME: '/',
     REMINDERS: '/reminders',
     EDIT_LABELS: '/edit-labels',
-    ARCHIVE: '/archive',
+    ARCHIVED: '/archived',
     TRASH: '/trash',
 }

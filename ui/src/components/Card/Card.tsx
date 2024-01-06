@@ -16,9 +16,14 @@ const Card: React.FC<CardProps> = ({ note }) => {
                 </div>
             </a>
             <div className="pt-4">
-
                 <Badge variant="default">{note.status}</Badge>
-                <Badge className="mt-2" variant="secondary">{note.createdAt}</Badge>
+                <Badge className="mt-2 ml-2" variant="secondary">
+                    {new Date(note.updatedAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                    })}
+                </Badge>
             </div>
         </div>
     );
