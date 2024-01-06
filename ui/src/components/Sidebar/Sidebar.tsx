@@ -5,8 +5,6 @@ import { SidebarItem } from './SidebarItem';
 import { ROUTES } from '@/constants/routes';
 import { useLocation } from 'react-router-dom';
 
-
-
 const Sidebar: React.FC = () => {
     const location = useLocation();
 

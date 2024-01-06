@@ -21,7 +21,7 @@ func JWT(config *config.Config) gin.HandlerFunc {
 				return []byte(config.JWT.Secret), nil
 			})
 			if claims, ok := token.Claims.(jwt.MapClaims); ok {
-				c.Set("user_id", claims["jti"])
+				c.Set("user_id", claims["sub"])
 			}
 		}
 

@@ -1,13 +1,12 @@
 import React from 'react'
 import { Search } from '@/components/Search';
-import { IoRefreshOutline, IoSettings } from 'react-icons/io5';
-import { FaThList } from 'react-icons/fa'
+import { IoLogOutOutline, IoRefreshOutline, IoSettings } from 'react-icons/io5';
 import { NavIcon } from '@/components/Navbar/NavIcon';
 import { Switch } from "@/components/ui/switch"
 import { useTheme, DARK, LIGHT } from "@/components/theme-provider"
 import { ROUTES } from '@/constants/routes';
 import { Link } from 'react-router-dom';
-import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import { GoogleLogin, CredentialResponse, googleLogout } from '@react-oauth/google';
 import { AUTH } from '@/constants/auth';
 
 const Navbar: React.FC = () => {
@@ -48,12 +47,19 @@ const Navbar: React.FC = () => {
                                 <NavIcon icon={IoSettings} />
                             </div>
                             <div className='mr-10'>
-                                <NavIcon icon={FaThList} />
+                                <NavIcon onClick={
+                                    () => {
+                                        localStorage.removeItem(AUTH.GOOGLE_CLIENT);
+                                        localStorage.removeItem(AUTH.GOOGLE_CREDENTIAL);
+                                        googleLogout();
+                                        window.location.reload()
+                                    }
+
+                                } icon={IoLogOutOutline} />
                             </div>
                             <div className='mr-4 mb-1'>
                                 <GoogleLogin onSuccess={responseMessage} />
                             </div>
-
                         </div>
                     </div>
                 </div>

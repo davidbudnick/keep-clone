@@ -7,6 +7,7 @@ import { Navbar, Sidebar } from "@/components";
 import { ROUTES } from "@/constants/routes";
 import { AUTH } from "./constants/auth";
 
+//TODO: put in ENV file
 const httpLink = new HttpLink({ uri: 'http://localhost:3333/query' });
 
 const authLink = new ApolloLink((operation, forward) => {
