@@ -22,7 +22,7 @@ func (r *mutationResolver) CreateNote(ctx context.Context, input model.NewNote) 
 }
 
 // UpdateNote is the resolver for the updateNote field.
-func (r *mutationResolver) UpdateNote(ctx context.Context, input model.UpdateNote) (*model.NoteMutationResponse, error) {
+func (r *mutationResolver) UpdateNote(ctx context.Context, input model.UpdateNote) (*model.Note, error) {
 	//TODO: Pass in the USER_ID
 	res, err := r.NotesService.Update(ctx, "1", input)
 	if err != nil {
@@ -33,14 +33,14 @@ func (r *mutationResolver) UpdateNote(ctx context.Context, input model.UpdateNot
 }
 
 // DeleteNote is the resolver for the deleteNote field.
-func (r *mutationResolver) DeleteNote(ctx context.Context, id string) (*model.NoteMutationResponse, error) {
+func (r *mutationResolver) DeleteNote(ctx context.Context, id string) (*model.Note, error) {
 	panic(fmt.Errorf("not implemented: DeleteNote - deleteNote"))
 }
 
 // Notes is the resolver for the Notes field.
 func (r *queryResolver) Notes(ctx context.Context, status *model.Status) ([]*model.Note, error) {
 	//TODO: Pass in the USER_ID
-	notes, err := r.NotesService.List(ctx, status, "1")
+	notes, err := r.NotesService.List(ctx, status.String(), "1")
 	if err != nil {
 		return nil, err
 	}

@@ -74,8 +74,8 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	CreateNote(ctx context.Context, input model.NewNote) (*model.Note, error)
-	UpdateNote(ctx context.Context, input model.UpdateNote) (*model.NoteMutationResponse, error)
-	DeleteNote(ctx context.Context, id string) (*model.NoteMutationResponse, error)
+	UpdateNote(ctx context.Context, input model.UpdateNote) (*model.Note, error)
+	DeleteNote(ctx context.Context, id string) (*model.Note, error)
 }
 type QueryResolver interface {
 	Notes(ctx context.Context, status *model.Status) ([]*model.Note, error)
@@ -571,9 +571,9 @@ func (ec *executionContext) _Mutation_updateNote(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.NoteMutationResponse)
+	res := resTmp.(*model.Note)
 	fc.Result = res
-	return ec.marshalNNoteMutationResponse2ᚖserverᚋgraphᚋmodelᚐNoteMutationResponse(ctx, field.Selections, res)
+	return ec.marshalNNote2ᚖserverᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateNote(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -584,12 +584,22 @@ func (ec *executionContext) fieldContext_Mutation_updateNote(ctx context.Context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "success":
-				return ec.fieldContext_NoteMutationResponse_success(ctx, field)
 			case "id":
-				return ec.fieldContext_NoteMutationResponse_id(ctx, field)
+				return ec.fieldContext_Note_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Note_userId(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
+			case "body":
+				return ec.fieldContext_Note_body(ctx, field)
+			case "status":
+				return ec.fieldContext_Note_status(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Note_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Note_updatedAt(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type NoteMutationResponse", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
 	}
 	defer func() {
@@ -632,9 +642,9 @@ func (ec *executionContext) _Mutation_deleteNote(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.NoteMutationResponse)
+	res := resTmp.(*model.Note)
 	fc.Result = res
-	return ec.marshalNNoteMutationResponse2ᚖserverᚋgraphᚋmodelᚐNoteMutationResponse(ctx, field.Selections, res)
+	return ec.marshalNNote2ᚖserverᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deleteNote(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -645,12 +655,22 @@ func (ec *executionContext) fieldContext_Mutation_deleteNote(ctx context.Context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "success":
-				return ec.fieldContext_NoteMutationResponse_success(ctx, field)
 			case "id":
-				return ec.fieldContext_NoteMutationResponse_id(ctx, field)
+				return ec.fieldContext_Note_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Note_userId(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
+			case "body":
+				return ec.fieldContext_Note_body(ctx, field)
+			case "status":
+				return ec.fieldContext_Note_status(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Note_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Note_updatedAt(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type NoteMutationResponse", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
 	}
 	defer func() {
@@ -3905,20 +3925,6 @@ func (ec *executionContext) marshalNNote2ᚖserverᚋgraphᚋmodelᚐNote(ctx co
 		return graphql.Null
 	}
 	return ec._Note(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNNoteMutationResponse2serverᚋgraphᚋmodelᚐNoteMutationResponse(ctx context.Context, sel ast.SelectionSet, v model.NoteMutationResponse) graphql.Marshaler {
-	return ec._NoteMutationResponse(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNNoteMutationResponse2ᚖserverᚋgraphᚋmodelᚐNoteMutationResponse(ctx context.Context, sel ast.SelectionSet, v *model.NoteMutationResponse) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._NoteMutationResponse(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

@@ -1,10 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
-
-
-interface Note {
-    id: string
-    body: string
-}
+import Card from '@/components/Card/Card';
+import { Note } from '@/types/Note';
 
 const List = () => {
     const { loading, error, data } = useQuery(
@@ -13,21 +9,18 @@ const List = () => {
     notes(status: ACTIVE){
       id
       body
+      title
+      status
+      createdAt
   }}`)
 
     if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-
-    console.log(data)
+    if (error) return <p>Error</p>;
 
     return (
-        <div>
-            {data.notes.map((note: Note) => (
-                <div key={note.id}>
-                    <p>
-                        {note.id}={note.body}
-                    </p>
-                </div>
+        <div className="flex flex-wrap justify-center">
+            {data.notes?.map((note: Note) => (
+                <Card key={note.id} note={note} />
             ))}
         </div>
     )

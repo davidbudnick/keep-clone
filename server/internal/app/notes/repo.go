@@ -13,17 +13,12 @@ import (
 )
 
 const (
-	STATUS_ACTIVE   = "ACTIVE"
-	STATUS_ARCHIVED = "ARCHIVED"
-	STATUS_DELETED  = "DELETED"
-)
-
-const (
 	NOTES_COLLECTION = "notes"
 )
 
+//go:generate counterfeiter -o fakes/fake_notes_repo.go . NotesRepo
 type NotesRepo interface {
-	List(ctx context.Context, userID string, status model.Status) ([]Note, error)
+	List(ctx context.Context, userID string, status string) ([]Note, error)
 	Get(ctx context.Context, userID string, noteID string) (*Note, error)
 	Create(ctx context.Context, userID string, note model.NewNote) (*mongo.InsertOneResult, error)
 	Update(ctx context.Context, userID string, note model.UpdateNote) (*mongo.UpdateResult, error)
@@ -50,8 +45,8 @@ type Note struct {
 }
 
 type ListFilter struct {
-	UserID string       `bson:"user_id"`
-	Status model.Status `bson:"status"`
+	UserID string `bson:"user_id"`
+	Status string `bson:"status"`
 }
 
 type GetFilter struct {
@@ -59,7 +54,7 @@ type GetFilter struct {
 	UserID string             `bson:"user_id"`
 }
 
-func (r *notesRepo) List(ctx context.Context, userID string, status model.Status) ([]Note, error) {
+func (r *notesRepo) List(ctx context.Context, userID string, status string) ([]Note, error) {
 	cursor, err := r.Client.Database(db.NAME).Collection(NOTES_COLLECTION).Find(ctx, ListFilter{
 		UserID: userID,
 		Status: status,

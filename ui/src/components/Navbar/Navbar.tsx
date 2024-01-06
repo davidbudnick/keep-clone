@@ -1,0 +1,63 @@
+'use client';
+import React from 'react'
+import { Search } from '@/components/Search';
+import { IoRefreshOutline, IoSettings } from 'react-icons/io5';
+import { FaThList } from 'react-icons/fa'
+import { BsGrid3X3GapFill } from 'react-icons/bs'
+import { NavIcon } from '@/components/Navbar/NavIcon';
+import { Switch } from "@/components/ui/switch"
+import { useTheme } from "@/components/theme-provider"
+
+
+const Navbar: React.FC = () => {
+    const { setTheme, theme } = useTheme()
+    return (
+        <nav className="fixed top-0 z-50 w-full border-b mt-1 mb-1">
+            <div className="">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-start">
+                        <a href="#" className="ml-2 flex md:mr-24">
+                            <img alt="logo" src="https://www.gstatic.com/images/branding/product/1x/keep_2020q4_48dp.png" width={48} height={48} className="h-10 w-10" />
+                            <span className="ml-3 mt-1 self-center whitespace-nowrap font-mono text-xl dark:text-white">Keep</span>
+                        </a>
+                    </div>
+                    <Search />
+                    <div className="flex items-center">
+                        <div className="ml-3 mt-1 flex items-center">
+                            <div className="mr-1">
+                                <Switch checked={
+                                    theme === "dark"
+                                } onClick={() => {
+                                    setTheme(theme === "dark" ? "light" : "dark")
+                                }}
+                                />
+                            </div>
+                            <div className="mr-1">
+                                <NavIcon onClick={() => {
+                                    window.location.reload()
+                                }} icon={IoRefreshOutline} />
+                            </div>
+                            <div className='mr-1'>
+                                <NavIcon icon={IoSettings} />
+                            </div>
+                            <div className='mr-10'>
+                                <NavIcon icon={FaThList} />
+                            </div>
+                            <div className='mr-10'>
+                                <NavIcon icon={BsGrid3X3GapFill} />
+                            </div>
+                            <div>
+                                <button type="button" className="mb-2 mr-4 flex rounded-full bg-gray-800 text-sm focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
+                                    <img alt="user photo" src="https://s.gravatar.com/avatar/a84f08e26336cbbd8a316f4385effe6ffe61a1b77c1fee838e5d22b33ef2ac3e?s=80&r=g" height={40} width={40} className="h-8 w-8 rounded-full" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+    )
+}
+
+export default Navbar;

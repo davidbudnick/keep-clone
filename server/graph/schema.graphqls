@@ -39,6 +39,6 @@ input UpdateNote {
 
 type Mutation {
   createNote(input: NewNote!): Note!
-  updateNote(input: UpdateNote!): NoteMutationResponse!
-  deleteNote(id: String!): NoteMutationResponse!
+  updateNote(input: UpdateNote!): Note!
+  deleteNote(id: String!): Note!
 }

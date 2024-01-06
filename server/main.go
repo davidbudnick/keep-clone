@@ -8,7 +8,6 @@ import (
 	"server/internal/app/notes"
 	"server/internal/config"
 	"server/internal/db"
-	"server/internal/lib/log"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -29,8 +28,7 @@ func main() {
 	}
 
 	l := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		ReplaceAttr: log.ReplaceLevelWithSeverity,
-		Level:       slog.LevelDebug,
+		Level: slog.LevelDebug,
 	}))
 	slog.SetDefault(l)
 

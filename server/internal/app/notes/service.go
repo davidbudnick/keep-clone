@@ -2,23 +2,19 @@ package notes
 
 import (
 	"context"
-	"errors"
 	"server/graph/model"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/exp/slog"
 )
 
+//go:generate counterfeiter -o fakes/fake_notes_service.go . NotesService
 type NotesService interface {
-	List(ctx context.Context, status *model.Status, userID string) ([]*model.Note, error)
+	List(ctx context.Context, status string, userID string) ([]*model.Note, error)
 	Get(ctx context.Context, userID string, noteID string) (*model.Note, error)
 	Create(ctx context.Context, userID string, note model.NewNote) (*model.Note, error)
-	Update(ctx context.Context, userID string, note model.UpdateNote) (*model.NoteMutationResponse, error)
+	Update(ctx context.Context, userID string, note model.UpdateNote) (*model.Note, error)
 }
-
-var (
-	ErrStatusInvalid = errors.New("invalid status")
-)
 
 type notesService struct {
 	repo NotesRepo
@@ -30,13 +26,8 @@ func NewNotesService(repo NotesRepo) NotesService {
 	}
 }
 
-func (s *notesService) List(ctx context.Context, status *model.Status, userID string) ([]*model.Note, error) {
-	if status == nil || !status.IsValid() {
-		slog.ErrorContext(ctx, ErrStatusInvalid.Error(), "status", status)
-		return nil, ErrStatusInvalid
-	}
-
-	notesInternal, err := s.repo.List(ctx, userID, *status)
+func (s *notesService) List(ctx context.Context, status string, userID string) ([]*model.Note, error) {
+	notesInternal, err := s.repo.List(ctx, userID, status)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error listing notes", "error", err, "status", status)
 		return nil, err
@@ -83,7 +74,6 @@ func (s *notesService) Create(ctx context.Context, userID string, note model.New
 		return nil, err
 	}
 
-	//get the note
 	newNote, err := s.Get(ctx, userID, res.InsertedID.(primitive.ObjectID).Hex())
 	if err != nil {
 		slog.ErrorContext(ctx, "Error getting note", "error", err)
@@ -93,17 +83,18 @@ func (s *notesService) Create(ctx context.Context, userID string, note model.New
 	return newNote, nil
 }
 
-func (s *notesService) Update(ctx context.Context, userID string, note model.UpdateNote) (*model.NoteMutationResponse, error) {
+func (s *notesService) Update(ctx context.Context, userID string, note model.UpdateNote) (*model.Note, error) {
 	res, err := s.repo.Update(ctx, userID, note)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error updating note", "error", err)
-		return &model.NoteMutationResponse{
-			Success: false,
-		}, err
+		return nil, err
 	}
 
-	return &model.NoteMutationResponse{
-		ID:      res.UpsertedID.(primitive.ObjectID).Hex(),
-		Success: true,
-	}, nil
+	updatedNote, err := s.Get(ctx, userID, res.UpsertedID.(primitive.ObjectID).Hex())
+	if err != nil {
+		slog.ErrorContext(ctx, "Error getting note", "error", err)
+		return nil, err
+	}
+
+	return updatedNote, nil
 }

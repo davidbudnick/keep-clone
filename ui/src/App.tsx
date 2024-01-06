@@ -1,17 +1,17 @@
 import { ThemeProvider } from "@/components/theme-provider"
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import List from "@/components/list/List";
+import { Home } from "@/pages";
 
 const client = new ApolloClient({
   uri: 'http://localhost:3333/query',
   cache: new InMemoryCache(),
 });
 
-export default function Home() {
+export default function App() {
   return (
     <ApolloProvider client={client}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <List />
+        <Home />
       </ThemeProvider>
     </ApolloProvider>
   )
