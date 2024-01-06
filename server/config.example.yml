@@ -4,3 +4,5 @@ database:
   password: password
 ports:
   http: 3333
+jwt:
+  secret:

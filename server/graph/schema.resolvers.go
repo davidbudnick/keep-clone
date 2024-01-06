@@ -12,8 +12,7 @@ import (
 
 // CreateNote is the resolver for the createNote field.
 func (r *mutationResolver) CreateNote(ctx context.Context, input model.NewNote) (*model.Note, error) {
-	//TODO: Pass in the USER_ID
-	note, err := r.NotesService.Create(ctx, "1", input)
+	note, err := r.NotesService.Create(ctx, r.UserID, input)
 	if err != nil {
 		return nil, err
 	}
@@ -23,8 +22,7 @@ func (r *mutationResolver) CreateNote(ctx context.Context, input model.NewNote) 
 
 // UpdateNote is the resolver for the updateNote field.
 func (r *mutationResolver) UpdateNote(ctx context.Context, input model.UpdateNote) (*model.Note, error) {
-	//TODO: Pass in the USER_ID
-	res, err := r.NotesService.Update(ctx, "1", input)
+	res, err := r.NotesService.Update(ctx, r.UserID, input)
 	if err != nil {
 		return nil, err
 	}
@@ -39,8 +37,7 @@ func (r *mutationResolver) DeleteNote(ctx context.Context, id string) (*model.No
 
 // Notes is the resolver for the Notes field.
 func (r *queryResolver) Notes(ctx context.Context, status *model.Status) ([]*model.Note, error) {
-	//TODO: Pass in the USER_ID
-	notes, err := r.NotesService.List(ctx, status.String(), "1")
+	notes, err := r.NotesService.List(ctx, status.String(), r.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -50,8 +47,7 @@ func (r *queryResolver) Notes(ctx context.Context, status *model.Status) ([]*mod
 
 // Note is the resolver for the Note field.
 func (r *queryResolver) Note(ctx context.Context, id string) (*model.Note, error) {
-	//TODO: Pass in the USER_ID
-	note, err := r.NotesService.Get(ctx, "1", id)
+	note, err := r.NotesService.Get(ctx, r.UserID, id)
 	if err != nil {
 		return nil, err
 	}

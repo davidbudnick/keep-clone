@@ -4,14 +4,20 @@ import { IoRefreshOutline, IoSettings } from 'react-icons/io5';
 import { FaThList } from 'react-icons/fa'
 import { NavIcon } from '@/components/Navbar/NavIcon';
 import { Switch } from "@/components/ui/switch"
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useTheme, DARK, LIGHT } from "@/components/theme-provider"
 import { ROUTES } from '@/constants/routes';
 import { Link } from 'react-router-dom';
-
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import { AUTH } from '@/constants/auth';
 
 const Navbar: React.FC = () => {
     const { setTheme, theme } = useTheme()
+
+    const responseMessage = (response: CredentialResponse) => {
+        localStorage.setItem(AUTH.GOOGLE_CLIENT, response.clientId || "");
+        localStorage.setItem(AUTH.GOOGLE_CREDENTIAL, response.credential || "");
+    };
+
     return (
         <nav className="fixed top-0 z-50 w-full border-b pt-1 pb-1 dark:bg-black bg-white">
             <div className="">
@@ -44,20 +50,15 @@ const Navbar: React.FC = () => {
                             <div className='mr-10'>
                                 <NavIcon icon={FaThList} />
                             </div>
-                            <div>
-                                <button type="button" className="mb-2 mr-4 flex rounded-full bg-gray-800 text-sm focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
-                                    <Avatar>
-                                        <AvatarImage src="https://s.gravatar.com/avatar/a84f08e26336cbbd8a316f4385effe6ffe61a1b77c1fee838e5d22b33ef2ac3e?s=80&r=g" />
-                                        <AvatarFallback>DB</AvatarFallback>
-                                    </Avatar>
-                                </button>
+                            <div className='mr-4 mb-1'>
+                                <GoogleLogin onSuccess={responseMessage} />
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </nav>
-
     )
 }
 

@@ -12,7 +12,6 @@ interface ListProps {
 const List: React.FC<ListProps> = ({ status }) => {
     const { loading, error, data } = useQuery(
         gql`
-    
     query getNotes($status: Status!) {
     notes(status: $status){
       id

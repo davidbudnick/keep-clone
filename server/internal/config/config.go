@@ -10,6 +10,7 @@ import (
 type Config struct {
 	Database Database
 	Ports    Ports
+	JWT      JWT
 }
 
 type Database struct {
@@ -20,6 +21,10 @@ type Database struct {
 
 type Ports struct {
 	HTTP int
+}
+
+type JWT struct {
+	Secret string
 }
 
 var (

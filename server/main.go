@@ -8,6 +8,7 @@ import (
 	"server/internal/app/notes"
 	"server/internal/config"
 	"server/internal/db"
+	"server/internal/middleware"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -62,11 +63,11 @@ func main() {
 
 	config := cors.DefaultConfig()
 
-	//TODO: change to frontend url
 	config.AllowOrigins = []string{"*"}
-	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type"} // "Authorization", handlers.X_USER_ID,
+	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 
 	r.Use(cors.New(config))
+	r.Use(middleware.JWT(c))
 	r.POST("/query", graphqlHandler(
 		notes.NewNotesService(
 			notes.NewNotesRepo(databaseService.Client()),
@@ -86,6 +87,7 @@ func graphqlHandler(notesService notes.NotesService) gin.HandlerFunc {
 			graph.Config{
 				Resolvers: &graph.Resolver{
 					NotesService: notesService,
+					UserID:       c.GetString("user_id"),
 				},
 			},
 		)).ServeHTTP(c.Writer, c.Request)
