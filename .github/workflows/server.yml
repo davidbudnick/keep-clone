@@ -20,10 +20,13 @@ jobs:
     - name: Cache Go modules
       uses: actions/cache@v3
       with:
-        path: ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
+          path: |
+            ~/go/pkg/mod
+            ~/go/bin
+            !~/go/pkg/mod/cache/download
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
     
     - name: Build
       working-directory: server
