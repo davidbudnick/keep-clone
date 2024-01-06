@@ -2,6 +2,8 @@ import { gql, useQuery } from '@apollo/client'
 import Card from '@/components/Card/Card';
 import { Note } from '@/types/Note';
 import { SkeletonList } from '@/components/List/SkeletonList';
+import { useAuth } from '@/contexts/AuthContext';
+import { useEffect } from 'react';
 
 
 interface ListProps {
@@ -10,7 +12,8 @@ interface ListProps {
 
 
 const List: React.FC<ListProps> = ({ status }) => {
-    const { loading, error, data } = useQuery(
+    const auth = useAuth();
+    const { loading, error, data, refetch } = useQuery(
         gql`
     query getNotes($status: Status!) {
     notes(status: $status){
@@ -29,11 +32,18 @@ const List: React.FC<ListProps> = ({ status }) => {
         },
     )
 
+    useEffect(() => {
+        refetch();
+    }, [auth.isAuthenticated, refetch]);
+
+
     if (loading || error) {
         return (
             <SkeletonList />
         );
     }
+
+
 
     return (
         <div className="flex flex-wrap justify-center">

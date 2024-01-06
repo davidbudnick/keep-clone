@@ -7,11 +7,17 @@ package graph
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"server/graph/model"
 )
 
 // CreateNote is the resolver for the createNote field.
 func (r *mutationResolver) CreateNote(ctx context.Context, input model.NewNote) (*model.Note, error) {
+	if !model.Status(input.Status).IsValid() {
+		slog.Error("invalid status", "status", input.Status)
+		return nil, fmt.Errorf("invalid status")
+	}
+
 	note, err := r.NotesService.Create(ctx, r.UserID, input)
 	if err != nil {
 		return nil, err

@@ -5,14 +5,14 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Home, Archived, Trash } from "@/pages";
 import { Navbar, Sidebar } from "@/components";
 import { ROUTES } from "@/constants/routes";
-import { AUTH } from "./constants/auth";
+import { AUTH } from "@/constants/auth";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 //TODO: put in ENV file
 const httpLink = new HttpLink({ uri: 'http://localhost:3333/query' });
 
 const authLink = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem(AUTH.GOOGLE_CREDENTIAL);
-
   operation.setContext({
     headers: {
       authorization: token ? `Bearer ${token}` : '',
@@ -31,19 +31,21 @@ const client = new ApolloClient({
 export default function App() {
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_API_CLIENT_ID}>
-      <ApolloProvider client={client}>
-        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          <BrowserRouter>
-            <Navbar />
-            <Sidebar />
-            <Routes>
-              <Route path={ROUTES.HOME} element={<Home />} />
-              <Route path={ROUTES.ARCHIVED} element={<Archived />} />
-              <Route path={ROUTES.TRASH} element={<Trash />} />
-            </Routes>
-          </BrowserRouter>
-        </ThemeProvider>
-      </ApolloProvider>
+      <AuthProvider>
+        <ApolloProvider client={client}>
+          <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+            <BrowserRouter>
+              <Navbar />
+              <Sidebar />
+              <Routes>
+                <Route path={ROUTES.HOME} element={<Home />} />
+                <Route path={ROUTES.ARCHIVED} element={<Archived />} />
+                <Route path={ROUTES.TRASH} element={<Trash />} />
+              </Routes>
+            </BrowserRouter>
+          </ThemeProvider>
+        </ApolloProvider>
+      </AuthProvider>
     </GoogleOAuthProvider>
   )
 }

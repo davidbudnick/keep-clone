@@ -1,21 +1,25 @@
 import React from 'react'
 import { Search } from '@/components/Search';
-import { IoLogOutOutline, IoRefreshOutline, IoSettings } from 'react-icons/io5';
+import { IoRefreshOutline } from 'react-icons/io5';
 import { NavIcon } from '@/components/Navbar/NavIcon';
 import { Switch } from "@/components/ui/switch"
 import { useTheme, DARK, LIGHT } from "@/components/theme-provider"
 import { ROUTES } from '@/constants/routes';
 import { Link } from 'react-router-dom';
-import { GoogleLogin, CredentialResponse, googleLogout } from '@react-oauth/google';
-import { AUTH } from '@/constants/auth';
+import { GoogleLogin } from '@react-oauth/google';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from '@/components/ui/button';
+import { LogOut } from 'lucide-react';
 
 const Navbar: React.FC = () => {
     const { setTheme, theme } = useTheme()
-
-    const responseMessage = (response: CredentialResponse) => {
-        localStorage.setItem(AUTH.GOOGLE_CLIENT, response.clientId || "");
-        localStorage.setItem(AUTH.GOOGLE_CREDENTIAL, response.credential || "");
-    };
+    const auth = useAuth();
 
     return (
         <nav className="fixed top-0 z-50 w-full border-b pt-1 pb-1 dark:bg-black bg-white">
@@ -23,13 +27,13 @@ const Navbar: React.FC = () => {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center justify-start">
                         <Link to={ROUTES.HOME} className="ml-2 flex">
-                            <img alt="logo" src="https://www.gstatic.com/images/branding/product/1x/keep_2020q4_48dp.png" width={48} height={48} className="h-10 w-10" />
+                            <img alt="logo" src="/logo.png" width={48} height={48} className="h-10 w-10" />
                             <span className="ml-3 mt-1 self-center whitespace-nowrap font-mono text-xl dark:text-white">Keep</span>
                         </Link>
                     </div>
                     <Search />
                     <div className="flex items-center">
-                        <div className="ml-3 mt-1 flex items-center">
+                        <div className="ml-1 mt-1 flex items-center">
                             <div className="mr-1">
                                 <Switch checked={
                                     theme === DARK
@@ -43,22 +47,39 @@ const Navbar: React.FC = () => {
                                     window.location.reload()
                                 }} icon={IoRefreshOutline} />
                             </div>
-                            <div className='mr-1'>
-                                <NavIcon icon={IoSettings} />
-                            </div>
-                            <div className='mr-10'>
-                                <NavIcon onClick={
-                                    () => {
-                                        localStorage.removeItem(AUTH.GOOGLE_CLIENT);
-                                        localStorage.removeItem(AUTH.GOOGLE_CREDENTIAL);
-                                        googleLogout();
-                                        window.location.reload()
-                                    }
-
-                                } icon={IoLogOutOutline} />
-                            </div>
                             <div className='mr-4 mb-1'>
-                                <GoogleLogin onSuccess={responseMessage} />
+                                {
+                                    auth.isAuthenticated ?
+                                        <Popover>
+                                            <PopoverTrigger asChild className="cursor-pointer">
+                                                <Avatar>
+                                                    <AvatarImage className='h-10 w-10' src={auth.user?.picture} />
+                                                    <AvatarFallback>{`${auth.user?.given_name?.charAt(0)}${auth.user?.family_name?.charAt(0)}`}</AvatarFallback>
+                                                </Avatar>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-80 mt-1">
+                                                <div className="grid gap-4">
+                                                    <div className="space-y-2 text-center">
+                                                        <p className="text-xs font-bold">{auth.user?.email}</p>
+                                                        <p className="text-xs">Managed by {auth.user?.hd}</p>
+                                                        <div className='flex justify-center'>
+                                                            <Avatar className='mt-3'>
+                                                                <AvatarImage className='h-20 w-20' src={auth.user?.picture} />
+                                                                <AvatarFallback>{`${auth.user?.given_name?.charAt(0)}${auth.user?.family_name?.charAt(0)}`}</AvatarFallback>
+                                                            </Avatar>
+                                                        </div>
+                                                        <div className="text-xl font-light pt-1 pb-2">Hi, {auth.user?.given_name} {auth.user?.family_name}!</div>
+                                                        <Button onClick={auth.logout}>
+                                                            <LogOut className="mr-2 h-4 w-4" /> Logout
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </PopoverContent>
+                                        </Popover>
+                                        :
+                                        <GoogleLogin onSuccess={auth.login} />
+                                }
+
                             </div>
                         </div>
                     </div>
