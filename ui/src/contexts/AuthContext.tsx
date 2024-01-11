@@ -60,18 +60,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     useEffect(() => {
-        if (user?.exp) {
-            if (Date.now() < user.exp * 1000) {
-                logout();
-            }
-        }
-
         const token = localStorage.getItem(AUTH.GOOGLE_CREDENTIAL);
         if (token) {
             setIsAuthenticated(true);
             setUser(decodeUser(token));
-        }
 
+            if (user?.exp) {
+                if (Date.now() > user.exp * 1000) {
+                    logout();
+                }
+            }
+        }
     }, [user])
 
 
