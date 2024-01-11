@@ -5,4 +5,4 @@ database:
 ports:
   http: 3333
 jwt:
-  secret:
+  client_id:

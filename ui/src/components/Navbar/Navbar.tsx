@@ -54,7 +54,7 @@ const Navbar: React.FC = () => {
                                             <PopoverTrigger asChild className="cursor-pointer">
                                                 <Avatar>
                                                     <AvatarImage className='h-10 w-10' src={auth.user?.picture} />
-                                                    <AvatarFallback>{`${auth.user?.given_name?.charAt(0)}${auth.user?.family_name?.charAt(0)}`}</AvatarFallback>
+                                                    <AvatarFallback className='h-10 w-10'>{`${auth.user?.given_name?.charAt(0)}${auth.user?.family_name?.charAt(0)}`}</AvatarFallback>
                                                 </Avatar>
                                             </PopoverTrigger>
                                             <PopoverContent className="w-80 mt-1">
@@ -65,7 +65,7 @@ const Navbar: React.FC = () => {
                                                         <div className='flex justify-center'>
                                                             <Avatar className='mt-3'>
                                                                 <AvatarImage className='h-20 w-20' src={auth.user?.picture} />
-                                                                <AvatarFallback>{`${auth.user?.given_name?.charAt(0)}${auth.user?.family_name?.charAt(0)}`}</AvatarFallback>
+                                                                <AvatarFallback className='h-20 w-20 text-xl'>{`${auth.user?.given_name?.charAt(0)}${auth.user?.family_name?.charAt(0)}`}</AvatarFallback>
                                                             </Avatar>
                                                         </div>
                                                         <div className="text-xl font-light pt-1 pb-2">Hi, {auth.user?.given_name} {auth.user?.family_name}!</div>

@@ -24,7 +24,7 @@ type Ports struct {
 }
 
 type JWT struct {
-	Secret string
+	ClientID string
 }
 
 var (

@@ -1,38 +1,38 @@
 package middleware
 
 import (
-	"fmt"
+	"context"
+	"log/slog"
 	"server/internal/config"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
+	"google.golang.org/api/idtoken"
 )
 
-func JWT(config *config.Config) gin.HandlerFunc {
+const (
+	USER_ID = "user_id"
+	SUB     = "sub"
+)
+
+func JWT(ctx context.Context, conf *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
-		if tokenString != "" {
-			token, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-					return nil, fmt.Errorf("unexpected signing method: %v", token.Header["kid"])
-				}
-
-				return []byte(config.JWT.Secret), nil
-			})
-			if claims, ok := token.Claims.(jwt.MapClaims); ok {
-				c.Set("user_id", claims["sub"])
-			}
+		if tokenString == "" {
+			slog.ErrorContext(ctx, "No token provided")
+			c.Next()
+			return
 		}
 
-		//TODO: validate token and set claims
-		// if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		// 	// Pass the claims to the next middleware or handler
-		// 	c.Set("claims", claims)
-		// } else {
-		// 	c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token", "details": err})
-		// 	return
-		// }
+		payload, err := idtoken.Validate(ctx, tokenString, conf.JWT.ClientID)
+		if err != nil {
+			slog.ErrorContext(ctx, "Error validating token", "error", err)
+
+		}
+
+		if payload != nil {
+			c.Set(USER_ID, payload.Claims[SUB])
+		}
 
 		c.Next()
 	}

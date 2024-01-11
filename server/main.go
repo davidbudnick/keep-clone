@@ -67,7 +67,7 @@ func main() {
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 
 	r.Use(cors.New(config))
-	r.Use(middleware.JWT(c))
+	r.Use(middleware.JWT(ctx, c))
 	r.POST("/query", graphqlHandler(
 		notes.NewNotesService(
 			notes.NewNotesRepo(databaseService.Client()),
@@ -87,7 +87,7 @@ func graphqlHandler(notesService notes.NotesService) gin.HandlerFunc {
 			graph.Config{
 				Resolvers: &graph.Resolver{
 					NotesService: notesService,
-					UserID:       c.GetString("user_id"),
+					UserID:       c.GetString(middleware.USER_ID),
 				},
 			},
 		)).ServeHTTP(c.Writer, c.Request)
