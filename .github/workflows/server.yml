@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'server/**'
+      - 'go.work'
+      - 'go.work.sum'
       - '.github/workflows/server.yml'
 
 jobs:
