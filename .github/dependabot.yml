@@ -1,0 +1,13 @@
+version: 2
+updates:
+  # Configuration for Go modules
+  - package-ecosystem: "gomod"
+    directory: "/server"
+    schedule:
+      interval: "weekly"
+
+  # Configuration for npm (React)
+  - package-ecosystem: "npm"
+    directory: "/ui"
+    schedule:
+      interval: "weekly"
