@@ -14,7 +14,7 @@ import (
 // CreateNote is the resolver for the createNote field.
 func (r *mutationResolver) CreateNote(ctx context.Context, input model.NewNote) (*model.Note, error) {
 	if !model.Status(input.Status).IsValid() {
-		slog.Error("invalid status", "status", input.Status)
+		slog.ErrorContext(ctx, "invalid status", "status", input.Status)
 		return nil, fmt.Errorf("invalid status")
 	}
 

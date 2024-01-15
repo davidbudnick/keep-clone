@@ -10,6 +10,8 @@ import (
 	"server/internal/db"
 	"server/internal/middleware"
 
+	"log/slog"
+
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-contrib/cors"
@@ -17,14 +19,14 @@ import (
 	sloggin "github.com/samber/slog-gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"golang.org/x/exp/slog"
 )
 
 func main() {
 	ctx := context.Background()
 
-	c, err := config.GetConfig("config.yml")
+	c, err := config.GetConfig(ctx, "config.yml")
 	if err != nil {
+		slog.ErrorContext(ctx, "Error getting config", "error", err)
 		panic(err)
 	}
 
@@ -35,7 +37,7 @@ func main() {
 
 	databaseService, err := db.NewDatabaseService(ctx, c.Database.Connection, c.Database.Username, c.Database.Password)
 	if err != nil {
-		slog.Error("Error creating database service", "error", err)
+		slog.ErrorContext(ctx, "Error creating database service", "error", err)
 		panic(err)
 	}
 	defer databaseService.Client().Disconnect(ctx)
@@ -75,9 +77,9 @@ func main() {
 	))
 	r.GET("/", playgroundHandler())
 
-	slog.Info("Starting GIN server", "port", c.Ports.HTTP)
+	slog.InfoContext(ctx, "Starting GIN server", "port", c.Ports.HTTP)
 	if err = r.Run(fmt.Sprintf(":%d", c.Ports.HTTP)); err != nil {
-		slog.Error("Error starting GIN server", "error", err)
+		slog.ErrorContext(ctx, "Error starting GIN server", "error", err)
 	}
 }
 

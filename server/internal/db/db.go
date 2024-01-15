@@ -33,13 +33,13 @@ func NewDatabaseService(ctx context.Context, connection string, username string,
 				},
 			))
 	if err != nil {
-		slog.Error("Error creating database connection", "error", err)
+		slog.ErrorContext(ctx, "Error creating database connection", "error", err)
 		return nil, err
 	}
 
 	err = client.Ping(ctx, nil)
 	if err != nil {
-		slog.Error("Error pinging database", "error", err)
+		slog.ErrorContext(ctx, "Error pinging database", "error", err)
 		return nil, err
 	}
 

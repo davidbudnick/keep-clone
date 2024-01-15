@@ -2,6 +2,7 @@ package notes
 
 import (
 	"context"
+	"log/slog"
 	"server/graph/model"
 	"server/internal/db"
 	"time"
@@ -9,7 +10,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"golang.org/x/exp/slog"
 )
 
 const (

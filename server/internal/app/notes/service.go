@@ -4,8 +4,9 @@ import (
 	"context"
 	"server/graph/model"
 
+	"log/slog"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"golang.org/x/exp/slog"
 )
 
 //go:generate counterfeiter -o fakes/fake_notes_service.go . NotesService
