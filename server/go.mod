@@ -3,7 +3,7 @@ module server
 go 1.21
 
 require (
-	github.com/99designs/gqlgen v0.17.42
+	github.com/99designs/gqlgen v0.17.43
 	github.com/gin-contrib/cors v1.5.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/samber/slog-gin v1.10.1
