@@ -41,6 +41,7 @@ func (s *notesService) List(ctx context.Context, status string, userID string) (
 			UserID:    note.UserID,
 			Title:     note.Title,
 			Body:      note.Body,
+			Pinned:    note.Pinned,
 			Status:    note.Status,
 			CreatedAt: note.CreatedAt.Format("2006-01-02 15:04:05"),
 			UpdatedAt: note.UpdatedAt.Format("2006-01-02 15:04:05"),
@@ -63,6 +64,7 @@ func (s *notesService) Get(ctx context.Context, userID string, noteID string) (*
 		Title:     note.Title,
 		Body:      note.Body,
 		Status:    note.Status,
+		Pinned:    note.Pinned,
 		CreatedAt: note.CreatedAt.Format("2006-01-02 15:04:05"),
 		UpdatedAt: note.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}, nil
@@ -85,13 +87,13 @@ func (s *notesService) Create(ctx context.Context, userID string, note model.New
 }
 
 func (s *notesService) Update(ctx context.Context, userID string, note model.UpdateNote) (*model.Note, error) {
-	res, err := s.repo.Update(ctx, userID, note)
+	err := s.repo.Update(ctx, userID, note)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error updating note", "error", err)
 		return nil, err
 	}
 
-	updatedNote, err := s.Get(ctx, userID, res.UpsertedID.(primitive.ObjectID).Hex())
+	updatedNote, err := s.Get(ctx, userID, note.ID)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error getting note", "error", err)
 		return nil, err

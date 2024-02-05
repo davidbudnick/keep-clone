@@ -5,13 +5,12 @@ import { SkeletonList } from '@/components/List/SkeletonList';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect } from 'react';
 
-
 interface ListProps {
-    status: string
+    status: string;
+    fetch?: () => void;
 }
 
-
-const List: React.FC<ListProps> = ({ status }) => {
+const List: React.FC<ListProps> = ({ status, fetch }) => {
     const auth = useAuth();
     const { loading, error, data, refetch } = useQuery(
         gql`
@@ -21,6 +20,7 @@ const List: React.FC<ListProps> = ({ status }) => {
       body
       title
       status
+      pinned
       updatedAt 
       }
 }`,
@@ -34,7 +34,7 @@ const List: React.FC<ListProps> = ({ status }) => {
 
     useEffect(() => {
         refetch();
-    }, [auth.isAuthenticated, refetch]);
+    }, [auth.isAuthenticated, fetch]);
 
 
     if (loading || error) {
@@ -42,8 +42,6 @@ const List: React.FC<ListProps> = ({ status }) => {
             <SkeletonList />
         );
     }
-
-
 
     return (
         <div className="flex flex-wrap justify-center">

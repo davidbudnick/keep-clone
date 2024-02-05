@@ -46,6 +46,7 @@ func Test_notesService_List(t *testing.T) {
 						UserID:    "user-id",
 						Title:     "title",
 						Body:      "body",
+						Pinned:    false,
 						Status:    model.StatusActive.String(),
 						CreatedAt: time.Now(),
 						UpdatedAt: time.Now(),
@@ -58,6 +59,7 @@ func Test_notesService_List(t *testing.T) {
 					UserID:    "user-id",
 					Title:     "title",
 					Body:      "body",
+					Pinned:    false,
 					Status:    model.StatusActive.String(),
 					CreatedAt: time.Now().Format("2006-01-02 15:04:05"),
 					UpdatedAt: time.Now().Format("2006-01-02 15:04:05"),
@@ -132,6 +134,7 @@ func Test_notesService_Get(t *testing.T) {
 					UserID:    "user-id",
 					Title:     "title",
 					Body:      "body",
+					Pinned:    true,
 					Status:    model.StatusActive.String(),
 					CreatedAt: time.Now(),
 					UpdatedAt: time.Now(),
@@ -142,6 +145,7 @@ func Test_notesService_Get(t *testing.T) {
 				UserID:    "user-id",
 				Title:     "title",
 				Body:      "body",
+				Pinned:    true,
 				Status:    model.StatusActive.String(),
 				CreatedAt: time.Now().Format("2006-01-02 15:04:05"),
 				UpdatedAt: time.Now().Format("2006-01-02 15:04:05"),
@@ -208,6 +212,7 @@ func Test_notesService_Create(t *testing.T) {
 				note: model.NewNote{
 					Title:  "title",
 					Body:   "body",
+					Pinned: true,
 					Status: model.StatusActive.String(),
 				},
 			},
@@ -222,6 +227,7 @@ func Test_notesService_Create(t *testing.T) {
 					UserID:    "user-id",
 					Title:     "title",
 					Body:      "body",
+					Pinned:    true,
 					Status:    model.StatusActive.String(),
 					CreatedAt: time.Now(),
 					UpdatedAt: time.Now(),
@@ -232,6 +238,7 @@ func Test_notesService_Create(t *testing.T) {
 				UserID:    "user-id",
 				Title:     "title",
 				Body:      "body",
+				Pinned:    true,
 				Status:    model.StatusActive.String(),
 				CreatedAt: time.Now().Format("2006-01-02 15:04:05"),
 				UpdatedAt: time.Now().Format("2006-01-02 15:04:05"),
@@ -324,22 +331,20 @@ func Test_notesService_Update(t *testing.T) {
 					ID:     "note-id",
 					Title:  "title",
 					Body:   "body",
+					Pinned: true,
 					Status: model.StatusActive.String(),
 				},
 			},
 			setup: func(
 				repo *repo_fakes.FakeNotesRepo,
 			) {
-				repo.UpdateReturns(&mongo.UpdateResult{
-					MatchedCount:  1,
-					ModifiedCount: 1,
-					UpsertedID:    ID,
-				}, nil)
+				repo.UpdateReturns(nil)
 				repo.GetReturns(&notes.Note{
 					ID:        ID,
 					UserID:    "user-id",
 					Title:     "title",
 					Body:      "body",
+					Pinned:    true,
 					Status:    model.StatusActive.String(),
 					CreatedAt: time.Now(),
 					UpdatedAt: time.Now(),
@@ -350,6 +355,7 @@ func Test_notesService_Update(t *testing.T) {
 				UserID:    "user-id",
 				Title:     "title",
 				Body:      "body",
+				Pinned:    true,
 				Status:    model.StatusActive.String(),
 				CreatedAt: time.Now().Format("2006-01-02 15:04:05"),
 				UpdatedAt: time.Now().Format("2006-01-02 15:04:05"),
@@ -364,13 +370,14 @@ func Test_notesService_Update(t *testing.T) {
 					ID:     "note-id",
 					Title:  "title",
 					Body:   "body",
+					Pinned: true,
 					Status: model.StatusActive.String(),
 				},
 			},
 			setup: func(
 				repo *repo_fakes.FakeNotesRepo,
 			) {
-				repo.UpdateReturns(nil, errors.New("error"))
+				repo.UpdateReturns(errors.New("error"))
 			},
 			want:    nil,
 			wantErr: true,
@@ -383,17 +390,14 @@ func Test_notesService_Update(t *testing.T) {
 					ID:     "note-id",
 					Title:  "title",
 					Body:   "body",
+					Pinned: true,
 					Status: model.StatusActive.String(),
 				},
 			},
 			setup: func(
 				repo *repo_fakes.FakeNotesRepo,
 			) {
-				repo.UpdateReturns(&mongo.UpdateResult{
-					MatchedCount:  1,
-					ModifiedCount: 1,
-					UpsertedID:    ID,
-				}, nil)
+				repo.UpdateReturns(nil)
 				repo.GetReturns(nil, errors.New("error"))
 			},
 			want:    nil,

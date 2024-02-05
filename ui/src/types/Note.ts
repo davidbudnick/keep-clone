@@ -3,5 +3,6 @@ export interface Note {
     body: string;
     title: string;
     status: string;
+    pinned: boolean;
     updatedAt: string;
 }

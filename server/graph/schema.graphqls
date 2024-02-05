@@ -4,6 +4,7 @@ type Note {
   title: String!
   body: String!
   status: String!
+  pinned: Boolean!
   createdAt: String!
   updatedAt: String!
 }
@@ -28,6 +29,7 @@ input NewNote {
   title: String!
   body: String!
   status: String!
+  pinned: Boolean!
 }
 
 input UpdateNote {
@@ -35,6 +37,7 @@ input UpdateNote {
   title: String!
   body: String!
   status: String!
+  pinned: Boolean!
 }
 
 type Mutation {

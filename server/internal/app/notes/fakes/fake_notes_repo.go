@@ -56,7 +56,7 @@ type FakeNotesRepo struct {
 		result1 []notes.Note
 		result2 error
 	}
-	UpdateStub        func(context.Context, string, model.UpdateNote) (*mongo.UpdateResult, error)
+	UpdateStub        func(context.Context, string, model.UpdateNote) error
 	updateMutex       sync.RWMutex
 	updateArgsForCall []struct {
 		arg1 context.Context
@@ -64,12 +64,10 @@ type FakeNotesRepo struct {
 		arg3 model.UpdateNote
 	}
 	updateReturns struct {
-		result1 *mongo.UpdateResult
-		result2 error
+		result1 error
 	}
 	updateReturnsOnCall map[int]struct {
-		result1 *mongo.UpdateResult
-		result2 error
+		result1 error
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
@@ -273,7 +271,7 @@ func (fake *FakeNotesRepo) ListReturnsOnCall(i int, result1 []notes.Note, result
 	}{result1, result2}
 }
 
-func (fake *FakeNotesRepo) Update(arg1 context.Context, arg2 string, arg3 model.UpdateNote) (*mongo.UpdateResult, error) {
+func (fake *FakeNotesRepo) Update(arg1 context.Context, arg2 string, arg3 model.UpdateNote) error {
 	fake.updateMutex.Lock()
 	ret, specificReturn := fake.updateReturnsOnCall[len(fake.updateArgsForCall)]
 	fake.updateArgsForCall = append(fake.updateArgsForCall, struct {
@@ -289,9 +287,9 @@ func (fake *FakeNotesRepo) Update(arg1 context.Context, arg2 string, arg3 model.
 		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
-		return ret.result1, ret.result2
+		return ret.result1
 	}
-	return fakeReturns.result1, fakeReturns.result2
+	return fakeReturns.result1
 }
 
 func (fake *FakeNotesRepo) UpdateCallCount() int {
@@ -300,7 +298,7 @@ func (fake *FakeNotesRepo) UpdateCallCount() int {
 	return len(fake.updateArgsForCall)
 }
 
-func (fake *FakeNotesRepo) UpdateCalls(stub func(context.Context, string, model.UpdateNote) (*mongo.UpdateResult, error)) {
+func (fake *FakeNotesRepo) UpdateCalls(stub func(context.Context, string, model.UpdateNote) error) {
 	fake.updateMutex.Lock()
 	defer fake.updateMutex.Unlock()
 	fake.UpdateStub = stub
@@ -313,30 +311,27 @@ func (fake *FakeNotesRepo) UpdateArgsForCall(i int) (context.Context, string, mo
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeNotesRepo) UpdateReturns(result1 *mongo.UpdateResult, result2 error) {
+func (fake *FakeNotesRepo) UpdateReturns(result1 error) {
 	fake.updateMutex.Lock()
 	defer fake.updateMutex.Unlock()
 	fake.UpdateStub = nil
 	fake.updateReturns = struct {
-		result1 *mongo.UpdateResult
-		result2 error
-	}{result1, result2}
+		result1 error
+	}{result1}
 }
 
-func (fake *FakeNotesRepo) UpdateReturnsOnCall(i int, result1 *mongo.UpdateResult, result2 error) {
+func (fake *FakeNotesRepo) UpdateReturnsOnCall(i int, result1 error) {
 	fake.updateMutex.Lock()
 	defer fake.updateMutex.Unlock()
 	fake.UpdateStub = nil
 	if fake.updateReturnsOnCall == nil {
 		fake.updateReturnsOnCall = make(map[int]struct {
-			result1 *mongo.UpdateResult
-			result2 error
+			result1 error
 		})
 	}
 	fake.updateReturnsOnCall[i] = struct {
-		result1 *mongo.UpdateResult
-		result2 error
-	}{result1, result2}
+		result1 error
+	}{result1}
 }
 
 func (fake *FakeNotesRepo) Invocations() map[string][][]interface{} {

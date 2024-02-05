@@ -8,10 +8,14 @@ import (
 	"strconv"
 )
 
+type Mutation struct {
+}
+
 type NewNote struct {
 	Title  string `json:"title"`
 	Body   string `json:"body"`
 	Status string `json:"status"`
+	Pinned bool   `json:"pinned"`
 }
 
 type Note struct {
@@ -20,6 +24,7 @@ type Note struct {
 	Title     string `json:"title"`
 	Body      string `json:"body"`
 	Status    string `json:"status"`
+	Pinned    bool   `json:"pinned"`
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
 }
@@ -29,11 +34,15 @@ type NoteMutationResponse struct {
 	ID      string `json:"id"`
 }
 
+type Query struct {
+}
+
 type UpdateNote struct {
 	ID     string `json:"id"`
 	Title  string `json:"title"`
 	Body   string `json:"body"`
 	Status string `json:"status"`
+	Pinned bool   `json:"pinned"`
 }
 
 type Status string

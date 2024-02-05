@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const (
@@ -21,7 +22,7 @@ type NotesRepo interface {
 	List(ctx context.Context, userID string, status string) ([]Note, error)
 	Get(ctx context.Context, userID string, noteID string) (*Note, error)
 	Create(ctx context.Context, userID string, note model.NewNote) (*mongo.InsertOneResult, error)
-	Update(ctx context.Context, userID string, note model.UpdateNote) (*mongo.UpdateResult, error)
+	Update(ctx context.Context, userID string, note model.UpdateNote) error
 }
 
 type notesRepo struct {
@@ -40,6 +41,7 @@ type Note struct {
 	Title     string             `bson:"title"`
 	Body      string             `bson:"body"`
 	Status    string             `bson:"status"`
+	Pinned    bool               `bson:"pinned"`
 	CreatedAt time.Time          `bson:"created_at"`
 	UpdatedAt time.Time          `bson:"updated_at"`
 }
@@ -104,6 +106,7 @@ func (r *notesRepo) Create(ctx context.Context, userID string, note model.NewNot
 		Title:     note.Title,
 		Body:      note.Body,
 		Status:    note.Status,
+		Pinned:    note.Pinned,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	})
@@ -115,16 +118,16 @@ func (r *notesRepo) Create(ctx context.Context, userID string, note model.NewNot
 	return res, nil
 }
 
-func (r *notesRepo) Update(ctx context.Context, userID string, note model.UpdateNote) (*mongo.UpdateResult, error) {
+func (r *notesRepo) Update(ctx context.Context, userID string, note model.UpdateNote) error {
 	notesCollection := r.Client.Database(db.NAME).Collection(NOTES_COLLECTION)
 
 	objectId, err := primitive.ObjectIDFromHex(note.ID)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error decoding NoteID", "error", err)
-		return nil, err
+		return err
 	}
 
-	res, err := notesCollection.UpdateOne(ctx, GetFilter{
+	_, err = notesCollection.UpdateOne(ctx, GetFilter{
 		ID:     objectId,
 		UserID: userID,
 	}, bson.M{
@@ -132,13 +135,14 @@ func (r *notesRepo) Update(ctx context.Context, userID string, note model.Update
 			"title":      note.Title,
 			"body":       note.Body,
 			"status":     note.Status,
+			"pinned":     note.Pinned,
 			"updated_at": time.Now(),
 		},
-	})
+	}, options.Update().SetUpsert(true))
 	if err != nil {
 		slog.ErrorContext(ctx, "Error updating note", "error", err)
-		return nil, err
+		return err
 	}
 
-	return res, nil
+	return nil
 }
