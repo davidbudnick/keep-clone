@@ -7,45 +7,22 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Note } from '@/types/Note';
-import { gql, useMutation } from '@apollo/client';
+import { Note, useUpdateNoteMutation } from '@/graphql/generated/schema';
 
 interface CardProps {
-    note: Note
+    note: Note;
 }
 
 const Card: React.FC<CardProps> = ({ note }) => {
-    const [updateNote] = useMutation(
-        gql`
-        mutation UpdateNote($id: String!, $title: String!, $body: String!, $status: String!, $pinned: Boolean!) {
-            updateNote(input:{
-                id: $id,
-                title: $title,
-                body: $body,
-                status: $status,
-                pinned: $pinned,
-            }) {
-                id
-                title
-                body
-                status
-                pinned
-                createdAt
-                updatedAt
-                userId
-            }
-        }`,
-        {
-            variables:
-            {
-                id: note.id,
-                title: note.title,
-                body: note.body,
-                status: note.status,
-                pinned: !note.pinned
-            }
+    const [updateNote] = useUpdateNoteMutation({
+        variables: {
+            id: note.id,
+            title: note.title,
+            body: note.body,
+            status: note.status,
+            pinned: !note.pinned,
         },
-    )
+    });
 
     return (
         <div key={note.id} className="m-4 w-64 min-h-64 max-w-xs cursor-pointer rounded-lg border border-gray-200 p-6 shadow flex flex-col justify-between items-start relative group">

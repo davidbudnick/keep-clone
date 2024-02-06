@@ -1,0 +1,12 @@
+query GetNotes($status: Status!) {
+  notes(status: $status) {
+    id
+    body
+    title
+    status
+    pinned
+    userId
+    createdAt
+    updatedAt
+  }
+}

@@ -1,41 +1,31 @@
-import { gql, useQuery } from '@apollo/client'
 import Card from '@/components/Card/Card';
-import { Note } from '@/types/Note';
 import { SkeletonList } from '@/components/List/SkeletonList';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect } from 'react';
+import { ApolloError, ApolloQueryResult } from '@apollo/client';
+import { Exact, GetNotesQuery, Status } from '@/graphql/generated/schema';
 
 interface ListProps {
-    status: string;
-    fetch?: () => void;
+    loading: boolean;
+    error: ApolloError | undefined;
+    data: GetNotesQuery | undefined;
+    refetch: (variables?: Partial<Exact<{
+        status: Status;
+    }>> | undefined) => Promise<ApolloQueryResult<GetNotesQuery>>
 }
 
-const List: React.FC<ListProps> = ({ status, fetch }) => {
+const List: React.FC<ListProps> = ({
+    loading,
+    error,
+    data,
+    refetch,
+}) => {
     const auth = useAuth();
-    const { loading, error, data, refetch } = useQuery(
-        gql`
-    query getNotes($status: Status!) {
-    notes(status: $status){
-      id
-      body
-      title
-      status
-      pinned
-      updatedAt 
-      }
-}`,
-        {
-            variables:
-            {
-                status
-            }
-        },
-    )
+
 
     useEffect(() => {
         refetch();
-    }, [auth.isAuthenticated, fetch]);
-
+    }, [auth.isAuthenticated]);
 
     if (loading || error) {
         return (
@@ -45,7 +35,7 @@ const List: React.FC<ListProps> = ({ status, fetch }) => {
 
     return (
         <div className="flex flex-wrap justify-center">
-            {data.notes?.map((note: Note) => (
+            {data?.notes?.map((note) => (
                 <Card key={note.id} note={note} />
             ))}
         </div>

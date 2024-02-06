@@ -1,0 +1,18 @@
+mutation UpdateNote($id: String!, $title: String!, $body: String!, $status: String!, $pinned: Boolean!) {
+            updateNote(input:{
+                id: $id,
+                title: $title,
+                body: $body,
+                status: $status,
+                pinned: $pinned,
+            }) {
+                id
+                title
+                body
+                status
+                pinned
+                createdAt
+                updatedAt
+                userId
+            }
+}
