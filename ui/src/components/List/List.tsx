@@ -3,25 +3,24 @@ import { SkeletonList } from '@/components/List/SkeletonList';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect } from 'react';
 import { ApolloError, ApolloQueryResult } from '@apollo/client';
-import { Exact, GetNotesQuery, Status } from '@/graphql/generated/schema';
+import { Exact, GetNotesQuery, Note, Status } from '@/graphql/generated/schema';
 
 interface ListProps {
     loading: boolean;
     error: ApolloError | undefined;
-    data: GetNotesQuery | undefined;
-    refetch: (variables?: Partial<Exact<{
-        status: Status;
-    }>> | undefined) => Promise<ApolloQueryResult<GetNotesQuery>>
+    notes: Note[] | undefined;
+    refetch: (variables?: Partial<Exact<{ status: Status; }>> | undefined) => Promise<ApolloQueryResult<GetNotesQuery>>
+    disablePinned?: boolean;
 }
 
 const List: React.FC<ListProps> = ({
     loading,
     error,
-    data,
+    notes,
     refetch,
+    disablePinned,
 }) => {
     const auth = useAuth();
-
 
     useEffect(() => {
         refetch();
@@ -34,9 +33,9 @@ const List: React.FC<ListProps> = ({
     }
 
     return (
-        <div className="flex flex-wrap justify-center">
-            {data?.notes?.map((note) => (
-                <Card key={note.id} note={note} />
+        <div className="flex flex-wrap ml-6">
+            {notes?.map((note) => (
+                <Card disablePinned={disablePinned} key={note.id} note={note} />
             ))}
         </div>
     )

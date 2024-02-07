@@ -1,5 +1,5 @@
 import React from 'react'
-import { List, CreateNote } from '@/components'
+import { List } from '@/components'
 import { Status, useGetNotesQuery } from '@/graphql/generated/schema';
 
 const Archived: React.FC = () => {
@@ -7,12 +7,12 @@ const Archived: React.FC = () => {
         variables: { status: Status.Archived },
     });
     return (
-        <div className="ml-10 mt-14 p-4">
-            <CreateNote />
+        <div className="ml-10 mt-28 p-4">
             <List
+                disablePinned={true}
                 loading={loading}
                 error={error}
-                data={data}
+                notes={data?.notes}
                 refetch={refetch}
             />
         </div>

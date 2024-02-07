@@ -41,6 +41,16 @@ func (r *mutationResolver) DeleteNote(ctx context.Context, id string) (*model.No
 	panic(fmt.Errorf("not implemented: DeleteNote - deleteNote"))
 }
 
+// EmptyTrash is the resolver for the emptyTrash field.
+func (r *mutationResolver) EmptyTrash(ctx context.Context) ([]*model.Note, error) {
+	notes, err := r.NotesService.RemoveDeleted(ctx, r.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	return notes, nil
+}
+
 // Notes is the resolver for the Notes field.
 func (r *queryResolver) Notes(ctx context.Context, status *model.Status) ([]*model.Note, error) {
 	notes, err := r.NotesService.List(ctx, status.String(), r.UserID)

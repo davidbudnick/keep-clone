@@ -10,12 +10,29 @@ const Home: React.FC = () => {
     return (
         <div className="ml-10 mt-14 p-4">
             <CreateNote />
-            <List
-                loading={loading}
-                error={error}
-                data={data}
-                refetch={refetch}
-            />
+            {data?.notes.some((note) => note.pinned) &&
+                <>
+                    <div className="mb-4">
+                        <p className="ml-8 text-grey-500 text-xs font-semibold p-1">PINNED</p>
+                        <List
+                            loading={loading}
+                            error={error}
+                            notes={data?.notes.filter((note) => note.pinned)}
+                            refetch={refetch}
+                        />
+
+                    </div>
+                    <hr />
+                </>
+            }
+            <div className="mt-4">
+                <List
+                    loading={loading}
+                    error={error}
+                    notes={data?.notes.filter((note) => !note.pinned)}
+                    refetch={refetch}
+                />
+            </div>
         </div>
     )
 }

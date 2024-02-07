@@ -1,0 +1,12 @@
+mutation RemoveDeleted {
+  emptyTrash {
+    id
+    title
+    body
+    status
+    pinned
+    createdAt
+    updatedAt
+    userId
+  }
+}

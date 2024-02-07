@@ -56,6 +56,18 @@ type FakeNotesRepo struct {
 		result1 []notes.Note
 		result2 error
 	}
+	RemoveDeletedStub        func(context.Context, string) error
+	removeDeletedMutex       sync.RWMutex
+	removeDeletedArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+	}
+	removeDeletedReturns struct {
+		result1 error
+	}
+	removeDeletedReturnsOnCall map[int]struct {
+		result1 error
+	}
 	UpdateStub        func(context.Context, string, model.UpdateNote) error
 	updateMutex       sync.RWMutex
 	updateArgsForCall []struct {
@@ -271,6 +283,68 @@ func (fake *FakeNotesRepo) ListReturnsOnCall(i int, result1 []notes.Note, result
 	}{result1, result2}
 }
 
+func (fake *FakeNotesRepo) RemoveDeleted(arg1 context.Context, arg2 string) error {
+	fake.removeDeletedMutex.Lock()
+	ret, specificReturn := fake.removeDeletedReturnsOnCall[len(fake.removeDeletedArgsForCall)]
+	fake.removeDeletedArgsForCall = append(fake.removeDeletedArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.RemoveDeletedStub
+	fakeReturns := fake.removeDeletedReturns
+	fake.recordInvocation("RemoveDeleted", []interface{}{arg1, arg2})
+	fake.removeDeletedMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeNotesRepo) RemoveDeletedCallCount() int {
+	fake.removeDeletedMutex.RLock()
+	defer fake.removeDeletedMutex.RUnlock()
+	return len(fake.removeDeletedArgsForCall)
+}
+
+func (fake *FakeNotesRepo) RemoveDeletedCalls(stub func(context.Context, string) error) {
+	fake.removeDeletedMutex.Lock()
+	defer fake.removeDeletedMutex.Unlock()
+	fake.RemoveDeletedStub = stub
+}
+
+func (fake *FakeNotesRepo) RemoveDeletedArgsForCall(i int) (context.Context, string) {
+	fake.removeDeletedMutex.RLock()
+	defer fake.removeDeletedMutex.RUnlock()
+	argsForCall := fake.removeDeletedArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeNotesRepo) RemoveDeletedReturns(result1 error) {
+	fake.removeDeletedMutex.Lock()
+	defer fake.removeDeletedMutex.Unlock()
+	fake.RemoveDeletedStub = nil
+	fake.removeDeletedReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeNotesRepo) RemoveDeletedReturnsOnCall(i int, result1 error) {
+	fake.removeDeletedMutex.Lock()
+	defer fake.removeDeletedMutex.Unlock()
+	fake.RemoveDeletedStub = nil
+	if fake.removeDeletedReturnsOnCall == nil {
+		fake.removeDeletedReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.removeDeletedReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
 func (fake *FakeNotesRepo) Update(arg1 context.Context, arg2 string, arg3 model.UpdateNote) error {
 	fake.updateMutex.Lock()
 	ret, specificReturn := fake.updateReturnsOnCall[len(fake.updateArgsForCall)]
@@ -343,6 +417,8 @@ func (fake *FakeNotesRepo) Invocations() map[string][][]interface{} {
 	defer fake.getMutex.RUnlock()
 	fake.listMutex.RLock()
 	defer fake.listMutex.RUnlock()
+	fake.removeDeletedMutex.RLock()
+	defer fake.removeDeletedMutex.RUnlock()
 	fake.updateMutex.RLock()
 	defer fake.updateMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}

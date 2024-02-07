@@ -15,6 +15,7 @@ type NotesService interface {
 	Get(ctx context.Context, userID string, noteID string) (*model.Note, error)
 	Create(ctx context.Context, userID string, note model.NewNote) (*model.Note, error)
 	Update(ctx context.Context, userID string, note model.UpdateNote) (*model.Note, error)
+	RemoveDeleted(ctx context.Context, userID string) ([]*model.Note, error)
 }
 
 type notesService struct {
@@ -100,4 +101,20 @@ func (s *notesService) Update(ctx context.Context, userID string, note model.Upd
 	}
 
 	return updatedNote, nil
+}
+
+func (s *notesService) RemoveDeleted(ctx context.Context, userID string) ([]*model.Note, error) {
+	err := s.repo.RemoveDeleted(ctx, userID)
+	if err != nil {
+		slog.ErrorContext(ctx, "Error deleting notes", "error", err)
+		return nil, err
+	}
+
+	deletedNotes, err := s.List(ctx, model.StatusDeleted.String(), userID)
+	if err != nil {
+		slog.ErrorContext(ctx, "Error listing deleted notes", "error", err)
+		return nil, err
+	}
+
+	return deletedNotes, nil
 }

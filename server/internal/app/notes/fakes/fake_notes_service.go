@@ -54,6 +54,20 @@ type FakeNotesService struct {
 		result1 []*model.Note
 		result2 error
 	}
+	RemoveDeletedStub        func(context.Context, string) ([]*model.Note, error)
+	removeDeletedMutex       sync.RWMutex
+	removeDeletedArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+	}
+	removeDeletedReturns struct {
+		result1 []*model.Note
+		result2 error
+	}
+	removeDeletedReturnsOnCall map[int]struct {
+		result1 []*model.Note
+		result2 error
+	}
 	UpdateStub        func(context.Context, string, model.UpdateNote) (*model.Note, error)
 	updateMutex       sync.RWMutex
 	updateArgsForCall []struct {
@@ -271,6 +285,71 @@ func (fake *FakeNotesService) ListReturnsOnCall(i int, result1 []*model.Note, re
 	}{result1, result2}
 }
 
+func (fake *FakeNotesService) RemoveDeleted(arg1 context.Context, arg2 string) ([]*model.Note, error) {
+	fake.removeDeletedMutex.Lock()
+	ret, specificReturn := fake.removeDeletedReturnsOnCall[len(fake.removeDeletedArgsForCall)]
+	fake.removeDeletedArgsForCall = append(fake.removeDeletedArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.RemoveDeletedStub
+	fakeReturns := fake.removeDeletedReturns
+	fake.recordInvocation("RemoveDeleted", []interface{}{arg1, arg2})
+	fake.removeDeletedMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeNotesService) RemoveDeletedCallCount() int {
+	fake.removeDeletedMutex.RLock()
+	defer fake.removeDeletedMutex.RUnlock()
+	return len(fake.removeDeletedArgsForCall)
+}
+
+func (fake *FakeNotesService) RemoveDeletedCalls(stub func(context.Context, string) ([]*model.Note, error)) {
+	fake.removeDeletedMutex.Lock()
+	defer fake.removeDeletedMutex.Unlock()
+	fake.RemoveDeletedStub = stub
+}
+
+func (fake *FakeNotesService) RemoveDeletedArgsForCall(i int) (context.Context, string) {
+	fake.removeDeletedMutex.RLock()
+	defer fake.removeDeletedMutex.RUnlock()
+	argsForCall := fake.removeDeletedArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeNotesService) RemoveDeletedReturns(result1 []*model.Note, result2 error) {
+	fake.removeDeletedMutex.Lock()
+	defer fake.removeDeletedMutex.Unlock()
+	fake.RemoveDeletedStub = nil
+	fake.removeDeletedReturns = struct {
+		result1 []*model.Note
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeNotesService) RemoveDeletedReturnsOnCall(i int, result1 []*model.Note, result2 error) {
+	fake.removeDeletedMutex.Lock()
+	defer fake.removeDeletedMutex.Unlock()
+	fake.RemoveDeletedStub = nil
+	if fake.removeDeletedReturnsOnCall == nil {
+		fake.removeDeletedReturnsOnCall = make(map[int]struct {
+			result1 []*model.Note
+			result2 error
+		})
+	}
+	fake.removeDeletedReturnsOnCall[i] = struct {
+		result1 []*model.Note
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeNotesService) Update(arg1 context.Context, arg2 string, arg3 model.UpdateNote) (*model.Note, error) {
 	fake.updateMutex.Lock()
 	ret, specificReturn := fake.updateReturnsOnCall[len(fake.updateArgsForCall)]
@@ -346,6 +425,8 @@ func (fake *FakeNotesService) Invocations() map[string][][]interface{} {
 	defer fake.getMutex.RUnlock()
 	fake.listMutex.RLock()
 	defer fake.listMutex.RUnlock()
+	fake.removeDeletedMutex.RLock()
+	defer fake.removeDeletedMutex.RUnlock()
 	fake.updateMutex.RLock()
 	defer fake.updateMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}

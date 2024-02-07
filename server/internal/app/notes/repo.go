@@ -23,6 +23,7 @@ type NotesRepo interface {
 	Get(ctx context.Context, userID string, noteID string) (*Note, error)
 	Create(ctx context.Context, userID string, note model.NewNote) (*mongo.InsertOneResult, error)
 	Update(ctx context.Context, userID string, note model.UpdateNote) error
+	RemoveDeleted(ctx context.Context, userID string) error
 }
 
 type notesRepo struct {
@@ -141,6 +142,24 @@ func (r *notesRepo) Update(ctx context.Context, userID string, note model.Update
 	}, options.Update().SetUpsert(true))
 	if err != nil {
 		slog.ErrorContext(ctx, "Error updating note", "error", err)
+		return err
+	}
+
+	return nil
+}
+
+type DeleteFilter struct {
+	UserID string `bson:"user_id"`
+	Status string `bson:"status"`
+}
+
+func (r *notesRepo) RemoveDeleted(ctx context.Context, userID string) error {
+	_, err := r.Client.Database(db.NAME).Collection(NOTES_COLLECTION).DeleteMany(ctx, DeleteFilter{
+		UserID: userID,
+		Status: model.StatusDeleted.String(),
+	})
+	if err != nil {
+		slog.ErrorContext(ctx, "Error deleting notes", "error", err)
 		return err
 	}
 

@@ -50,6 +50,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateNote func(childComplexity int, input model.NewNote) int
 		DeleteNote func(childComplexity int, id string) int
+		EmptyTrash func(childComplexity int) int
 		UpdateNote func(childComplexity int, input model.UpdateNote) int
 	}
 
@@ -79,6 +80,7 @@ type MutationResolver interface {
 	CreateNote(ctx context.Context, input model.NewNote) (*model.Note, error)
 	UpdateNote(ctx context.Context, input model.UpdateNote) (*model.Note, error)
 	DeleteNote(ctx context.Context, id string) (*model.Note, error)
+	EmptyTrash(ctx context.Context) ([]*model.Note, error)
 }
 type QueryResolver interface {
 	Notes(ctx context.Context, status *model.Status) ([]*model.Note, error)
@@ -127,6 +129,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteNote(childComplexity, args["id"].(string)), true
+
+	case "Mutation.emptyTrash":
+		if e.complexity.Mutation.EmptyTrash == nil {
+			break
+		}
+
+		return e.complexity.Mutation.EmptyTrash(childComplexity), true
 
 	case "Mutation.updateNote":
 		if e.complexity.Mutation.UpdateNote == nil {
@@ -703,6 +712,68 @@ func (ec *executionContext) fieldContext_Mutation_deleteNote(ctx context.Context
 	if fc.Args, err = ec.field_Mutation_deleteNote_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_emptyTrash(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_emptyTrash(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EmptyTrash(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Note)
+	fc.Result = res
+	return ec.marshalNNote2ᚕᚖserverᚋgraphᚋmodelᚐNoteᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_emptyTrash(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Note_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Note_userId(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
+			case "body":
+				return ec.fieldContext_Note_body(ctx, field)
+			case "status":
+				return ec.fieldContext_Note_status(ctx, field)
+			case "pinned":
+				return ec.fieldContext_Note_pinned(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Note_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Note_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -3342,6 +3413,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deleteNote":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteNote(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "emptyTrash":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_emptyTrash(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++

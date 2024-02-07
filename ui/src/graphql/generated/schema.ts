@@ -21,6 +21,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createNote: Note;
   deleteNote: Note;
+  emptyTrash: Array<Note>;
   updateNote: Note;
 };
 
@@ -94,6 +95,11 @@ export type UpdateNote = {
   title: Scalars['String']['input'];
 };
 
+export type RemoveDeletedMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RemoveDeletedMutation = { __typename?: 'Mutation', emptyTrash: Array<{ __typename?: 'Note', id: string, title: string, body: string, status: string, pinned: boolean, createdAt: string, updatedAt: string, userId: string }> };
+
 export type UpdateNoteMutationVariables = Exact<{
   id: Scalars['String']['input'];
   title: Scalars['String']['input'];
@@ -113,6 +119,45 @@ export type GetNotesQueryVariables = Exact<{
 export type GetNotesQuery = { __typename?: 'Query', notes: Array<{ __typename?: 'Note', id: string, body: string, title: string, status: string, pinned: boolean, userId: string, createdAt: string, updatedAt: string }> };
 
 
+export const RemoveDeletedDocument = gql`
+    mutation RemoveDeleted {
+  emptyTrash {
+    id
+    title
+    body
+    status
+    pinned
+    createdAt
+    updatedAt
+    userId
+  }
+}
+    `;
+export type RemoveDeletedMutationFn = Apollo.MutationFunction<RemoveDeletedMutation, RemoveDeletedMutationVariables>;
+
+/**
+ * __useRemoveDeletedMutation__
+ *
+ * To run a mutation, you first call `useRemoveDeletedMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveDeletedMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeDeletedMutation, { data, loading, error }] = useRemoveDeletedMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useRemoveDeletedMutation(baseOptions?: Apollo.MutationHookOptions<RemoveDeletedMutation, RemoveDeletedMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveDeletedMutation, RemoveDeletedMutationVariables>(RemoveDeletedDocument, options);
+      }
+export type RemoveDeletedMutationHookResult = ReturnType<typeof useRemoveDeletedMutation>;
+export type RemoveDeletedMutationResult = Apollo.MutationResult<RemoveDeletedMutation>;
+export type RemoveDeletedMutationOptions = Apollo.BaseMutationOptions<RemoveDeletedMutation, RemoveDeletedMutationVariables>;
 export const UpdateNoteDocument = gql`
     mutation UpdateNote($id: String!, $title: String!, $body: String!, $status: String!, $pinned: Boolean!) {
   updateNote(
