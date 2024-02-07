@@ -25,14 +25,19 @@ const Home: React.FC = () => {
                     <hr />
                 </>
             }
-            <div className="mt-4">
-                <List
-                    loading={loading}
-                    error={error}
-                    notes={data?.notes.filter((note) => !note.pinned)}
-                    refetch={refetch}
-                />
-            </div>
+            {data?.notes.some((note) => !note.pinned) &&
+                <div className="mt-4">
+                    {data?.notes.some((note) => note.pinned) &&
+                        <p className="ml-8 text-grey-500 text-xs font-semibold p-1">OTHERS</p>
+                    }
+                    <List
+                        loading={loading}
+                        error={error}
+                        notes={data?.notes.filter((note) => !note.pinned)}
+                        refetch={refetch}
+                    />
+                </div>
+            }
         </div>
     )
 }
