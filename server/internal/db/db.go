@@ -9,9 +9,10 @@ import (
 )
 
 const (
-	NAME         = "keep"
-	USER_INDEX   = "user_id"
-	STATUS_INDEX = "status"
+	NAME             = "keep"
+	USER_INDEX       = "user_id"
+	STATUS_INDEX     = "status"
+	DELETED_AT_INDEX = "deleted_at"
 )
 
 type DatabaseService interface {

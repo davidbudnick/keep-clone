@@ -37,6 +37,13 @@ func (s *notesService) List(ctx context.Context, status string, userID string) (
 
 	var notes []*model.Note
 	for _, note := range notesInternal {
+
+		var deletedAtStr *string
+		if note.DeletedAt != nil {
+			formatted := note.DeletedAt.Format("2006-01-02 15:04:05")
+			deletedAtStr = &formatted
+		}
+
 		notes = append(notes, &model.Note{
 			ID:        note.ID.Hex(),
 			UserID:    note.UserID,
@@ -46,6 +53,7 @@ func (s *notesService) List(ctx context.Context, status string, userID string) (
 			Status:    note.Status,
 			CreatedAt: note.CreatedAt.Format("2006-01-02 15:04:05"),
 			UpdatedAt: note.UpdatedAt.Format("2006-01-02 15:04:05"),
+			DeletedAt: deletedAtStr,
 		})
 	}
 
@@ -59,6 +67,12 @@ func (s *notesService) Get(ctx context.Context, userID string, noteID string) (*
 		return nil, err
 	}
 
+	var deletedAtStr *string
+	if note.DeletedAt != nil {
+		formatted := note.DeletedAt.Format("2006-01-02 15:04:05")
+		deletedAtStr = &formatted
+	}
+
 	return &model.Note{
 		ID:        note.ID.Hex(),
 		UserID:    note.UserID,
@@ -68,6 +82,7 @@ func (s *notesService) Get(ctx context.Context, userID string, noteID string) (*
 		Pinned:    note.Pinned,
 		CreatedAt: note.CreatedAt.Format("2006-01-02 15:04:05"),
 		UpdatedAt: note.UpdatedAt.Format("2006-01-02 15:04:05"),
+		DeletedAt: deletedAtStr,
 	}, nil
 }
 

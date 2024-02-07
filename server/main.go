@@ -19,6 +19,7 @@ import (
 	sloggin "github.com/samber/slog-gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
@@ -57,6 +58,18 @@ func main() {
 	})
 	if err != nil {
 		slog.ErrorContext(ctx, "Error creating indexes", "error", err)
+	}
+
+	_, err = notesCollection.Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys: bson.D{
+			{
+				Key:   db.DELETED_AT_INDEX,
+				Value: 1,
+			},
+		}, Options: options.Index().SetExpireAfterSeconds(24 * 60 * 60 * 7),
+	})
+	if err != nil {
+		slog.ErrorContext(ctx, "Error creating deletedAt index", "error", err)
 	}
 
 	r := gin.New()

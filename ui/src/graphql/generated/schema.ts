@@ -51,6 +51,7 @@ export type Note = {
   __typename?: 'Note';
   body: Scalars['String']['output'];
   createdAt: Scalars['String']['output'];
+  deletedAt?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   pinned: Scalars['Boolean']['output'];
   status: Scalars['String']['output'];
@@ -116,7 +117,7 @@ export type GetNotesQueryVariables = Exact<{
 }>;
 
 
-export type GetNotesQuery = { __typename?: 'Query', notes: Array<{ __typename?: 'Note', id: string, body: string, title: string, status: string, pinned: boolean, userId: string, createdAt: string, updatedAt: string }> };
+export type GetNotesQuery = { __typename?: 'Query', notes: Array<{ __typename?: 'Note', id: string, body: string, title: string, status: string, pinned: boolean, userId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
 
 
 export const RemoveDeletedDocument = gql`
@@ -215,6 +216,7 @@ export const GetNotesDocument = gql`
     userId
     createdAt
     updatedAt
+    deletedAt
   }
 }
     `;

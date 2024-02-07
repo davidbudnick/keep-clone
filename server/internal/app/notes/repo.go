@@ -45,16 +45,17 @@ type Note struct {
 	Pinned    bool               `bson:"pinned"`
 	CreatedAt time.Time          `bson:"created_at"`
 	UpdatedAt time.Time          `bson:"updated_at"`
-}
-
-type ListFilter struct {
-	UserID string `bson:"user_id"`
-	Status string `bson:"status"`
+	DeletedAt *time.Time         `bson:"deleted_at"`
 }
 
 type GetFilter struct {
 	ID     primitive.ObjectID `bson:"_id"`
 	UserID string             `bson:"user_id"`
+}
+
+type ListFilter struct {
+	UserID string `bson:"user_id"`
+	Status string `bson:"status"`
 }
 
 func (r *notesRepo) List(ctx context.Context, userID string, status string) ([]Note, error) {
@@ -100,6 +101,12 @@ func (r *notesRepo) Get(ctx context.Context, userID string, noteID string) (*Not
 }
 
 func (r *notesRepo) Create(ctx context.Context, userID string, note model.NewNote) (*mongo.InsertOneResult, error) {
+	var deletedAt *time.Time
+	if note.Status == model.StatusDeleted.String() {
+		now := time.Now()
+		deletedAt = &now
+	}
+
 	notesCollection := r.Client.Database(db.NAME).Collection(NOTES_COLLECTION)
 	res, err := notesCollection.InsertOne(ctx, Note{
 		ID:        primitive.NewObjectID(),
@@ -110,6 +117,7 @@ func (r *notesRepo) Create(ctx context.Context, userID string, note model.NewNot
 		Pinned:    note.Pinned,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
+		DeletedAt: deletedAt,
 	})
 	if err != nil {
 		slog.ErrorContext(ctx, "Error saving note", "error", err)
@@ -128,9 +136,16 @@ func (r *notesRepo) Update(ctx context.Context, userID string, note model.Update
 		return err
 	}
 
+	var deletedAt *time.Time
+	if note.Status == model.StatusDeleted.String() {
+		now := time.Now()
+		deletedAt = &now
+	}
+
 	_, err = notesCollection.UpdateOne(ctx, GetFilter{
 		ID:     objectId,
 		UserID: userID,
+		//TODO: move this into a struct
 	}, bson.M{
 		"$set": bson.M{
 			"title":      note.Title,
@@ -138,6 +153,7 @@ func (r *notesRepo) Update(ctx context.Context, userID string, note model.Update
 			"status":     note.Status,
 			"pinned":     note.Pinned,
 			"updated_at": time.Now(),
+			"deleted_at": deletedAt,
 		},
 	}, options.Update().SetUpsert(true))
 	if err != nil {

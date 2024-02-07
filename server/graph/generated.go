@@ -48,15 +48,17 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		CreateNote func(childComplexity int, input model.NewNote) int
-		DeleteNote func(childComplexity int, id string) int
-		EmptyTrash func(childComplexity int) int
-		UpdateNote func(childComplexity int, input model.UpdateNote) int
+		ArchiveNote func(childComplexity int, id string) int
+		CreateNote  func(childComplexity int, input model.NewNote) int
+		DeleteNote  func(childComplexity int, id string) int
+		EmptyTrash  func(childComplexity int) int
+		UpdateNote  func(childComplexity int, input model.UpdateNote) int
 	}
 
 	Note struct {
 		Body      func(childComplexity int) int
 		CreatedAt func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
 		ID        func(childComplexity int) int
 		Pinned    func(childComplexity int) int
 		Status    func(childComplexity int) int
@@ -80,6 +82,7 @@ type MutationResolver interface {
 	CreateNote(ctx context.Context, input model.NewNote) (*model.Note, error)
 	UpdateNote(ctx context.Context, input model.UpdateNote) (*model.Note, error)
 	DeleteNote(ctx context.Context, id string) (*model.Note, error)
+	ArchiveNote(ctx context.Context, id string) (*model.Note, error)
 	EmptyTrash(ctx context.Context) ([]*model.Note, error)
 }
 type QueryResolver interface {
@@ -105,6 +108,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Mutation.archiveNote":
+		if e.complexity.Mutation.ArchiveNote == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_archiveNote_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ArchiveNote(childComplexity, args["id"].(string)), true
 
 	case "Mutation.createNote":
 		if e.complexity.Mutation.CreateNote == nil {
@@ -162,6 +177,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Note.CreatedAt(childComplexity), true
+
+	case "Note.deletedAt":
+		if e.complexity.Note.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.Note.DeletedAt(childComplexity), true
 
 	case "Note.id":
 		if e.complexity.Note.ID == nil {
@@ -369,6 +391,21 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
+func (ec *executionContext) field_Mutation_archiveNote_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createNote_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -552,6 +589,8 @@ func (ec *executionContext) fieldContext_Mutation_createNote(ctx context.Context
 				return ec.fieldContext_Note_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
@@ -625,6 +664,8 @@ func (ec *executionContext) fieldContext_Mutation_updateNote(ctx context.Context
 				return ec.fieldContext_Note_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
@@ -698,6 +739,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteNote(ctx context.Context
 				return ec.fieldContext_Note_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
@@ -710,6 +753,81 @@ func (ec *executionContext) fieldContext_Mutation_deleteNote(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteNote_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_archiveNote(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_archiveNote(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ArchiveNote(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Note)
+	fc.Result = res
+	return ec.marshalNNote2ᚖserverᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_archiveNote(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Note_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Note_userId(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
+			case "body":
+				return ec.fieldContext_Note_body(ctx, field)
+			case "status":
+				return ec.fieldContext_Note_status(ctx, field)
+			case "pinned":
+				return ec.fieldContext_Note_pinned(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Note_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_archiveNote_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -771,6 +889,8 @@ func (ec *executionContext) fieldContext_Mutation_emptyTrash(ctx context.Context
 				return ec.fieldContext_Note_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
@@ -1130,6 +1250,47 @@ func (ec *executionContext) fieldContext_Note_updatedAt(ctx context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _Note_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Note_deletedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Note_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Note",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _NoteMutationResponse_success(ctx context.Context, field graphql.CollectedField, obj *model.NoteMutationResponse) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_NoteMutationResponse_success(ctx, field)
 	if err != nil {
@@ -1273,6 +1434,8 @@ func (ec *executionContext) fieldContext_Query_notes(ctx context.Context, field 
 				return ec.fieldContext_Note_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
@@ -1346,6 +1509,8 @@ func (ec *executionContext) fieldContext_Query_note(ctx context.Context, field g
 				return ec.fieldContext_Note_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
@@ -3417,6 +3582,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "archiveNote":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_archiveNote(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "emptyTrash":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_emptyTrash(ctx, field)
@@ -3498,6 +3670,8 @@ func (ec *executionContext) _Note(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "deletedAt":
+			out.Values[i] = ec._Note_deletedAt(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

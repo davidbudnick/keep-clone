@@ -38,7 +38,16 @@ func (r *mutationResolver) UpdateNote(ctx context.Context, input model.UpdateNot
 
 // DeleteNote is the resolver for the deleteNote field.
 func (r *mutationResolver) DeleteNote(ctx context.Context, id string) (*model.Note, error) {
-	panic(fmt.Errorf("not implemented: DeleteNote - deleteNote"))
+	//TODO: implement
+	slog.Error("not implemented: DeleteNote - deleteNote")
+	return nil, nil
+}
+
+// ArchiveNote is the resolver for the archiveNote field.
+func (r *mutationResolver) ArchiveNote(ctx context.Context, id string) (*model.Note, error) {
+	//TODO: implement
+	slog.Error("not implemented: ArchiveNote - archiveNote")
+	return nil, nil
 }
 
 // EmptyTrash is the resolver for the emptyTrash field.

@@ -55,12 +55,17 @@ const Card: React.FC<CardProps> = ({ note, disablePinned }) => {
                 </div>
             </a>
             <div className="pt-4">
-                <Badge variant="default">{note.status}</Badge>
-                <Badge className="mt-2 ml-2" variant="secondary">
-                    {new Date(note.updatedAt).toLocaleDateString("en-US", {
+                <Badge className="mt-2" variant="outline">
+                    {note.status}
+                </Badge>
+                <Badge className="mt-2" variant="secondary">
+                    {new Date(note.updatedAt).toLocaleTimeString("en-US", {
                         month: "short",
                         day: "numeric",
                         year: "numeric",
+                        hour: "numeric",
+                        minute: "numeric",
+                        second: "numeric",
                     })}
                 </Badge>
             </div>
