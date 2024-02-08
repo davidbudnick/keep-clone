@@ -22,7 +22,7 @@ const Home: React.FC = () => {
 
     if (data?.notes?.length === 0) {
         return (
-            <>
+            <div>
                 <div className="ml-10 mt-14 p-4">
                     <CreateNote />
                 </div>
@@ -34,7 +34,7 @@ const Home: React.FC = () => {
                         </p>
                     </div>
                 </div>
-            </>
+            </div>
         )
     }
 

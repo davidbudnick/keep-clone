@@ -3,3 +3,4 @@ export const PAGES = {
     ARCHIVED: "Archived",
     TRASH: "Trash",
 };
+

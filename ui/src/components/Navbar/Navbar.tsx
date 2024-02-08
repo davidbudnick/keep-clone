@@ -21,18 +21,14 @@ import { PAGES } from "@/constants/pages";
 const Navbar: React.FC = () => {
     const { setTheme, theme } = useTheme()
     const location = useLocation();
-
-
-
     const auth = useAuth();
 
     const GetPageName = () => {
-        switch (location.pathname) {
-        case ROUTES.HOME:
+        if (location.pathname === ROUTES.HOME) {
             return PAGES.HOME
-        case ROUTES.ARCHIVED:
+        } else if (location.pathname === ROUTES.ARCHIVED) {
             return PAGES.ARCHIVED
-        case ROUTES.TRASH:
+        } else if (location.pathname === ROUTES.TRASH) {
             return PAGES.TRASH
         }
     }
@@ -75,7 +71,7 @@ const Navbar: React.FC = () => {
                                                     <AvatarFallback className='h-10 w-10'>{`${auth.user?.given_name?.charAt(0)}${auth.user?.family_name?.charAt(0)}`}</AvatarFallback>
                                                 </Avatar>
                                             </PopoverTrigger>
-                                            <PopoverContent className="mt-1 w-80">
+                                            <PopoverContent className="z-10 mt-2 w-80 rounded-lg border border-gray-300 bg-white p-4 shadow-lg dark:border-gray-700 dark:bg-black">
                                                 <div className="grid gap-4">
                                                     <div className="space-y-2 text-center">
                                                         <p className="text-xs font-bold">{auth.user?.email}</p>
