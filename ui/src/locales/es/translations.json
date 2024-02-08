@@ -1,0 +1,48 @@
+{
+    "pages": {
+        "home": {
+            "title": "Inicio",
+            "no_notes": "No tienes notas",
+            "pinned": "FIJADAS",
+            "others": "OTRAS",
+            "unpin": "Desfijar Nota",
+            "pin": "Fijar Nota",
+            "actions": {
+                "delete": "Eliminar",
+                "archive": "Archivar"
+            },
+            "create_note": {
+                "take_a_note": "Toma una nota...",
+                "whats_on_your_mind": "¿Qué estás pensando?",
+                "add_note": "Añadir Nota",
+                "title_placeholder": "Título"
+            }
+        },
+        "archived": {
+            "title": "Archivadas",
+            "no_notes": "No hay notas archivadas",
+            "actions": {
+                "unarchive": "Desarchivar",
+                "delete": "Eliminar"
+            }
+        },
+        "trash": {
+            "title": "Papelera",
+            "no_notes": "No hay notas en la papelera",
+            "auto_delete": "Las notas en la Papelera se eliminan automáticamente después de 7 días",
+            "empty_trash": "Vaciar Papelera",
+            "notes_deleted": "Las notas han sido eliminadas con éxito",
+            "actions": {
+                "restore": "Restaurar",
+                "archive": "Archivar"
+            }
+        }
+    },
+    "navbar": {
+        "logout": "Cerrar sesión",
+        "managed_by": "Gestionado por",
+        "hi": "Hola",
+        "search": "Buscar",
+        "refresh": "Actualizar"
+    }
+}

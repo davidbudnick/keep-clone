@@ -7,6 +7,9 @@ import { Navbar, Sidebar } from "@/components";
 import { ROUTES } from "@/constants/routes";
 import { AUTH } from "@/constants/auth";
 import { AuthProvider } from "@/contexts/AuthContext";
+import i18n from "i18next";
+import { localStorageKey, locales, resources } from "@/locales/i18n";
+import { initReactI18next } from "react-i18next";
 
 const authLink = new ApolloLink((operation, forward) => {
     const token = localStorage.getItem(AUTH.GOOGLE_CREDENTIAL);
@@ -26,6 +29,15 @@ const client = new ApolloClient({
     cache: new InMemoryCache(),
 });
 
+i18n.use(initReactI18next)
+    .init({
+        resources: resources,
+        lng: localStorage.getItem(localStorageKey) || locales.en,
+        fallbackLng: locales.en,
+        interpolation: {
+            escapeValue: false
+        }
+    });
 
 export const App = () => {
     return (

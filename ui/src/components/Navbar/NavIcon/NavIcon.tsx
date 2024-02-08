@@ -9,7 +9,7 @@ interface NavIconProps {
 
 const NavIcon: React.FC<NavIconProps> = ({ icon, iconSize = 24, onClick }) => {
     return (
-        <a type="button" onClick={onClick} className='cursor-pointer rounded-full p-3'>
+        <a type="button" onClick={onClick} className='mx-4 cursor-pointer rounded-full'>
             {React.createElement(icon, { size: iconSize })}
         </a>
     )

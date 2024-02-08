@@ -9,12 +9,14 @@ import {
 } from "@/components/ui/tooltip"
 import { Note, Status, useUpdateNoteMutation } from "@/graphql/generated/schema";
 import { truncateBody, truncateTitle } from "@/lib/truncate";
+import { useTranslation } from "react-i18next";
 
 interface CardProps {
     note: Note;
 }
 
 const ArchivedCard: React.FC<CardProps> = ({ note }) => {
+    const { t } = useTranslation();
     const [updateNote] = useUpdateNoteMutation(
         {
             update(cache) {
@@ -65,7 +67,7 @@ const ArchivedCard: React.FC<CardProps> = ({ note }) => {
                                     }} size={20} className='duration-50 opacity-0 transition-opacity group-hover:opacity-100' />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Delete Note</p>
+                                    <p>{t("pages.archived.delete")}</p>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
@@ -91,7 +93,7 @@ const ArchivedCard: React.FC<CardProps> = ({ note }) => {
                                         size={20} className='duration-50 opacity-0 transition-opacity group-hover:opacity-100' />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Unarchive</p>
+                                    <p>{t("pages.archived.unarchive")}</p>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>

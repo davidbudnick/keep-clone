@@ -4,11 +4,12 @@ import { Status, useGetNotesQuery, useRemoveDeletedMutation } from "@/graphql/ge
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { FaTrashCan } from "react-icons/fa6";
-
+import { useTranslation } from "react-i18next";
 
 const Trash: React.FC = () => {
     const { toast } = useToast()
     const auth = useAuth();
+    const { t } = useTranslation();
     const [removeDeleted] = useRemoveDeletedMutation(
         {
             update(cache) {
@@ -36,7 +37,7 @@ const Trash: React.FC = () => {
             <div className="ml-12 flex h-[calc(100vh-17rem)] items-center justify-center p-4">
                 <div>
                     <FaTrashCan size={90} className="mx-auto text-gray-500" />
-                    <p className="mt-8 text-center text-2xl text-gray-600">No notes in trash</p>
+                    <p className="mt-8 text-center text-2xl text-gray-600">{t("pages.trash.no_notes")}</p>
                 </div>
             </div>
 
@@ -46,14 +47,14 @@ const Trash: React.FC = () => {
     return (
         <div className="ml-10 mt-14 p-4">
             <div className="mb-4 mt-4 flex justify-center">
-                <p className="italic">Notes in the Trash are deleted automatically after 7 days</p>
+                <p className="italic">{t("pages.trash.auto_delete")}</p>
                 {data?.notes?.length !== 0 &&
                     <button disabled={data?.notes?.length === 0} onClick={() => {
                         removeDeleted();
                         toast({
-                            title: "Notes have been successfully deleted",
+                            title: t("pages.trash.notes_deleted"),
                         })
-                    }} className="ml-4 cursor-pointer text-blue-500 hover:underline">Empty Trash</button>
+                    }} className="ml-4 cursor-pointer text-blue-500 hover:underline">{t("pages.trash.empty_trash")}</button>
                 }
             </div>
             <div className="ml-6 flex flex-wrap">

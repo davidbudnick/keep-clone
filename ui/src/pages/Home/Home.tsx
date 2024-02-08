@@ -3,9 +3,11 @@ import { CreateNote, HomeCard, SkeletonList } from "@/components";
 import { Status, useGetNotesQuery } from "@/graphql/generated/schema";
 import { useAuth } from "@/contexts/AuthContext";
 import { MdOutlineLightbulb } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 
 const Home: React.FC = () => {
     const auth = useAuth();
+    const { t } = useTranslation();
     const { loading, error, data, refetch } = useGetNotesQuery({
         variables: { status: Status.Active },
     });
@@ -30,7 +32,7 @@ const Home: React.FC = () => {
                     <div>
                         <MdOutlineLightbulb size={110} className="mx-auto text-gray-500" />
                         <p className="mt-6 text-center text-2xl text-gray-600">
-                            No Notes
+                            {t("pages.home.no_notes")}
                         </p>
                     </div>
                 </div>
@@ -44,7 +46,7 @@ const Home: React.FC = () => {
             {data?.notes.some((note) => note.pinned) &&
                 <>
                     <div className="mb-4">
-                        <p className="text-grey-500 ml-8 p-1 text-xs font-semibold">PINNED</p>
+                        <p className="text-grey-500 ml-8 p-1 text-xs font-semibold">{t("pages.home.pinned")}</p>
                         <div className="ml-6 flex flex-wrap">
                             {data?.notes?.filter((note) => note.pinned).map((note) => (
                                 <HomeCard key={note.id} note={note} />
@@ -58,7 +60,7 @@ const Home: React.FC = () => {
             {data?.notes.some((note) => !note.pinned) &&
                 <div className="mt-4">
                     {data?.notes.some((note) => note.pinned) &&
-                        <p className="text-grey-500 ml-8 p-1 text-xs font-semibold">OTHERS</p>
+                        <p className="text-grey-500 ml-8 p-1 text-xs font-semibold"> {t("pages.home.others")}</p>
                     }
                     <div className="ml-6 flex flex-wrap">
                         {data?.notes?.filter((note) => !note.pinned).map((note) => (

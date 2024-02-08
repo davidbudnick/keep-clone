@@ -4,9 +4,11 @@ import { SkeletonList } from "@/components";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArchivedCard } from "@/components";
 import { MdOutlineArchive } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 
 const Archived: React.FC = () => {
     const auth = useAuth();
+    const { t } = useTranslation();
     const { loading, error, data, refetch } = useGetNotesQuery({
         variables: { status: Status.Archived },
     });
@@ -27,7 +29,7 @@ const Archived: React.FC = () => {
                 <div className="ml-10 flex h-[calc(100vh-17rem)]  items-center justify-center p-4">
                     <div>
                         <MdOutlineArchive size={110} className="mx-auto text-gray-500" />
-                        <p className="mt-4 text-center text-2xl text-gray-600">No notes archived</p>
+                        <p className="mt-4 text-center text-2xl text-gray-600">{t("pages.archived.no_notes")}</p>
                     </div>
                 </div>
             </>

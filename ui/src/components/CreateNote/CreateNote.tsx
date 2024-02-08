@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Status, useCreateNewNoteMutation } from "@/graphql/generated/schema";
+import { useTranslation } from "react-i18next";
 
 interface IFormInput {
     title: string;
@@ -18,6 +19,7 @@ interface IFormInput {
 }
 
 const CreateNote: React.FC = () => {
+    const { t } = useTranslation();
     const [open, setOpen] = React.useState(false);
     const [createNote] = useCreateNewNoteMutation(
         {
@@ -71,19 +73,19 @@ const CreateNote: React.FC = () => {
                 <DialogTrigger asChild>
                     <div className="w-full max-w-lg cursor-pointer p-2">
                         <div className="w-full rounded-md border p-3">
-                            <p className="text-gray-500">Take a note...</p>
+                            <p className="text-gray-500">{t("pages.home.create_note.take_a_note")}</p>
                         </div>
                     </div>
                 </DialogTrigger>
                 <DialogContent className="max-h-[90vh] w-full max-w-2xl overflow-y-auto">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <DialogHeader>
-                            <DialogTitle className="mb-2">What's on your mind?</DialogTitle>
+                            <DialogTitle className="mb-4">{t("pages.home.create_note.whats_on_your_mind")}</DialogTitle>
                         </DialogHeader>
                         <Controller
                             name="title"
                             control={control}
-                            render={({ field }) => <Input {...field} autoFocus placeholder="Title" />}
+                            render={({ field }) => <Input {...field} autoFocus placeholder={t("pages.home.create_note.title_placeholder")} />}
                         />
                         <Controller
                             name="body"
@@ -93,12 +95,12 @@ const CreateNote: React.FC = () => {
                                     {...field}
                                     onClick={(e) => { e.stopPropagation(); }}
                                     className="mt-2 h-48"
-                                    placeholder="Take a note..."
+                                    placeholder={t("pages.home.create_note.take_a_note")}
                                 />
                             )}
                         />
                         <div className="flex justify-end">
-                            <Button type="submit" variant="outline" className='mt-2'>Add Note</Button>
+                            <Button type="submit" variant="outline" className='mt-4'>{t("pages.home.create_note.add_note")}</Button>
                         </div>
                     </form>
                 </DialogContent>

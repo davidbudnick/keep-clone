@@ -9,12 +9,14 @@ import {
 } from "@/components/ui/tooltip"
 import { Note, Status, useUpdateNoteMutation } from "@/graphql/generated/schema";
 import { truncateBody, truncateTitle } from "@/lib/truncate";
+import { useTranslation } from "react-i18next";
 
 interface CardProps {
     note: Note;
 }
 
 const HomeCard: React.FC<CardProps> = ({ note }) => {
+    const { t } = useTranslation();
     const [updateNote] = useUpdateNoteMutation(
         {
             update(cache) {
@@ -58,8 +60,8 @@ const HomeCard: React.FC<CardProps> = ({ note }) => {
                         </TooltipTrigger>
                         <TooltipContent>
                             {note.pinned ?
-                                <p>Unpin Note</p> :
-                                <p>Pin Note</p>
+                                <p>{t("pages.home.unpin")}</p> :
+                                <p>{t("pages.home.pin")}</p>
                             }
                         </TooltipContent>
                     </Tooltip>
@@ -105,7 +107,7 @@ const HomeCard: React.FC<CardProps> = ({ note }) => {
                                     }} size={20} className='duration-50 opacity-0 transition-opacity group-hover:opacity-100' />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Delete Note</p>
+                                    <p>{t("pages.home.actions.delete")}</p>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
@@ -131,7 +133,9 @@ const HomeCard: React.FC<CardProps> = ({ note }) => {
                                         size={20} className='duration-50 opacity-0 transition-opacity group-hover:opacity-100' />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Archive Note</p>
+                                    <p>
+                                        {t("pages.home.actions.archive")}
+                                    </p>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>

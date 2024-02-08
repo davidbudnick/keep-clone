@@ -1,0 +1,48 @@
+{
+    "pages": {
+        "home": {
+            "title": "Home",
+            "no_notes": "You have no notes",
+            "pinned": "PINNED",
+            "others": "OTHERS",
+            "unpin": "Unpin Note",
+            "pin": "Pin Note",
+            "actions": {
+                "delete": "Delete",
+                "archive": "Archive"
+            },
+            "create_note": {
+                "take_a_note": "Take a note...",
+                "whats_on_your_mind": "What's on your mind?",
+                "add_note": "Add Note",
+                "title_placeholder": "Title"
+            }
+        },
+        "archived": {
+            "title": "Archived",
+            "no_notes": "No notes archived",
+            "actions": {
+                "unarchive": "Unarchive",
+                "delete": "Delete"
+            }
+        },
+        "trash": {
+            "title": "Trash",
+            "no_notes": "No notes in trash",
+            "auto_delete": "Notes in the Trash are deleted automatically after 7 days",
+            "empty_trash": "Empty Trash",
+            "notes_deleted": "Notes have been successfully deleted",
+            "actions": {
+                "restore": "Restore",
+                "archive": "Archive"
+            }
+        }
+    },
+    "navbar": {
+        "logout": "Logout",
+        "managed_by": "Managed by",
+        "hi": "Hi",
+        "search": "Search",
+        "refresh": "Refresh"
+    }
+}

@@ -1,7 +1,7 @@
 import React from "react"
-import { Search } from "@/components/Search";
+import { Search } from "@/components";
 import { IoRefreshOutline } from "react-icons/io5";
-import { NavIcon } from "@/components/Navbar/NavIcon";
+import NavIcon from "@/components/Navbar/NavIcon/NavIcon";
 import { Switch } from "@/components/ui/switch"
 import { useTheme, DARK, LIGHT } from "@/components/theme-provider"
 import { ROUTES } from "@/constants/routes";
@@ -16,25 +16,40 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
-import { PAGES } from "@/constants/pages";
+import { useTranslation } from "react-i18next";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { localStorageKey, locales } from "@/locales/i18n";
 
 const Navbar: React.FC = () => {
     const { setTheme, theme } = useTheme()
     const location = useLocation();
     const auth = useAuth();
+    const { t, i18n } = useTranslation();
 
     const GetPageName = () => {
         if (location.pathname === ROUTES.HOME) {
-            return PAGES.HOME
+            return t("pages.home.title")
         } else if (location.pathname === ROUTES.ARCHIVED) {
-            return PAGES.ARCHIVED
+            return t("pages.archived.title")
         } else if (location.pathname === ROUTES.TRASH) {
-            return PAGES.TRASH
+            return t("pages.trash.title")
         }
     }
 
     return (
-        <nav className="fixed top-0 z-50 w-full border-b bg-white pb-1 pt-1 dark:bg-black">
+        <nav className="fixed top-0 z-50 w-full border-b bg-white pb-2 pt-2 dark:bg-black">
             <div className="">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center justify-start">
@@ -47,19 +62,35 @@ const Navbar: React.FC = () => {
                     </div>
                     <Search />
                     <div className="flex items-center">
-                        <div className="ml-1 mt-1 flex items-center">
-                            <div className="mr-1">
-                                <Switch checked={
-                                    theme === DARK
-                                } onClick={() => {
-                                    setTheme(theme === DARK ? LIGHT : DARK)
-                                }}
-                                />
+                        <div className="ml-1 flex items-center">
+                            <div className="mr-4">
+                                <Select onValueChange={(e) => {
+                                    i18n.changeLanguage(e);
+                                    localStorage.setItem(localStorageKey, e);
+                                }}>
+                                    <SelectTrigger className="w-[70px]">
+                                        <SelectValue placeholder={localStorage.getItem(localStorageKey) || locales.en} />
+                                    </SelectTrigger>
+                                    <SelectContent className="w-[70px]" defaultValue={localStorage.getItem(localStorageKey) || locales.en} defaultChecked>
+                                        <SelectItem value={locales.en}>{locales.en}</SelectItem>
+                                        <SelectItem value={locales.es}>{locales.es}</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
-                            <div className="mr-1">
-                                <NavIcon onClick={() => {
-                                    window.location.reload()
-                                }} icon={IoRefreshOutline} />
+                            <div className="mr-1 mt-1">
+                                <Switch checked={theme === DARK} onClick={() => setTheme(theme === DARK ? LIGHT : DARK)} />
+                            </div>
+                            <div className="mr-1 mt-1">
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <NavIcon onClick={() => window.location.reload()} icon={IoRefreshOutline} />
+                                        </TooltipTrigger>
+                                        <TooltipContent side="bottom">
+                                            {t("navbar.refresh")}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                             </div>
                             <div className='mb-1 mr-4'>
                                 {
@@ -75,16 +106,16 @@ const Navbar: React.FC = () => {
                                                 <div className="grid gap-4">
                                                     <div className="space-y-2 text-center">
                                                         <p className="text-xs font-bold">{auth.user?.email}</p>
-                                                        <p className="text-xs">Managed by {auth.user?.hd}</p>
+                                                        <p className="text-xs">{t("navbar.managed_by")} {auth.user?.hd}</p>
                                                         <div className='flex justify-center'>
                                                             <Avatar className='mt-3'>
                                                                 <AvatarImage className='h-20 w-20' src={auth.user?.picture} />
                                                                 <AvatarFallback className='h-20 w-20 text-xl'>{`${auth.user?.given_name?.charAt(0)}${auth.user?.family_name?.charAt(0)}`}</AvatarFallback>
                                                             </Avatar>
                                                         </div>
-                                                        <div className="pb-2 pt-1 text-xl font-light">Hi, {auth.user?.given_name} {auth.user?.family_name}!</div>
+                                                        <div className="pb-2 pt-1 text-xl font-light">{t("navbar.hi")}, {auth.user?.given_name} {auth.user?.family_name}!</div>
                                                         <Button onClick={auth.logout}>
-                                                            <LogOut className="mr-2 h-4 w-4" /> Logout
+                                                            <LogOut className="mr-2 h-4 w-4" /> {t("navbar.logout")}
                                                         </Button>
                                                     </div>
                                                 </div>
