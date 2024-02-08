@@ -8,6 +8,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Note, Status, useUpdateNoteMutation } from "@/graphql/generated/schema";
+import { truncateBody, truncateTitle } from "@/lib/truncate";
 
 interface CardProps {
     note: Note;
@@ -66,8 +67,8 @@ const HomeCard: React.FC<CardProps> = ({ note }) => {
             </div>
             <a>
                 <div>
-                    <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">{note.title}</h5>
-                    <p className="font-normal text-gray-700 dark:text-gray-400">{note.body}</p>
+                    <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">{truncateTitle(note.title)}</h5>
+                    <p className="font-normal text-gray-700 dark:text-gray-400">{truncateBody(note.body)}</p>
                 </div>
             </a>
             <div className="pt-4">
