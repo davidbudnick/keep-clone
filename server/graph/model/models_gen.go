@@ -8,14 +8,14 @@ import (
 	"strconv"
 )
 
-type Mutation struct {
-}
-
-type NewNote struct {
+type CreateNote struct {
 	Title  string `json:"title"`
 	Body   string `json:"body"`
 	Status string `json:"status"`
 	Pinned bool   `json:"pinned"`
+}
+
+type Mutation struct {
 }
 
 type Note struct {

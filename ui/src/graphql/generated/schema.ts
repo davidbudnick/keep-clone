@@ -17,34 +17,28 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type CreateNote = {
+  body: Scalars["String"]["input"];
+  pinned: Scalars["Boolean"]["input"];
+  status: Scalars["String"]["input"];
+  title: Scalars["String"]["input"];
+};
+
 export type Mutation = {
   __typename?: "Mutation";
   createNote: Note;
-  deleteNote: Note;
   emptyTrash: Array<Note>;
   updateNote: Note;
 };
 
 
 export type MutationCreateNoteArgs = {
-  input: NewNote;
-};
-
-
-export type MutationDeleteNoteArgs = {
-  id: Scalars["String"]["input"];
+  input: CreateNote;
 };
 
 
 export type MutationUpdateNoteArgs = {
   input: UpdateNote;
-};
-
-export type NewNote = {
-  body: Scalars["String"]["input"];
-  pinned: Scalars["Boolean"]["input"];
-  status: Scalars["String"]["input"];
-  title: Scalars["String"]["input"];
 };
 
 export type Note = {
@@ -96,17 +90,20 @@ export type UpdateNote = {
   title: Scalars["String"]["input"];
 };
 
+export type CreateNewNoteMutationVariables = Exact<{
+  input: CreateNote;
+}>;
+
+
+export type CreateNewNoteMutation = { __typename?: "Mutation", createNote: { __typename?: "Note", id: string, title: string, body: string, status: string, createdAt: string, updatedAt: string, deletedAt?: string | null, userId: string } };
+
 export type RemoveDeletedMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type RemoveDeletedMutation = { __typename?: "Mutation", emptyTrash: Array<{ __typename?: "Note", id: string, title: string, body: string, status: string, pinned: boolean, createdAt: string, updatedAt: string, userId: string }> };
 
 export type UpdateNoteMutationVariables = Exact<{
-  id: Scalars["String"]["input"];
-  title: Scalars["String"]["input"];
-  body: Scalars["String"]["input"];
-  status: Scalars["String"]["input"];
-  pinned: Scalars["Boolean"]["input"];
+  input: UpdateNote;
 }>;
 
 
@@ -120,6 +117,46 @@ export type GetNotesQueryVariables = Exact<{
 export type GetNotesQuery = { __typename?: "Query", notes: Array<{ __typename?: "Note", id: string, body: string, title: string, status: string, pinned: boolean, userId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
 
 
+export const CreateNewNoteDocument = gql`
+    mutation CreateNewNote($input: CreateNote!) {
+  createNote(input: $input) {
+    id
+    title
+    body
+    status
+    createdAt
+    updatedAt
+    deletedAt
+    userId
+  }
+}
+    `;
+export type CreateNewNoteMutationFn = Apollo.MutationFunction<CreateNewNoteMutation, CreateNewNoteMutationVariables>;
+
+/**
+ * __useCreateNewNoteMutation__
+ *
+ * To run a mutation, you first call `useCreateNewNoteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateNewNoteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createNewNoteMutation, { data, loading, error }] = useCreateNewNoteMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateNewNoteMutation(baseOptions?: Apollo.MutationHookOptions<CreateNewNoteMutation, CreateNewNoteMutationVariables>) {
+    const options = {...defaultOptions, ...baseOptions}
+    return Apollo.useMutation<CreateNewNoteMutation, CreateNewNoteMutationVariables>(CreateNewNoteDocument, options);
+}
+export type CreateNewNoteMutationHookResult = ReturnType<typeof useCreateNewNoteMutation>;
+export type CreateNewNoteMutationResult = Apollo.MutationResult<CreateNewNoteMutation>;
+export type CreateNewNoteMutationOptions = Apollo.BaseMutationOptions<CreateNewNoteMutation, CreateNewNoteMutationVariables>;
 export const RemoveDeletedDocument = gql`
     mutation RemoveDeleted {
   emptyTrash {
@@ -160,10 +197,8 @@ export type RemoveDeletedMutationHookResult = ReturnType<typeof useRemoveDeleted
 export type RemoveDeletedMutationResult = Apollo.MutationResult<RemoveDeletedMutation>;
 export type RemoveDeletedMutationOptions = Apollo.BaseMutationOptions<RemoveDeletedMutation, RemoveDeletedMutationVariables>;
 export const UpdateNoteDocument = gql`
-    mutation UpdateNote($id: String!, $title: String!, $body: String!, $status: String!, $pinned: Boolean!) {
-  updateNote(
-    input: {id: $id, title: $title, body: $body, status: $status, pinned: $pinned}
-  ) {
+    mutation UpdateNote($input: UpdateNote!) {
+  updateNote(input: $input) {
     id
     title
     body
@@ -190,11 +225,7 @@ export type UpdateNoteMutationFn = Apollo.MutationFunction<UpdateNoteMutation, U
  * @example
  * const [updateNoteMutation, { data, loading, error }] = useUpdateNoteMutation({
  *   variables: {
- *      id: // value for 'id'
- *      title: // value for 'title'
- *      body: // value for 'body'
- *      status: // value for 'status'
- *      pinned: // value for 'pinned'
+ *      input: // value for 'input'
  *   },
  * });
  */

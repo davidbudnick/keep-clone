@@ -31,24 +31,28 @@ const HomeCard: React.FC<CardProps> = ({ note }) => {
                             {note.pinned ?
                                 <MdPushPin onClick={() => updateNote({
                                     variables: {
-                                        id: note.id,
-                                        title: note.title,
-                                        body: note.body,
-                                        status: note.status,
-                                        pinned: false,
+                                        input: {
+                                            id: note.id,
+                                            title: note.title,
+                                            body: note.body,
+                                            status: note.status,
+                                            pinned: false,
+                                        },
                                     },
                                 })} size={20} /> :
                                 <MdOutlinePushPin onClick={() => updateNote(
                                     {
                                         variables: {
-                                            id: note.id,
-                                            title: note.title,
-                                            body: note.body,
-                                            status: note.status,
-                                            pinned: true,
+                                            input: {
+                                                id: note.id,
+                                                title: note.title,
+                                                body: note.body,
+                                                status: note.status,
+                                                pinned: true,
+                                            }
                                         },
                                     }
-                                )} size={20} className="opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                                )} size={20} className="duration-50 opacity-0 transition-opacity group-hover:opacity-100" />
                             }
                         </TooltipTrigger>
                         <TooltipContent>
@@ -88,14 +92,16 @@ const HomeCard: React.FC<CardProps> = ({ note }) => {
                                     <MdDelete onClick={() => {
                                         updateNote({
                                             variables: {
-                                                id: note.id,
-                                                title: note.title,
-                                                body: note.body,
-                                                status: Status.Deleted,
-                                                pinned: false,
+                                                input: {
+                                                    id: note.id,
+                                                    title: note.title,
+                                                    body: note.body,
+                                                    status: Status.Deleted,
+                                                    pinned: false,
+                                                },
                                             },
                                         })
-                                    }} size={20} className='opacity-0 transition-opacity duration-200 group-hover:opacity-100' />
+                                    }} size={20} className='duration-50 opacity-0 transition-opacity group-hover:opacity-100' />
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p>Delete Note</p>
@@ -111,15 +117,17 @@ const HomeCard: React.FC<CardProps> = ({ note }) => {
                                         onClick={() => {
                                             updateNote({
                                                 variables: {
-                                                    id: note.id,
-                                                    title: note.title,
-                                                    body: note.body,
-                                                    status: Status.Archived,
-                                                    pinned: false,
+                                                    input: {
+                                                        id: note.id,
+                                                        title: note.title,
+                                                        body: note.body,
+                                                        status: Status.Archived,
+                                                        pinned: false,
+                                                    },
                                                 },
                                             })
                                         }}
-                                        size={20} className='opacity-0 transition-opacity duration-200 group-hover:opacity-100' />
+                                        size={20} className='duration-50 opacity-0 transition-opacity group-hover:opacity-100' />
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p>Archive Note</p>

@@ -48,7 +48,7 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		CreateNote func(childComplexity int, input model.NewNote) int
+		CreateNote func(childComplexity int, input model.CreateNote) int
 		EmptyTrash func(childComplexity int) int
 		UpdateNote func(childComplexity int, input model.UpdateNote) int
 	}
@@ -77,7 +77,7 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateNote(ctx context.Context, input model.NewNote) (*model.Note, error)
+	CreateNote(ctx context.Context, input model.CreateNote) (*model.Note, error)
 	UpdateNote(ctx context.Context, input model.UpdateNote) (*model.Note, error)
 	EmptyTrash(ctx context.Context) ([]*model.Note, error)
 }
@@ -115,7 +115,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateNote(childComplexity, args["input"].(model.NewNote)), true
+		return e.complexity.Mutation.CreateNote(childComplexity, args["input"].(model.CreateNote)), true
 
 	case "Mutation.emptyTrash":
 		if e.complexity.Mutation.EmptyTrash == nil {
@@ -245,7 +245,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
-		ec.unmarshalInputNewNote,
+		ec.unmarshalInputCreateNote,
 		ec.unmarshalInputUpdateNote,
 	)
 	first := true
@@ -366,10 +366,10 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_createNote_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.NewNote
+	var arg0 model.CreateNote
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewNote2serverᚋgraphᚋmodelᚐNewNote(ctx, tmp)
+		arg0, err = ec.unmarshalNCreateNote2serverᚋgraphᚋmodelᚐCreateNote(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -490,7 +490,7 @@ func (ec *executionContext) _Mutation_createNote(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateNote(rctx, fc.Args["input"].(model.NewNote))
+		return ec.resolvers.Mutation().CreateNote(rctx, fc.Args["input"].(model.CreateNote))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3223,8 +3223,8 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputNewNote(ctx context.Context, obj interface{}) (model.NewNote, error) {
-	var it model.NewNote
+func (ec *executionContext) unmarshalInputCreateNote(ctx context.Context, obj interface{}) (model.CreateNote, error) {
+	var it model.CreateNote
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -3952,6 +3952,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNCreateNote2serverᚋgraphᚋmodelᚐCreateNote(ctx context.Context, v interface{}) (model.CreateNote, error) {
+	res, err := ec.unmarshalInputCreateNote(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3965,11 +3970,6 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) unmarshalNNewNote2serverᚋgraphᚋmodelᚐNewNote(ctx context.Context, v interface{}) (model.NewNote, error) {
-	res, err := ec.unmarshalInputNewNote(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNNote2serverᚋgraphᚋmodelᚐNote(ctx context.Context, sel ast.SelectionSet, v model.Note) graphql.Marshaler {

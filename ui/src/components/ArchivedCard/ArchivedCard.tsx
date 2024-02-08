@@ -52,14 +52,16 @@ const ArchivedCard: React.FC<CardProps> = ({ note }) => {
                                     <MdDelete onClick={() => {
                                         updateNote({
                                             variables: {
-                                                id: note.id,
-                                                title: note.title,
-                                                body: note.body,
-                                                status: Status.Deleted,
-                                                pinned: false,
+                                                input: {
+                                                    id: note.id,
+                                                    title: note.title,
+                                                    body: note.body,
+                                                    status: Status.Deleted,
+                                                    pinned: false,
+                                                },
                                             },
                                         })
-                                    }} size={20} className='opacity-0 transition-opacity duration-200 group-hover:opacity-100' />
+                                    }} size={20} className='duration-50 opacity-0 transition-opacity group-hover:opacity-100' />
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p>Delete Note</p>
@@ -75,15 +77,17 @@ const ArchivedCard: React.FC<CardProps> = ({ note }) => {
                                         onClick={() => {
                                             updateNote({
                                                 variables: {
-                                                    id: note.id,
-                                                    title: note.title,
-                                                    body: note.body,
-                                                    status: Status.Active,
-                                                    pinned: false,
+                                                    input: {
+                                                        id: note.id,
+                                                        title: note.title,
+                                                        body: note.body,
+                                                        status: Status.Active,
+                                                        pinned: false,
+                                                    },
                                                 },
                                             })
                                         }}
-                                        size={20} className='opacity-0 transition-opacity duration-200 group-hover:opacity-100' />
+                                        size={20} className='duration-50 opacity-0 transition-opacity group-hover:opacity-100' />
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p>Unarchive</p>

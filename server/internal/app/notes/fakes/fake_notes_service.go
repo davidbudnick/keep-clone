@@ -9,12 +9,12 @@ import (
 )
 
 type FakeNotesService struct {
-	CreateStub        func(context.Context, string, model.NewNote) (*model.Note, error)
+	CreateStub        func(context.Context, string, model.CreateNote) (*model.Note, error)
 	createMutex       sync.RWMutex
 	createArgsForCall []struct {
 		arg1 context.Context
 		arg2 string
-		arg3 model.NewNote
+		arg3 model.CreateNote
 	}
 	createReturns struct {
 		result1 *model.Note
@@ -87,13 +87,13 @@ type FakeNotesService struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeNotesService) Create(arg1 context.Context, arg2 string, arg3 model.NewNote) (*model.Note, error) {
+func (fake *FakeNotesService) Create(arg1 context.Context, arg2 string, arg3 model.CreateNote) (*model.Note, error) {
 	fake.createMutex.Lock()
 	ret, specificReturn := fake.createReturnsOnCall[len(fake.createArgsForCall)]
 	fake.createArgsForCall = append(fake.createArgsForCall, struct {
 		arg1 context.Context
 		arg2 string
-		arg3 model.NewNote
+		arg3 model.CreateNote
 	}{arg1, arg2, arg3})
 	stub := fake.CreateStub
 	fakeReturns := fake.createReturns
@@ -114,13 +114,13 @@ func (fake *FakeNotesService) CreateCallCount() int {
 	return len(fake.createArgsForCall)
 }
 
-func (fake *FakeNotesService) CreateCalls(stub func(context.Context, string, model.NewNote) (*model.Note, error)) {
+func (fake *FakeNotesService) CreateCalls(stub func(context.Context, string, model.CreateNote) (*model.Note, error)) {
 	fake.createMutex.Lock()
 	defer fake.createMutex.Unlock()
 	fake.CreateStub = stub
 }
 
-func (fake *FakeNotesService) CreateArgsForCall(i int) (context.Context, string, model.NewNote) {
+func (fake *FakeNotesService) CreateArgsForCall(i int) (context.Context, string, model.CreateNote) {
 	fake.createMutex.RLock()
 	defer fake.createMutex.RUnlock()
 	argsForCall := fake.createArgsForCall[i]

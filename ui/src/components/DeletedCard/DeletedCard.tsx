@@ -1,6 +1,6 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { MdUnarchive } from "react-icons/md";
+import { MdRestore, MdUnarchive } from "react-icons/md";
 import {
     Tooltip,
     TooltipContent,
@@ -45,7 +45,7 @@ const DeletedCard: React.FC<CardProps> = ({ note }) => {
                     })}
                 </Badge>
                 <div className="absolute bottom-2 left-4">
-                    <span>
+                    <span className="mr-4">
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger>
@@ -53,18 +53,46 @@ const DeletedCard: React.FC<CardProps> = ({ note }) => {
                                         onClick={() => {
                                             updateNote({
                                                 variables: {
-                                                    id: note.id,
-                                                    title: note.title,
-                                                    body: note.body,
-                                                    status: Status.Archived,
-                                                    pinned: false,
+                                                    input: {
+                                                        id: note.id,
+                                                        title: note.title,
+                                                        body: note.body,
+                                                        status: Status.Archived,
+                                                        pinned: false,
+                                                    },
                                                 },
                                             })
                                         }}
-                                        size={20} className='opacity-0 transition-opacity duration-200 group-hover:opacity-100' />
+                                        size={20} className='duration-50 opacity-0 transition-opacity group-hover:opacity-100' />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Unarchive</p>
+                                    <p>Archive</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </span>
+                    <span>
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger>
+                                    <MdRestore
+                                        onClick={() => {
+                                            updateNote({
+                                                variables: {
+                                                    input: {
+                                                        id: note.id,
+                                                        title: note.title,
+                                                        body: note.body,
+                                                        status: Status.Active,
+                                                        pinned: false,
+                                                    },
+                                                },
+                                            })
+                                        }}
+                                        size={20} className='duration-50 opacity-0 transition-opacity group-hover:opacity-100' />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Restore</p>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>

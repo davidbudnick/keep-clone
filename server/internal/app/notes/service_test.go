@@ -191,7 +191,7 @@ func Test_notesService_Get(t *testing.T) {
 func Test_notesService_Create(t *testing.T) {
 	type args struct {
 		userID string
-		note   model.NewNote
+		note   model.CreateNote
 	}
 
 	var ID = primitive.NewObjectID()
@@ -209,7 +209,7 @@ func Test_notesService_Create(t *testing.T) {
 			name: "should return note",
 			args: args{
 				userID: "user-id",
-				note: model.NewNote{
+				note: model.CreateNote{
 					Title:  "title",
 					Body:   "body",
 					Pinned: true,
@@ -249,7 +249,7 @@ func Test_notesService_Create(t *testing.T) {
 			name: "should repo create return error",
 			args: args{
 				userID: "user-id",
-				note: model.NewNote{
+				note: model.CreateNote{
 					Title:  "title",
 					Body:   "body",
 					Status: model.StatusActive.String(),
@@ -267,7 +267,7 @@ func Test_notesService_Create(t *testing.T) {
 			name: "should repo get return error",
 			args: args{
 				userID: "user-id",
-				note: model.NewNote{
+				note: model.CreateNote{
 					Title:  "title",
 					Body:   "body",
 					Status: model.StatusActive.String(),

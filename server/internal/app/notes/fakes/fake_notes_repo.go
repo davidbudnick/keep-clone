@@ -11,12 +11,12 @@ import (
 )
 
 type FakeNotesRepo struct {
-	CreateStub        func(context.Context, string, model.NewNote) (*mongo.InsertOneResult, error)
+	CreateStub        func(context.Context, string, model.CreateNote) (*mongo.InsertOneResult, error)
 	createMutex       sync.RWMutex
 	createArgsForCall []struct {
 		arg1 context.Context
 		arg2 string
-		arg3 model.NewNote
+		arg3 model.CreateNote
 	}
 	createReturns struct {
 		result1 *mongo.InsertOneResult
@@ -85,13 +85,13 @@ type FakeNotesRepo struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeNotesRepo) Create(arg1 context.Context, arg2 string, arg3 model.NewNote) (*mongo.InsertOneResult, error) {
+func (fake *FakeNotesRepo) Create(arg1 context.Context, arg2 string, arg3 model.CreateNote) (*mongo.InsertOneResult, error) {
 	fake.createMutex.Lock()
 	ret, specificReturn := fake.createReturnsOnCall[len(fake.createArgsForCall)]
 	fake.createArgsForCall = append(fake.createArgsForCall, struct {
 		arg1 context.Context
 		arg2 string
-		arg3 model.NewNote
+		arg3 model.CreateNote
 	}{arg1, arg2, arg3})
 	stub := fake.CreateStub
 	fakeReturns := fake.createReturns
@@ -112,13 +112,13 @@ func (fake *FakeNotesRepo) CreateCallCount() int {
 	return len(fake.createArgsForCall)
 }
 
-func (fake *FakeNotesRepo) CreateCalls(stub func(context.Context, string, model.NewNote) (*mongo.InsertOneResult, error)) {
+func (fake *FakeNotesRepo) CreateCalls(stub func(context.Context, string, model.CreateNote) (*mongo.InsertOneResult, error)) {
 	fake.createMutex.Lock()
 	defer fake.createMutex.Unlock()
 	fake.CreateStub = stub
 }
 
-func (fake *FakeNotesRepo) CreateArgsForCall(i int) (context.Context, string, model.NewNote) {
+func (fake *FakeNotesRepo) CreateArgsForCall(i int) (context.Context, string, model.CreateNote) {
 	fake.createMutex.RLock()
 	defer fake.createMutex.RUnlock()
 	argsForCall := fake.createArgsForCall[i]

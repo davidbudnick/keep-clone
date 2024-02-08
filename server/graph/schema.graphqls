@@ -26,7 +26,7 @@ type Query {
   note(id: String!): Note!
 }
 
-input NewNote {
+input CreateNote {
   title: String!
   body: String!
   status: String!
@@ -42,7 +42,7 @@ input UpdateNote {
 }
 
 type Mutation {
-  createNote(input: NewNote!): Note!
+  createNote(input: CreateNote!): Note!
   updateNote(input: UpdateNote!): Note!
   emptyTrash: [Note!]!
 }

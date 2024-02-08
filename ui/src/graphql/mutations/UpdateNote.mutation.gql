@@ -1,11 +1,5 @@
-mutation UpdateNote($id: String!, $title: String!, $body: String!, $status: String!, $pinned: Boolean!) {
-            updateNote(input:{
-                id: $id,
-                title: $title,
-                body: $body,
-                status: $status,
-                pinned: $pinned,
-            }) {
+mutation UpdateNote($input: UpdateNote!) {
+            updateNote(input: $input) {
                 id
                 title
                 body

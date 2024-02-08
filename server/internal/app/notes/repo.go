@@ -21,7 +21,7 @@ const (
 type NotesRepo interface {
 	List(ctx context.Context, userID string, status string) ([]Note, error)
 	Get(ctx context.Context, userID string, noteID string) (*Note, error)
-	Create(ctx context.Context, userID string, note model.NewNote) (*mongo.InsertOneResult, error)
+	Create(ctx context.Context, userID string, note model.CreateNote) (*mongo.InsertOneResult, error)
 	Update(ctx context.Context, userID string, note model.UpdateNote) error
 	RemoveDeleted(ctx context.Context, userID string) error
 }
@@ -100,7 +100,7 @@ func (r *notesRepo) Get(ctx context.Context, userID string, noteID string) (*Not
 	return &note, nil
 }
 
-func (r *notesRepo) Create(ctx context.Context, userID string, note model.NewNote) (*mongo.InsertOneResult, error) {
+func (r *notesRepo) Create(ctx context.Context, userID string, note model.CreateNote) (*mongo.InsertOneResult, error) {
 	var deletedAt *time.Time
 	if note.Status == model.StatusDeleted.String() {
 		now := time.Now()

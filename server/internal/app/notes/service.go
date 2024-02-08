@@ -3,6 +3,7 @@ package notes
 import (
 	"context"
 	"server/graph/model"
+	"sort"
 
 	"log/slog"
 
@@ -13,7 +14,7 @@ import (
 type NotesService interface {
 	List(ctx context.Context, status string, userID string) ([]*model.Note, error)
 	Get(ctx context.Context, userID string, noteID string) (*model.Note, error)
-	Create(ctx context.Context, userID string, note model.NewNote) (*model.Note, error)
+	Create(ctx context.Context, userID string, note model.CreateNote) (*model.Note, error)
 	Update(ctx context.Context, userID string, note model.UpdateNote) (*model.Note, error)
 	RemoveDeleted(ctx context.Context, userID string) ([]*model.Note, error)
 }
@@ -57,6 +58,10 @@ func (s *notesService) List(ctx context.Context, status string, userID string) (
 		})
 	}
 
+	sort.Slice(notes, func(i, j int) bool {
+		return notes[i].UpdatedAt > notes[j].UpdatedAt
+	})
+
 	return notes, nil
 }
 
@@ -86,7 +91,7 @@ func (s *notesService) Get(ctx context.Context, userID string, noteID string) (*
 	}, nil
 }
 
-func (s *notesService) Create(ctx context.Context, userID string, note model.NewNote) (*model.Note, error) {
+func (s *notesService) Create(ctx context.Context, userID string, note model.CreateNote) (*model.Note, error) {
 	res, err := s.repo.Create(ctx, userID, note)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error saving note", "error", err)
