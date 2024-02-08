@@ -5,7 +5,7 @@ import { NavIcon } from '@/components/Navbar/NavIcon';
 import { Switch } from "@/components/ui/switch"
 import { useTheme, DARK, LIGHT } from "@/components/theme-provider"
 import { ROUTES } from '@/constants/routes';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
@@ -16,10 +16,26 @@ import {
 } from "@/components/ui/popover";
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
+import { PAGES } from '@/constants/pages';
 
 const Navbar: React.FC = () => {
     const { setTheme, theme } = useTheme()
+    const location = useLocation();
+
+
+
     const auth = useAuth();
+
+    const GetPageName = () => {
+        switch (location.pathname) {
+            case ROUTES.HOME:
+                return PAGES.HOME
+            case ROUTES.ARCHIVED:
+                return PAGES.ARCHIVED
+            case ROUTES.TRASH:
+                return PAGES.TRASH
+        }
+    }
 
     return (
         <nav className="fixed top-0 z-50 w-full border-b pt-1 pb-1 dark:bg-black bg-white">
@@ -28,7 +44,9 @@ const Navbar: React.FC = () => {
                     <div className="flex items-center justify-start">
                         <Link to={ROUTES.HOME} className="ml-2 flex">
                             <img alt="logo" src="/logo.png" width={48} height={48} className="h-10 w-10" />
-                            <span className="ml-3 mt-1 self-center whitespace-nowrap font-mono text-xl dark:text-white">Keep</span>
+                            <span className="ml-3 mt-1 self-center whitespace-nowrap font-mono text-xl dark:text-white">
+                                {GetPageName()}
+                            </span>
                         </Link>
                     </div>
                     <Search />

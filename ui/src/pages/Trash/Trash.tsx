@@ -1,10 +1,12 @@
-import React from 'react'
-import { List } from '@/components'
+import React, { useEffect } from 'react'
+import { DeletedCard, SkeletonList } from '@/components'
 import { Status, useGetNotesQuery, useRemoveDeletedMutation } from '@/graphql/generated/schema';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Trash: React.FC = () => {
     const { toast } = useToast()
+    const auth = useAuth();
     const [removeDeleted] = useRemoveDeletedMutation(
         {
             update(cache) {
@@ -16,6 +18,16 @@ const Trash: React.FC = () => {
     const { loading, error, data, refetch } = useGetNotesQuery({
         variables: { status: Status.Deleted },
     });
+
+    useEffect(() => {
+        refetch();
+    }, [auth.isAuthenticated]);
+
+    if (loading || error) {
+        return (
+            <SkeletonList />
+        );
+    }
 
     return (
         <div className="ml-10 mt-14 p-4">
@@ -30,13 +42,11 @@ const Trash: React.FC = () => {
                     }} className="ml-4 text-blue-500 hover:underline cursor-pointer">Empty Trash</button>
                 }
             </div>
-            <List
-                disablePinned={true}
-                loading={loading}
-                error={error}
-                notes={data?.notes}
-                refetch={refetch}
-            />
+            <div className="flex flex-wrap ml-6">
+                {data?.notes?.map((note) => (
+                    <DeletedCard key={note.id} note={note} />
+                ))}
+            </div>
         </div >
     )
 }

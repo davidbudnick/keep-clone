@@ -164,13 +164,13 @@ func (r *notesRepo) Update(ctx context.Context, userID string, note model.Update
 	return nil
 }
 
-type DeleteFilter struct {
+type RemoveDeletedFilter struct {
 	UserID string `bson:"user_id"`
 	Status string `bson:"status"`
 }
 
 func (r *notesRepo) RemoveDeleted(ctx context.Context, userID string) error {
-	_, err := r.Client.Database(db.NAME).Collection(NOTES_COLLECTION).DeleteMany(ctx, DeleteFilter{
+	_, err := r.Client.Database(db.NAME).Collection(NOTES_COLLECTION).DeleteMany(ctx, RemoveDeletedFilter{
 		UserID: userID,
 		Status: model.StatusDeleted.String(),
 	})

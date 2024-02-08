@@ -44,7 +44,5 @@ input UpdateNote {
 type Mutation {
   createNote(input: NewNote!): Note!
   updateNote(input: UpdateNote!): Note!
-  deleteNote(id: String!): Note!
-  archiveNote(id: String!): Note!
   emptyTrash: [Note!]!
 }
