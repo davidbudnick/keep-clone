@@ -26,7 +26,7 @@ const Home: React.FC = () => {
                 <div className="ml-10 mt-14 p-4">
                     <CreateNote />
                 </div>
-                <div className="ml-10 flex h-[calc(100vh-17rem)] items-center justify-center p-4">
+                <div className="ml-10 flex h-[calc(100vh-35rem)] items-center justify-center p-4">
                     <div>
                         <MdOutlineLightbulb size={110} className="mx-auto text-gray-500" />
                         <p className="mt-6 text-center text-2xl text-gray-600">
