@@ -17,8 +17,8 @@ interface IFormInput {
     body: string;
 }
 
-
 const CreateNote: React.FC = () => {
+    const [open, setOpen] = React.useState(false);
     const [createNote] = useCreateNewNoteMutation(
         {
             update(cache) {
@@ -51,8 +51,7 @@ const CreateNote: React.FC = () => {
 
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "n") {
-                e.preventDefault();
+            if (e.ctrlKey && e.key === "n") {
                 setOpen(true);
             }
         };
@@ -64,7 +63,7 @@ const CreateNote: React.FC = () => {
         };
     }, []);
 
-    const [open, setOpen] = React.useState(false);
+
 
     return (
         <div className="flex justify-center">
