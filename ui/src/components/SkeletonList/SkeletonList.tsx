@@ -3,13 +3,13 @@ import { Skeleton } from "@/components/ui/skeleton"
 const SkeletonList = () => {
     return (
         <div className="ml-10 mt-20 p-4">
-            <div className='flex flex-wrap mx-6 mt-6'>
+            <div className='mx-6 mt-6 flex flex-wrap'>
                 {Array.from({ length: 4 }, (_, index) => (
-                    <div key={index} className="m-4 w-64 min-h-64 max-w-xs cursor-pointer rounded-lg border border-gray-200 p-6 shadow flex flex-col justify-between items-start">
-                        <Skeleton className="w-[100px] h-[20px] mb-2 rounded-full" />
-                        <Skeleton className="w-full h-6 mb-4 rounded" />
-                        <Skeleton className="w-[80px] h-[20px] rounded-full" />
-                        <Skeleton className="w-[80px] h-[20px] mt-2 rounded-full" />
+                    <div key={index} className="m-4 flex min-h-64 w-64 max-w-xs cursor-pointer flex-col items-start justify-between rounded-lg border border-gray-200 p-6 shadow">
+                        <Skeleton className="mb-2 h-[20px] w-[100px] rounded-full" />
+                        <Skeleton className="mb-4 h-6 w-full rounded" />
+                        <Skeleton className="h-[20px] w-[80px] rounded-full" />
+                        <Skeleton className="mt-2 h-[20px] w-[80px] rounded-full" />
                     </div>
                 ))}
             </div>

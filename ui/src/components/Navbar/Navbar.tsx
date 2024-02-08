@@ -38,7 +38,7 @@ const Navbar: React.FC = () => {
     }
 
     return (
-        <nav className="fixed top-0 z-50 w-full border-b pt-1 pb-1 dark:bg-black bg-white">
+        <nav className="fixed top-0 z-50 w-full border-b bg-white pb-1 pt-1 dark:bg-black">
             <div className="">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center justify-start">
@@ -65,7 +65,7 @@ const Navbar: React.FC = () => {
                                     window.location.reload()
                                 }} icon={IoRefreshOutline} />
                             </div>
-                            <div className='mr-4 mb-1'>
+                            <div className='mb-1 mr-4'>
                                 {
                                     auth.isAuthenticated ?
                                         <Popover>
@@ -75,7 +75,7 @@ const Navbar: React.FC = () => {
                                                     <AvatarFallback className='h-10 w-10'>{`${auth.user?.given_name?.charAt(0)}${auth.user?.family_name?.charAt(0)}`}</AvatarFallback>
                                                 </Avatar>
                                             </PopoverTrigger>
-                                            <PopoverContent className="w-80 mt-1">
+                                            <PopoverContent className="mt-1 w-80">
                                                 <div className="grid gap-4">
                                                     <div className="space-y-2 text-center">
                                                         <p className="text-xs font-bold">{auth.user?.email}</p>
@@ -86,7 +86,7 @@ const Navbar: React.FC = () => {
                                                                 <AvatarFallback className='h-20 w-20 text-xl'>{`${auth.user?.given_name?.charAt(0)}${auth.user?.family_name?.charAt(0)}`}</AvatarFallback>
                                                             </Avatar>
                                                         </div>
-                                                        <div className="text-xl font-light pt-1 pb-2">Hi, {auth.user?.given_name} {auth.user?.family_name}!</div>
+                                                        <div className="pb-2 pt-1 text-xl font-light">Hi, {auth.user?.given_name} {auth.user?.family_name}!</div>
                                                         <Button onClick={auth.logout}>
                                                             <LogOut className="mr-2 h-4 w-4" /> Logout
                                                         </Button>

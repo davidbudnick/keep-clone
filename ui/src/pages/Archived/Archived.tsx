@@ -24,10 +24,10 @@ const Archived: React.FC = () => {
     if (data?.notes?.length === 0) {
         return (
             <>
-                <div className="flex items-center ml-10 p-4 justify-center h-screen">
+                <div className="ml-10 flex h-screen items-center justify-center p-4">
                     <div>
                         <MdOutlineArchive size={110} className="mx-auto text-gray-500" />
-                        <p className="text-center text-2xl mt-4 text-gray-300">No notes archived</p>
+                        <p className="mt-4 text-center text-2xl text-gray-600">No notes archived</p>
                     </div>
                 </div>
             </>
@@ -36,7 +36,7 @@ const Archived: React.FC = () => {
 
     return (
         <div className="ml-10 mt-28 p-4">
-            <div className="flex flex-wrap ml-6">
+            <div className="ml-6 flex flex-wrap">
                 {data?.notes?.map((note) => (
                     <ArchivedCard key={note.id} note={note} />
                 ))}

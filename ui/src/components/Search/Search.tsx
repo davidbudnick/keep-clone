@@ -42,7 +42,7 @@ const Search: React.FC = () => {
                     }
                 }
             }
-            className="w-full h-12"
+            className="h-12 w-full"
             {...register("query")} />
         </div>
     );

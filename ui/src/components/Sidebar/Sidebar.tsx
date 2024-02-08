@@ -9,8 +9,8 @@ const Sidebar: React.FC = () => {
     const location = useLocation();
 
     return (
-        <aside id="logo-sidebar" className="fixed left-0 top-2 z-40  h-screen -translate-x-full border-r transition-transform sm:translate-x-0 pt-16 dark:bg-black bg-white" aria-label="Sidebar">
-            <div className="h-full overflow-y-aut">
+        <aside id="logo-sidebar" className="fixed left-0 top-2 z-40  h-screen -translate-x-full border-r bg-white pt-16 transition-transform dark:bg-black sm:translate-x-0" aria-label="Sidebar">
+            <div className="overflow-y-aut h-full">
                 <ul className="space-y-2 font-medium">
                     <SidebarItem route={ROUTES.HOME} currentRoute={location.pathname} icon={MdOutlineLightbulb} label="Notes" />
                     <SidebarItem route={ROUTES.ARCHIVED} currentRoute={location.pathname} icon={MdOutlineArchive} label="Archive" />

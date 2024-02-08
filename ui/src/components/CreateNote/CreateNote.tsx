@@ -10,11 +10,11 @@ const CreateNote: React.FC = () => {
             <div className='w-full max-w-lg p-2' onClick={(e) => e.stopPropagation()}>
                 <>
                     {open &&
-                        <div className='p-2 border rounded'>
+                        <div className='rounded border p-2'>
                             <Input autoFocus placeholder="Title" />
                             <Textarea onClick={(e) => { e.stopPropagation(); setOpen(true); }} className="mt-2" placeholder="Take a note..." />
                             <div className="flex justify-end">
-                                <Button variant="outline" onClick={() => setOpen(false)} className='mt-2 mr-2'>Cancel</Button>
+                                <Button variant="outline" onClick={() => setOpen(false)} className='mr-2 mt-2'>Cancel</Button>
                                 <Button variant="outline" onClick={() => setOpen(false)} className='mt-2'>Submit</Button>
                             </div>
                         </div>

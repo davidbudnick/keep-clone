@@ -23,7 +23,7 @@ const DeletedCard: React.FC<CardProps> = ({ note }) => {
     );
 
     return (
-        <div key={note.id} className="m-2 w-64 min-h-64 max-w-xs cursor-pointer rounded-lg border border-gray-200 p-5 shadow flex flex-col justify-between items-start relative group">
+        <div key={note.id} className="group relative m-2 flex min-h-64 w-64 max-w-xs cursor-pointer flex-col items-start justify-between rounded-lg border border-gray-200 p-5 shadow">
             <a>
                 <div>
                     <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">{note.title}</h5>
@@ -34,7 +34,7 @@ const DeletedCard: React.FC<CardProps> = ({ note }) => {
                 <Badge className="mt-2" variant="outline">
                     {note.status}
                 </Badge>
-                <Badge className="mt-2 mb-8" variant="secondary">
+                <Badge className="mb-8 mt-2" variant="secondary">
                     {new Date(note.updatedAt).toLocaleTimeString("en-US", {
                         month: "short",
                         day: "numeric",
@@ -61,7 +61,7 @@ const DeletedCard: React.FC<CardProps> = ({ note }) => {
                                                 },
                                             })
                                         }}
-                                        size={20} className='opacity-0 group-hover:opacity-100 transition-opacity duration-200' />
+                                        size={20} className='opacity-0 transition-opacity duration-200 group-hover:opacity-100' />
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p>Unarchive</p>
