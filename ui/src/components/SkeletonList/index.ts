@@ -1,2 +1,2 @@
-import SkeletonList from './SkeletonList';
+import SkeletonList from "./SkeletonList";
 export { SkeletonList }

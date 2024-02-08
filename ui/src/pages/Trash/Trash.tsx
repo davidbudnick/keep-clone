@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react'
-import { DeletedCard, SkeletonList } from '@/components'
-import { Status, useGetNotesQuery, useRemoveDeletedMutation } from '@/graphql/generated/schema';
-import { useToast } from '@/components/ui/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
+import React, { useEffect } from "react"
+import { DeletedCard, SkeletonList } from "@/components"
+import { Status, useGetNotesQuery, useRemoveDeletedMutation } from "@/graphql/generated/schema";
+import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { FaTrashCan } from "react-icons/fa6";
+
 
 const Trash: React.FC = () => {
     const { toast } = useToast()
@@ -10,7 +12,7 @@ const Trash: React.FC = () => {
     const [removeDeleted] = useRemoveDeletedMutation(
         {
             update(cache) {
-                cache.evict({ fieldName: 'notes' });
+                cache.evict({ fieldName: "notes" });
             }
         }
     );
@@ -27,6 +29,19 @@ const Trash: React.FC = () => {
         return (
             <SkeletonList />
         );
+    }
+
+    if (data?.notes?.length === 0) {
+        return (
+            <>
+                <div className="flex items-center ml-10 p-4 justify-center h-screen">
+                    <div>
+                        <FaTrashCan size={90} className="mx-auto text-gray-500" />
+                        <p className="text-center text-2xl mt-8 text-gray-300">No notes in trash</p>
+                    </div>
+                </div>
+            </>
+        )
     }
 
     return (

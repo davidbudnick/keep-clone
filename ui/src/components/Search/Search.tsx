@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 import { useForm, Resolver } from "react-hook-form";
-import { Input } from '@/components/ui/input';
+import { Input } from "@/components/ui/input";
 
 const Search: React.FC = () => {
     type SearchValues = {
@@ -42,8 +42,8 @@ const Search: React.FC = () => {
                     }
                 }
             }
-                className="w-full h-12"
-                {...register("query")} />
+            className="w-full h-12"
+            {...register("query")} />
         </div>
     );
 }

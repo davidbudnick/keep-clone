@@ -1,2 +1,2 @@
-import SidebarItem from './SidebarItem';
+import SidebarItem from "./SidebarItem";
 export { SidebarItem }

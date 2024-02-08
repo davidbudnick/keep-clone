@@ -1,9 +1,9 @@
-import React from 'react';
-import { BiTrash } from 'react-icons/bi';
-import { MdOutlineArchive, MdOutlineLightbulb } from 'react-icons/md';
-import { SidebarItem } from './SidebarItem';
-import { ROUTES } from '@/constants/routes';
-import { useLocation } from 'react-router-dom';
+import React from "react";
+import { BiTrash } from "react-icons/bi";
+import { MdOutlineArchive, MdOutlineLightbulb } from "react-icons/md";
+import { SidebarItem } from "./SidebarItem";
+import { ROUTES } from "@/constants/routes";
+import { useLocation } from "react-router-dom";
 
 const Sidebar: React.FC = () => {
     const location = useLocation();

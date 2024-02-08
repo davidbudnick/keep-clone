@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { MdUnarchive } from "react-icons/md";
 import {
@@ -7,7 +7,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Note, Status, useUpdateNoteMutation } from '@/graphql/generated/schema';
+import { Note, Status, useUpdateNoteMutation } from "@/graphql/generated/schema";
 
 interface CardProps {
     note: Note;
@@ -17,7 +17,7 @@ const DeletedCard: React.FC<CardProps> = ({ note }) => {
     const [updateNote] = useUpdateNoteMutation(
         {
             update(cache) {
-                cache.evict({ fieldName: 'notes' });
+                cache.evict({ fieldName: "notes" });
             }
         }
     );

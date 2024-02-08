@@ -11,5 +11,15 @@ module.exports = {
   plugins: ['react-refresh'],
   rules: {
     'react-hooks/exhaustive-deps': 'off',
+    'no-irregular-whitespace': 'error',
+    "indent": ["error", 4],
+    "no-trailing-spaces": "error",
+    "no-multi-spaces": "error",
+    "space-before-blocks": "error",
+    "keyword-spacing": ["error", { "before": true, "after": true }],
+    "space-infix-ops": "error",
+    "eol-last": ["error", "always"],
+    "newline-per-chained-call": ["error", { "ignoreChainWithDepth": 2 }],
+    "quotes": ["error", "double"],
   },
 }

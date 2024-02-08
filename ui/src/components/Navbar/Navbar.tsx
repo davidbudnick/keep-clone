@@ -1,22 +1,22 @@
-import React from 'react'
-import { Search } from '@/components/Search';
-import { IoRefreshOutline } from 'react-icons/io5';
-import { NavIcon } from '@/components/Navbar/NavIcon';
+import React from "react"
+import { Search } from "@/components/Search";
+import { IoRefreshOutline } from "react-icons/io5";
+import { NavIcon } from "@/components/Navbar/NavIcon";
 import { Switch } from "@/components/ui/switch"
 import { useTheme, DARK, LIGHT } from "@/components/theme-provider"
-import { ROUTES } from '@/constants/routes';
-import { Link, useLocation } from 'react-router-dom';
-import { GoogleLogin } from '@react-oauth/google';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useAuth } from '@/contexts/AuthContext';
+import { ROUTES } from "@/constants/routes";
+import { Link, useLocation } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/AuthContext";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from '@/components/ui/button';
-import { LogOut } from 'lucide-react';
-import { PAGES } from '@/constants/pages';
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
+import { PAGES } from "@/constants/pages";
 
 const Navbar: React.FC = () => {
     const { setTheme, theme } = useTheme()
@@ -28,12 +28,12 @@ const Navbar: React.FC = () => {
 
     const GetPageName = () => {
         switch (location.pathname) {
-            case ROUTES.HOME:
-                return PAGES.HOME
-            case ROUTES.ARCHIVED:
-                return PAGES.ARCHIVED
-            case ROUTES.TRASH:
-                return PAGES.TRASH
+        case ROUTES.HOME:
+            return PAGES.HOME
+        case ROUTES.ARCHIVED:
+            return PAGES.ARCHIVED
+        case ROUTES.TRASH:
+            return PAGES.TRASH
         }
     }
 

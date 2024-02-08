@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 const CreateNote: React.FC = () => {
     const [open, setOpen] = useState<boolean>(false);
@@ -14,6 +14,7 @@ const CreateNote: React.FC = () => {
                             <Input autoFocus placeholder="Title" />
                             <Textarea onClick={(e) => { e.stopPropagation(); setOpen(true); }} className="mt-2" placeholder="Take a note..." />
                             <div className="flex justify-end">
+                                <Button variant="outline" onClick={() => setOpen(false)} className='mt-2 mr-2'>Cancel</Button>
                                 <Button variant="outline" onClick={() => setOpen(false)} className='mt-2'>Submit</Button>
                             </div>
                         </div>

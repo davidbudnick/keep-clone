@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { CreateNote, HomeCard, SkeletonList } from "@/components";
 import { Status, useGetNotesQuery } from "@/graphql/generated/schema";
 import { useAuth } from "@/contexts/AuthContext";
+import { MdOutlineLightbulb } from "react-icons/md";
 
 const Home: React.FC = () => {
     const auth = useAuth();
@@ -17,6 +18,24 @@ const Home: React.FC = () => {
         return (
             <SkeletonList />
         );
+    }
+
+    if (data?.notes?.length === 0) {
+        return (
+            <>
+                <div className="ml-10 mt-14 p-4">
+                    <CreateNote />
+                </div>
+                <div className="flex items-center ml-10 p-4 justify-center h-[calc(100vh-18rem)]">
+                    <div>
+                        <MdOutlineLightbulb size={110} className="mx-auto text-gray-500" />
+                        <p className="text-center text-2xl mt-6 text-gray-300">
+                            No Notes
+                        </p>
+                    </div>
+                </div>
+            </>
+        )
     }
 
     return (

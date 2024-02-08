@@ -1,6 +1,6 @@
-import { AUTH } from '@/constants/auth';
-import { CredentialResponse, googleLogout } from '@react-oauth/google';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { AUTH } from "@/constants/auth";
+import { CredentialResponse, googleLogout } from "@react-oauth/google";
+import { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextValue {
     isAuthenticated: boolean;
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const decodeUser = (credential: string) => {
-        const decoded: User = JSON.parse(atob(credential?.split('.')[1] || ""));
+        const decoded: User = JSON.parse(atob(credential?.split(".")[1] || ""));
         return decoded;
     }
 

@@ -1,2 +1,2 @@
-import NavIcon from './NavIcon';
+import NavIcon from "./NavIcon";
 export { NavIcon }

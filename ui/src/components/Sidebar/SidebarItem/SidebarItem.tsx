@@ -1,7 +1,7 @@
-import { cn } from '@/lib/utils';
-import React from 'react';
-import { IconType } from 'react-icons';
-import { Link } from 'react-router-dom';
+import { cn } from "@/lib/utils";
+import React from "react";
+import { IconType } from "react-icons";
+import { Link } from "react-router-dom";
 
 interface SidebarItemProps {
     route?: string;
