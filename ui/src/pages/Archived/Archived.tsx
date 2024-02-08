@@ -24,7 +24,7 @@ const Archived: React.FC = () => {
     if (data?.notes?.length === 0) {
         return (
             <>
-                <div className="ml-10 flex h-screen items-center justify-center p-4">
+                <div className="ml-10 flex h-[calc(100vh-17rem)]  items-center justify-center p-4">
                     <div>
                         <MdOutlineArchive size={110} className="mx-auto text-gray-500" />
                         <p className="mt-4 text-center text-2xl text-gray-600">No notes archived</p>
