@@ -51,7 +51,7 @@ const CreateNote: React.FC = () => {
 
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "n" && e.ctrlKey) {
+            if (e.key === "n") {
                 e.preventDefault();
                 setOpen(true);
             }
