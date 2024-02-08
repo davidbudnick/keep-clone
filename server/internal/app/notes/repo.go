@@ -127,6 +127,15 @@ func (r *notesRepo) Create(ctx context.Context, userID string, note model.NewNot
 	return res, nil
 }
 
+type UpdateFilter struct {
+	Tilte     string     `bson:"title"`
+	Body      string     `bson:"body"`
+	Status    string     `bson:"status"`
+	Pinned    bool       `bson:"pinned"`
+	UpdateAt  time.Time  `bson:"updated_at"`
+	DeletedAt *time.Time `bson:"deleted_at"`
+}
+
 func (r *notesRepo) Update(ctx context.Context, userID string, note model.UpdateNote) error {
 	notesCollection := r.Client.Database(db.NAME).Collection(NOTES_COLLECTION)
 
@@ -147,13 +156,13 @@ func (r *notesRepo) Update(ctx context.Context, userID string, note model.Update
 		UserID: userID,
 		//TODO: move this into a struct
 	}, bson.M{
-		"$set": bson.M{
-			"title":      note.Title,
-			"body":       note.Body,
-			"status":     note.Status,
-			"pinned":     note.Pinned,
-			"updated_at": time.Now(),
-			"deleted_at": deletedAt,
+		"$set": UpdateFilter{
+			Tilte:     note.Title,
+			Body:      note.Body,
+			Status:    note.Status,
+			Pinned:    note.Pinned,
+			UpdateAt:  time.Now(),
+			DeletedAt: deletedAt,
 		},
 	}, options.Update().SetUpsert(true))
 	if err != nil {
