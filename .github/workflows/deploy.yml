@@ -6,7 +6,57 @@ on:
       - main
 
 jobs:
+  build-test-ui:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '21.6.1'
+        cache-dependency-path: './ui/yarn.lock'
+
+    - name: Install Dependencies
+      run: yarn install
+      working-directory: ui
+
+    - name: Lint
+      run: yarn lint
+      working-directory: ui
+
+    - name: Build
+      run: yarn build
+      working-directory: ui
+  
+  build-test-server:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.21'
+        cache-dependency-path: 'server/go.sum'
+
+    - name: Test
+      working-directory: server
+      run: go test ./...
+
+    - name: Build
+      working-directory: server
+      run: go build -v .
+
   build-and-push:
+    needs: 
+      - build-test-ui
+      - build-test-server
+    
     name: Build and Push Docker Images
     runs-on: ubuntu-latest
 
