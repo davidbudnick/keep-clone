@@ -36,6 +36,16 @@ func (r *mutationResolver) UpdateNote(ctx context.Context, input model.UpdateNot
 	return res, nil
 }
 
+// DeleteNote is the resolver for the deleteNote field.
+func (r *mutationResolver) DeleteNote(ctx context.Context, id string) (string, error) {
+	res, err := r.NotesService.Delete(ctx, r.UserID, id)
+	if err != nil {
+		return "", err
+	}
+
+	return res.String(), nil
+}
+
 // EmptyTrash is the resolver for the emptyTrash field.
 func (r *mutationResolver) EmptyTrash(ctx context.Context) ([]*model.Note, error) {
 	notes, err := r.NotesService.RemoveDeleted(ctx, r.UserID)

@@ -7,6 +7,7 @@ import (
 	"server/internal/app/notes"
 	"sync"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -24,6 +25,21 @@ type FakeNotesRepo struct {
 	}
 	createReturnsOnCall map[int]struct {
 		result1 *mongo.InsertOneResult
+		result2 error
+	}
+	DeleteStub        func(context.Context, string, string) (*primitive.ObjectID, error)
+	deleteMutex       sync.RWMutex
+	deleteArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}
+	deleteReturns struct {
+		result1 *primitive.ObjectID
+		result2 error
+	}
+	deleteReturnsOnCall map[int]struct {
+		result1 *primitive.ObjectID
 		result2 error
 	}
 	GetStub        func(context.Context, string, string) (*notes.Note, error)
@@ -147,6 +163,72 @@ func (fake *FakeNotesRepo) CreateReturnsOnCall(i int, result1 *mongo.InsertOneRe
 	}
 	fake.createReturnsOnCall[i] = struct {
 		result1 *mongo.InsertOneResult
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeNotesRepo) Delete(arg1 context.Context, arg2 string, arg3 string) (*primitive.ObjectID, error) {
+	fake.deleteMutex.Lock()
+	ret, specificReturn := fake.deleteReturnsOnCall[len(fake.deleteArgsForCall)]
+	fake.deleteArgsForCall = append(fake.deleteArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}{arg1, arg2, arg3})
+	stub := fake.DeleteStub
+	fakeReturns := fake.deleteReturns
+	fake.recordInvocation("Delete", []interface{}{arg1, arg2, arg3})
+	fake.deleteMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeNotesRepo) DeleteCallCount() int {
+	fake.deleteMutex.RLock()
+	defer fake.deleteMutex.RUnlock()
+	return len(fake.deleteArgsForCall)
+}
+
+func (fake *FakeNotesRepo) DeleteCalls(stub func(context.Context, string, string) (*primitive.ObjectID, error)) {
+	fake.deleteMutex.Lock()
+	defer fake.deleteMutex.Unlock()
+	fake.DeleteStub = stub
+}
+
+func (fake *FakeNotesRepo) DeleteArgsForCall(i int) (context.Context, string, string) {
+	fake.deleteMutex.RLock()
+	defer fake.deleteMutex.RUnlock()
+	argsForCall := fake.deleteArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeNotesRepo) DeleteReturns(result1 *primitive.ObjectID, result2 error) {
+	fake.deleteMutex.Lock()
+	defer fake.deleteMutex.Unlock()
+	fake.DeleteStub = nil
+	fake.deleteReturns = struct {
+		result1 *primitive.ObjectID
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeNotesRepo) DeleteReturnsOnCall(i int, result1 *primitive.ObjectID, result2 error) {
+	fake.deleteMutex.Lock()
+	defer fake.deleteMutex.Unlock()
+	fake.DeleteStub = nil
+	if fake.deleteReturnsOnCall == nil {
+		fake.deleteReturnsOnCall = make(map[int]struct {
+			result1 *primitive.ObjectID
+			result2 error
+		})
+	}
+	fake.deleteReturnsOnCall[i] = struct {
+		result1 *primitive.ObjectID
 		result2 error
 	}{result1, result2}
 }
@@ -413,6 +495,8 @@ func (fake *FakeNotesRepo) Invocations() map[string][][]interface{} {
 	defer fake.invocationsMutex.RUnlock()
 	fake.createMutex.RLock()
 	defer fake.createMutex.RUnlock()
+	fake.deleteMutex.RLock()
+	defer fake.deleteMutex.RUnlock()
 	fake.getMutex.RLock()
 	defer fake.getMutex.RUnlock()
 	fake.listMutex.RLock()

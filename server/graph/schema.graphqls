@@ -10,11 +10,6 @@ type Note {
   deletedAt: String
 }
 
-type NoteMutationResponse {
-  success: Boolean!
-  id: ID!
-}
-
 enum Status {
   ACTIVE
   ARCHIVED
@@ -44,5 +39,6 @@ input UpdateNote {
 type Mutation {
   createNote(input: CreateNote!): Note!
   updateNote(input: UpdateNote!): Note!
+  deleteNote(id: String!): String!
   emptyTrash: [Note!]!
 }

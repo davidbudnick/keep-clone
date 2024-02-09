@@ -30,11 +30,6 @@ type Note struct {
 	DeletedAt *string `json:"deletedAt,omitempty"`
 }
 
-type NoteMutationResponse struct {
-	Success bool   `json:"success"`
-	ID      string `json:"id"`
-}
-
 type Query struct {
 }
 

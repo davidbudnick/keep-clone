@@ -16,6 +16,7 @@ type NotesService interface {
 	Get(ctx context.Context, userID string, noteID string) (*model.Note, error)
 	Create(ctx context.Context, userID string, note model.CreateNote) (*model.Note, error)
 	Update(ctx context.Context, userID string, note model.UpdateNote) (*model.Note, error)
+	Delete(ctx context.Context, userID string, noteID string) (*primitive.ObjectID, error)
 	RemoveDeleted(ctx context.Context, userID string) ([]*model.Note, error)
 }
 
@@ -121,6 +122,16 @@ func (s *notesService) Update(ctx context.Context, userID string, note model.Upd
 	}
 
 	return updatedNote, nil
+}
+
+func (s *notesService) Delete(ctx context.Context, userID string, noteID string) (*primitive.ObjectID, error) {
+	ID, err := s.repo.Delete(ctx, userID, noteID)
+	if err != nil {
+		slog.ErrorContext(ctx, "Error deleting note", "error", err)
+		return nil, err
+	}
+
+	return ID, nil
 }
 
 func (s *notesService) RemoveDeleted(ctx context.Context, userID string) ([]*model.Note, error) {

@@ -1,13 +1,13 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { MdRestore, MdUnarchive } from "react-icons/md";
+import { MdDelete, MdRestore, MdUnarchive } from "react-icons/md";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Note, Status, useUpdateNoteMutation } from "@/graphql/generated/schema";
+import { Note, Status, useDeleteNoteMutation, useUpdateNoteMutation } from "@/graphql/generated/schema";
 import { truncateBody, truncateTitle } from "@/lib/truncate";
 import { useTranslation } from "react-i18next";
 
@@ -18,6 +18,14 @@ interface CardProps {
 const DeletedCard: React.FC<CardProps> = ({ note }) => {
     const { t } = useTranslation();
     const [updateNote] = useUpdateNoteMutation(
+        {
+            update(cache) {
+                cache.evict({ fieldName: "notes" });
+            }
+        }
+    );
+
+    const [deleteNote] = useDeleteNoteMutation(
         {
             update(cache) {
                 cache.evict({ fieldName: "notes" });
@@ -74,7 +82,7 @@ const DeletedCard: React.FC<CardProps> = ({ note }) => {
                             </Tooltip>
                         </TooltipProvider>
                     </span>
-                    <span>
+                    <span className="mr-4">
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger>
@@ -100,7 +108,26 @@ const DeletedCard: React.FC<CardProps> = ({ note }) => {
                             </Tooltip>
                         </TooltipProvider>
                     </span>
-                    {/* //TODO: add delete note button */}
+                    <span>
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger>
+                                    <MdDelete
+                                        onClick={() => {
+                                            deleteNote({
+                                                variables: {
+                                                    id: note.id,
+                                                },
+                                            })
+                                        }}
+                                        size={20} className='duration-50 opacity-0 transition-opacity group-hover:opacity-100' />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>{t("pages.trash.actions.delete")}</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </span>
                 </div>
             </div>
         </div>

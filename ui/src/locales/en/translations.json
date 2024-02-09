@@ -35,7 +35,8 @@
             "notes_deleted": "Notes have been successfully deleted",
             "actions": {
                 "restore": "Restore",
-                "archive": "Archive"
+                "archive": "Archive",
+                "delete": "Delete"
             }
         }
     },

@@ -35,7 +35,8 @@
             "notes_deleted": "Las notas han sido eliminadas con éxito",
             "actions": {
                 "restore": "Restaurar",
-                "archive": "Archivar"
+                "archive": "Archivar",
+                "delete": "Eliminar"
             }
         }
     },

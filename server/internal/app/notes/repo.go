@@ -23,6 +23,7 @@ type NotesRepo interface {
 	Get(ctx context.Context, userID string, noteID string) (*Note, error)
 	Create(ctx context.Context, userID string, note model.CreateNote) (*mongo.InsertOneResult, error)
 	Update(ctx context.Context, userID string, note model.UpdateNote) error
+	Delete(ctx context.Context, userID string, noteID string) (*primitive.ObjectID, error)
 	RemoveDeleted(ctx context.Context, userID string) error
 }
 
@@ -170,6 +171,26 @@ func (r *notesRepo) Update(ctx context.Context, userID string, note model.Update
 	}
 
 	return nil
+}
+
+func (r *notesRepo) Delete(ctx context.Context, userID string, noteID string) (*primitive.ObjectID, error) {
+	objectId, err := primitive.ObjectIDFromHex(noteID)
+	if err != nil {
+		slog.ErrorContext(ctx, "Error decoding NoteID", "error", err)
+		return nil, err
+	}
+
+	notesCollection := r.Client.Database(db.NAME).Collection(NOTES_COLLECTION)
+	_, err = notesCollection.DeleteOne(ctx, GetFilter{
+		ID:     objectId,
+		UserID: userID,
+	})
+	if err != nil {
+		slog.ErrorContext(ctx, "Error deleting note", "error", err)
+		return nil, err
+	}
+
+	return &objectId, nil
 }
 
 type RemoveDeletedFilter struct {
