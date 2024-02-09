@@ -7,6 +7,7 @@ on:
 
 jobs:
   build-test-ui:
+    name: Build/Test UI
     runs-on: ubuntu-latest
 
     steps:
@@ -31,7 +32,7 @@ jobs:
       working-directory: ui
   
   build-test-server:
-    name: Build and Test
+    name: Build/Test Server
     runs-on: ubuntu-latest
 
     steps:
@@ -53,11 +54,11 @@ jobs:
       run: go build -v .
 
   build-and-push:
+    name: Build/Push ECR
     needs: 
       - build-test-ui
       - build-test-server
     
-    name: Build and Push Docker Images
     runs-on: ubuntu-latest
 
     steps:
