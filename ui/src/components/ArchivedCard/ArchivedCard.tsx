@@ -67,7 +67,7 @@ const ArchivedCard: React.FC<CardProps> = ({ note }) => {
                                     }} size={20} className='duration-50 opacity-0 transition-opacity group-hover:opacity-100' />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>{t("pages.archived.delete")}</p>
+                                    <p>{t("pages.archived.actions.delete")}</p>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
@@ -93,7 +93,7 @@ const ArchivedCard: React.FC<CardProps> = ({ note }) => {
                                         size={20} className='duration-50 opacity-0 transition-opacity group-hover:opacity-100' />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>{t("pages.archived.unarchive")}</p>
+                                    <p>{t("pages.archived.actions.unarchive")}</p>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>

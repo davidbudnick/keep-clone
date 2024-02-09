@@ -6,8 +6,8 @@
             "no_notes": "You have no notes",
             "pinned": "PINNED",
             "others": "OTHERS",
-            "unpin": "Unpin Note",
-            "pin": "Pin Note",
+            "unpin": "Unpin",
+            "pin": "Pin",
             "actions": {
                 "delete": "Delete",
                 "archive": "Archive"

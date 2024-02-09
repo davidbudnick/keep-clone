@@ -6,8 +6,8 @@
             "no_notes": "No tienes notas",
             "pinned": "FIJADAS",
             "others": "OTRAS",
-            "unpin": "Desfijar Nota",
-            "pin": "Fijar Nota",
+            "unpin": "Desfijar",
+            "pin": "Fijar",
             "actions": {
                 "delete": "Eliminar",
                 "archive": "Archivar"
