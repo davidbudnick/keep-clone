@@ -72,6 +72,7 @@ func main() {
 		slog.ErrorContext(ctx, "Error creating deletedAt index", "error", err)
 	}
 
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	r.Use(sloggin.New(l))
 	r.Use(gin.Recovery())
