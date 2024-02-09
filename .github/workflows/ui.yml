@@ -17,7 +17,8 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '21.x'
-        cache-dependency-path: ui/node_modules
+        cache-dependency-path: './ui/yarn.lock'
+        cache: yarn
 
     - name: Install Dependencies
       run: yarn install
