@@ -88,8 +88,9 @@ jobs:
         IMAGE_TAG: latest
       run: |
         docker build -t $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG ./ui
-        docker tag $ECR_REGISTRY/$SERVER_ECR_REPOSITORY:$GITHUB_SHA
+        docker tag $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$SERVER_ECR_REPOSITORY:$GITHUB_SHA
         docker push $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$UI_ECR_REPOSITORY:$GITHUB_SHA
 
   build-and-push-server:
     name: Build/Push Server
@@ -126,5 +127,6 @@ jobs:
         IMAGE_TAG: latest
       run: |
         docker build -t $ECR_REGISTRY/$SERVER_ECR_REPOSITORY:$IMAGE_TAG ./server
-        docker tag $ECR_REGISTRY/$SERVER_ECR_REPOSITORY:$GITHUB_SHA
+        docker tag $ECR_REGISTRY/$SERVER_ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$SERVER_ECR_REPOSITORY:$GITHUB_SHA
         docker push $ECR_REGISTRY/$SERVER_ECR_REPOSITORY:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$SERVER_ECR_REPOSITORY:$GITHUB_SHA
