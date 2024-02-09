@@ -54,9 +54,45 @@ jobs:
       run: go build -v .
 
   build-and-push:
-    name: Build/Push ECR
+    name: Build/Push UI
     needs: 
       - build-test-ui
+    
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '21.6.1'
+        cache-dependency-path: './ui/yarn.lock'
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build, tag, and push UI image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        UI_ECR_REPOSITORY: keep_ui_staging
+        IMAGE_TAG: latest
+      run: |
+        docker build -t $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG ./ui
+        docker push $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG
+
+  build-and-push-server:
+    name: Build/Push Server
+    needs: 
       - build-test-server
     
     runs-on: ubuntu-latest
@@ -71,12 +107,6 @@ jobs:
         go-version: '1.21'
         cache-dependency-path: 'server/go.sum'
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '21.6.1'
-        cache-dependency-path: './ui/yarn.lock'
-    
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -96,12 +126,3 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$SERVER_ECR_REPOSITORY:$IMAGE_TAG ./server
         docker push $ECR_REGISTRY/$SERVER_ECR_REPOSITORY:$IMAGE_TAG
-
-    - name: Build, tag, and push UI image to Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        UI_ECR_REPOSITORY: keep_ui_staging
-        IMAGE_TAG: latest
-      run: |
-        docker build -t $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG ./ui
-        docker push $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG
