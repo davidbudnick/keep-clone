@@ -2,8 +2,10 @@ import React from "react";
 import { useForm, Resolver } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Search: React.FC = () => {
+    const { isAuthenticated } = useAuth()
     type SearchValues = {
         query: string
     }
@@ -36,8 +38,8 @@ const Search: React.FC = () => {
     const { t } = useTranslation();
 
     return (
-        <div className="flex w-full max-w-lg items-center space-x-2">
-            <Input type="text" placeholder={t("navbar.search")} onKeyDown={
+        <div className="flex w-full max-w-lg">
+            <Input disabled={!isAuthenticated} type="text" placeholder={t("navbar.search")} onKeyDown={
                 (e) => {
                     if (e.key === "Enter") {
                         onSubmit()

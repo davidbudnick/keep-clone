@@ -122,7 +122,7 @@ const Navbar: React.FC = () => {
                                             </PopoverContent>
                                         </Popover>
                                         :
-                                        <GoogleLogin onSuccess={auth.login} />
+                                        <GoogleLogin locale={localStorage.getItem(localStorageKey) || locales.en} onSuccess={auth.login} />
                                 }
 
                             </div>

@@ -15,9 +15,17 @@ interface SidebarItemProps {
     label: string;
     icon: IconType;
     iconSize?: number;
+    disabled?: boolean;
 }
 
-const SidebarItem: React.FC<SidebarItemProps> = ({ route = "", currentRoute = "", label, icon, iconSize = 24 }) => {
+const SidebarItem: React.FC<SidebarItemProps> = ({ route = "", currentRoute = "", label, icon, iconSize = 24, disabled }) => {
+
+    if (disabled) {
+        return <Link to={route} className="group m-1 flex cursor-not-allowed items-center rounded-full p-3 text-gray-900  dark:text-white">
+            {React.createElement(icon, { size: iconSize })}
+        </Link>
+    }
+
     return (
         <div>
             <TooltipProvider>

@@ -1,6 +1,7 @@
 {
     "pages": {
         "home": {
+            "logged_out": "Sign in with Google Account to start taking notes",
             "title": "Home",
             "no_notes": "You have no notes",
             "pinned": "PINNED",

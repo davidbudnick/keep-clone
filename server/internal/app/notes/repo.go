@@ -154,9 +154,8 @@ func (r *notesRepo) Update(ctx context.Context, userID string, note model.Update
 	_, err = notesCollection.UpdateOne(ctx, GetFilter{
 		ID:     objectId,
 		UserID: userID,
-		//TODO: move this into a struct
 	}, bson.M{
-		"$set": UpdateFilter{
+		db.SET: UpdateFilter{
 			Tilte:     note.Title,
 			Body:      note.Body,
 			Status:    note.Status,

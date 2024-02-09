@@ -1,6 +1,7 @@
 {
     "pages": {
         "home": {
+            "logged_out": "Inicia sesión con tu cuenta de Google para empezar a tomar notas",
             "title": "Inicio",
             "no_notes": "No tienes notas",
             "pinned": "FIJADAS",

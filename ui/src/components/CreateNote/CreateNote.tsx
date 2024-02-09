@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Status, useCreateNewNoteMutation } from "@/graphql/generated/schema";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface IFormInput {
     title: string;
@@ -19,6 +20,7 @@ interface IFormInput {
 }
 
 const CreateNote: React.FC = () => {
+    const { isAuthenticated } = useAuth()
     const { t } = useTranslation();
     const [open, setOpen] = React.useState(false);
     const [createNote] = useCreateNewNoteMutation(
@@ -65,13 +67,23 @@ const CreateNote: React.FC = () => {
         };
     }, []);
 
-
+    if (!isAuthenticated) {
+        return (
+            <div className="flex justify-center">
+                <div className={"w-full max-w-lg cursor-pointer p-2 opacity-50"}>
+                    <div className="w-full rounded-md border p-3">
+                        <p className="text-gray-500">{t("pages.home.create_note.take_a_note")}</p>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="flex justify-center">
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <div className="w-full max-w-lg cursor-pointer p-2">
+                    <div className={"w-full max-w-lg cursor-pointer p-2"}>
                         <div className="w-full rounded-md border p-3">
                             <p className="text-gray-500">{t("pages.home.create_note.take_a_note")}</p>
                         </div>

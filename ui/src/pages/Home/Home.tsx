@@ -4,6 +4,7 @@ import { Status, useGetNotesQuery } from "@/graphql/generated/schema";
 import { useAuth } from "@/contexts/AuthContext";
 import { MdOutlineLightbulb } from "react-icons/md";
 import { useTranslation } from "react-i18next";
+import { FaGoogle } from "react-icons/fa";
 
 const Home: React.FC = () => {
     const auth = useAuth();
@@ -20,6 +21,19 @@ const Home: React.FC = () => {
         return (
             <SkeletonList />
         );
+    }
+
+    if (!auth.isAuthenticated) {
+        return (
+            <div className="flex h-[calc(100vh-35rem)] items-center justify-center p-4">
+                <div>
+                    <FaGoogle size={90} className="mx-auto text-gray-500" />
+                    <p className="mt-6 text-center text-2xl text-gray-600">
+                        {t("pages.home.logged_out")}
+                    </p>
+                </div>
+            </div>
+        )
     }
 
     if (data?.notes?.length === 0) {
