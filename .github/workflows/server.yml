@@ -26,7 +26,7 @@ jobs:
             ~/go/pkg/mod
             ~/go/bin
             !~/go/pkg/mod/cache/download
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('server/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
     
