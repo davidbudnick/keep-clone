@@ -9,31 +9,34 @@ on:
       - '.github/workflows/server.yml'
 
 jobs:
-  build:
+  build-and-test:
+    name: Build and Test
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.21'
-    
+
     - name: Cache Go modules
       uses: actions/cache@v4
       with:
-          path: |
-            ~/go/pkg/mod
-            ~/go/bin
-            !~/go/pkg/mod/cache/download
-          key: ${{ runner.os }}-go-${{ hashFiles('server/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-    
-    - name: Build
-      working-directory: server
-      run: go build -v ./...
+        path: |
+          ~/go/pkg/mod
+          ~/go/bin
+          !~/go/pkg/mod/cache/download
+        key: ${{ runner.os }}-go-${{ hashFiles('server/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
 
     - name: Test
       working-directory: server
-      run: go test -v ./...
+      run: go test ./...
+
+    - name: Build
+      working-directory: server
+      run: go build -v .
