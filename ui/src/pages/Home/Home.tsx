@@ -28,7 +28,7 @@ const Home: React.FC = () => {
             <div className="flex h-[calc(100vh-35rem)] items-center justify-center p-4">
                 <div>
                     <FaGoogle size={90} className="mx-auto text-gray-500" />
-                    <p className="mt-6 text-center text-2xl text-gray-600">
+                    <p className="mt-6 select-none text-center text-2xl text-gray-600">
                         {t("pages.home.logged_out")}
                     </p>
                 </div>
