@@ -24,6 +24,11 @@ resource "aws_ecr_repository" "keep_ui" {
   }
 }
 
+output "keep_ui_ecr_image_name" {
+  description = "The full image name for keep_ui that can be used to pull the image"
+  value       = "${aws_ecr_repository.keep_ui.repository_url}:latest"
+}
+
 resource "aws_ecr_repository" "keep_server" {
   name                 = "keep_server"
   image_tag_mutability = "MUTABLE"
@@ -35,6 +40,11 @@ resource "aws_ecr_repository" "keep_server" {
   encryption_configuration {
     encryption_type = "AES256"
   }
+}
+
+output "keep_server_ecr_image_name" {
+  description = "The full image name for keep_server that can be used to pull the image"
+  value       = "${aws_ecr_repository.keep_server.repository_url}:latest"
 }
 
 resource "aws_iam_policy" "allow_push_pull_policy_keep" {
@@ -122,4 +132,170 @@ output "secret_access_key" {
 # Ensure .env (UI) and config.yml (Server) are placed in the bucket
 resource "aws_s3_bucket" "keep_secrets-staging" {
   bucket = "keep-secrets-staging"
+}
+
+resource "aws_ecs_cluster" "keep_cluster_staging" {
+  name = "keep-cluster-staging"
+}
+
+data "aws_vpc" "default" {
+  default = true
+}
+
+data "aws_subnets" "default" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
+}
+
+resource "aws_security_group" "keep_ui_alb_sg" {
+  name        = "keep-ui-alb-sg-staging"
+  description = "ALB security group for keep-ui in staging"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_lb" "keep_ui_alb_staging" {
+  name               = "keep-ui-alb-staging"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.keep_ui_alb_sg.id]
+  subnets            = data.aws_subnets.default.ids
+}
+
+resource "aws_lb_target_group" "keep_ui_tg_staging" {
+  name        = "keep-ui-tg-staging"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = data.aws_vpc.default.id
+  target_type = "ip"
+
+  health_check {
+    path                = "/"
+    protocol            = "HTTP"
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 5
+    interval            = 30
+    matcher             = "200"
+  }
+}
+
+resource "aws_lb_listener" "keep_ui_listener_staging" {
+  load_balancer_arn = aws_lb.keep_ui_alb_staging.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.keep_ui_tg_staging.arn
+  }
+}
+
+resource "aws_iam_role" "ecs_task_execution_role" {
+  name = "ecs-task-execution-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        },
+        Effect = "Allow",
+      },
+    ],
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_iam_role" "ecs_task_role" {
+  name = "ecs-task-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        },
+        Effect = "Allow",
+      },
+    ],
+  })
+}
+
+resource "aws_ecs_task_definition" "keep_ui_task_staging" {
+  family                   = "keep-ui-task-staging"
+  cpu                      = "256"
+  memory                   = "512"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
+
+  container_definitions = jsonencode([
+    {
+      name      = "keep_ui_staging"
+      image     = "${aws_ecr_repository.keep_ui.repository_url}:latest"
+      cpu       = 256
+      memory    = 512
+      essential = true
+      portMappings = [
+        {
+          containerPort = 80,
+          hostPort      = 80,
+          protocol      = "tcp"
+        }
+      ]
+    }
+  ])
+}
+
+resource "aws_ecs_service" "keep_ui_service_staging" {
+  name            = "keep-ui-service-staging"
+  cluster         = aws_ecs_cluster.keep_cluster_staging.id
+  task_definition = aws_ecs_task_definition.keep_ui_task_staging.arn
+  launch_type     = "FARGATE"
+  desired_count   = 1
+
+  network_configuration {
+    subnets          = data.aws_subnets.default.ids
+    assign_public_ip = true
+    security_groups  = [aws_security_group.keep_ui_alb_sg.id]
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.keep_ui_tg_staging.arn
+    container_name   = "keep_ui_staging"
+    container_port   = 80
+  }
+
+  depends_on = [
+    aws_lb_listener.keep_ui_listener_staging
+  ]
+}
+
+output "alb_dns_name" {
+  value = aws_lb.keep_ui_alb_staging.dns_name
 }
