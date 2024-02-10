@@ -2,49 +2,8 @@ provider "aws" {
   region = "us-east-1"
 }
 
-terraform {
-  backend "s3" {
-    bucket  = "keep-tf"
-    key     = "terraform.tfstate"
-    region  = "us-east-1"
-    encrypt = true
-  }
-}
-
-resource "aws_ecr_repository" "keep_ui" {
-  name                 = "keep_ui"
-  image_tag_mutability = "MUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = false
-  }
-
-  encryption_configuration {
-    encryption_type = "AES256"
-  }
-}
-
-output "keep_ui_ecr_image_name" {
-  description = "The full image name for keep_ui that can be used to pull the image"
-  value       = "${aws_ecr_repository.keep_ui.repository_url}:latest"
-}
-
-resource "aws_ecr_repository" "keep_server" {
-  name                 = "keep_server"
-  image_tag_mutability = "MUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = false
-  }
-
-  encryption_configuration {
-    encryption_type = "AES256"
-  }
-}
-
-output "keep_server_ecr_image_name" {
-  description = "The full image name for keep_server that can be used to pull the image"
-  value       = "${aws_ecr_repository.keep_server.repository_url}:latest"
+module "ecr" {
+  source = "../ecr"
 }
 
 resource "aws_iam_policy" "allow_push_pull_policy_keep" {
@@ -84,8 +43,8 @@ resource "aws_iam_policy" "allow_push_pull_policy_keep" {
           "ecr:UntagResource",
         ],
         Resource = [
-          aws_ecr_repository.keep_ui.arn,
-          aws_ecr_repository.keep_server.arn
+          module.ecr.keep_ui_ecr_arn,
+          module.ecr.keep_server_ecr_arn
         ]
       }
     ]
@@ -256,7 +215,7 @@ resource "aws_ecs_task_definition" "keep_ui_task_staging" {
   container_definitions = jsonencode([
     {
       name      = "keep_ui_staging"
-      image     = "${aws_ecr_repository.keep_ui.repository_url}:latest"
+      image     = module.ecr.keep_ui_ecr_image_name
       cpu       = 256
       memory    = 512
       essential = true
