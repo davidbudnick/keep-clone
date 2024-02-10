@@ -10,7 +10,7 @@ Purpose of this project is to create a clone of the [Google Keep](https://keep.g
 - [Docker](https://www.docker.com/)
 - [Tailwind](https://tailwindcss.com/)
 - [Shadcn/ui](https://ui.shadcn.com/)
-
+- [Terraform](https://www.terraform.io/)
 
 
 ---
