@@ -48,7 +48,13 @@ resource "aws_iam_policy" "allow_push_pull_policy_keep" {
       {
         Effect = "Allow"
         Action = [
-          "ecr:GetAuthorizationToken",
+          "ecr:GetAuthorizationToken"
+        ],
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
           "ecr:GetDownloadUrlForLayer",
           "ecr:BatchGetImage",
           "ecr:BatchCheckLayerAvailability",
@@ -66,7 +72,7 @@ resource "aws_iam_policy" "allow_push_pull_policy_keep" {
           "ecr:ListTagsForResource",
           "ecr:TagResource",
           "ecr:UntagResource",
-        ]
+        ],
         Resource = [
           aws_ecr_repository.keep_ui.arn,
           aws_ecr_repository.keep_server.arn
