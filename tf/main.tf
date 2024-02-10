@@ -129,7 +129,6 @@ output "secret_access_key" {
   sensitive = true
 }
 
-# Ensure .env (UI) and config.yml (Server) are placed in the bucket
 resource "aws_s3_bucket" "keep_secrets-staging" {
   bucket = "keep-secrets-staging"
 }
