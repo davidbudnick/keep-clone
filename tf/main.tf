@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 module "ecr" {
-  source = "../ecr"
+  source = "./ecr"
 }
 
 resource "aws_iam_policy" "allow_push_pull_policy_keep" {
