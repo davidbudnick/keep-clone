@@ -21,7 +21,3 @@ variable "keep_ui_alb_sg_id" {
 variable "keep_ui_tg_staging_arn" {
   type = string
 }
-
-variable "keep_secrets_arn" {
-  type = string
-}

@@ -27,13 +27,11 @@ output "secret_access_key" {
 }
 
 module "networking" {
-  source           = "./networking"
-  keep_secrets_arn = module.s3.keep_secrets_arn
+  source = "./networking"
 }
 
 module "ecs" {
   source                      = "./ecs"
-  keep_secrets_arn            = module.s3.keep_secrets_arn
   keep_ui_ecr_image_name      = module.ecr.keep_ui_ecr_image_name
   ecs_task_execution_role_arn = module.networking.ecs_task_execution_role_arn
   keep_ui_alb_staging_arn     = module.networking.keep_ui_alb_staging_arn
