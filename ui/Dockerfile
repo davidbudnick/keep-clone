@@ -2,7 +2,9 @@ FROM node:20-alpine as build-stage
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install
+
 COPY . .
+COPY .env .
 RUN yarn build
 
 FROM nginx:stable-alpine as production-stage

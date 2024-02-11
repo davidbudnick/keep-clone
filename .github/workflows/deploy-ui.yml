@@ -53,7 +53,14 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-
+    
+    - name: Create .env file
+      run: |
+        echo "VITE_API_CLIENT_ID=${{ secrets.VITE_API_CLIENT_ID }}" >> .env
+        echo "VITE_API_CLIENT_SECRET=${{ secrets.VITE_API_CLIENT_SECRET }}" >> .env
+        echo "VITE_API_GRAPHQL_ENDPOINT=${{ secrets.VITE_API_GRAPHQL_ENDPOINT }}" >> .env
+      working-directory: ui
+  
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -74,11 +81,7 @@ jobs:
         VITE_API_CLIENT_SECRET: ${{ secrets.VITE_API_CLIENT_SECRET }}
         VITE_API_GRAPHQL_ENDPOINT: ${{ secrets.VITE_API_GRAPHQL_ENDPOINT }}
       run: |
-        docker build \
-          --build-arg VITE_API_CLIENT_ID="${VITE_API_CLIENT_ID}" \
-          --build-arg VITE_API_CLIENT_SECRET="${VITE_API_CLIENT_SECRET}" \
-          --build-arg VITE_API_GRAPHQL_ENDPOINT="${VITE_API_GRAPHQL_ENDPOINT}" \
-          -t $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG ./ui
+        docker build -t $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG ./ui
         docker tag $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$UI_ECR_REPOSITORY:$GITHUB_SHA
         docker push $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$UI_ECR_REPOSITORY:$GITHUB_SHA
