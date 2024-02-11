@@ -106,7 +106,7 @@ jobs:
       with:
         task-definition: ${{ env.ECS_TASK_DEFINITION_UI }}
         container-name: ${{ env.ECS_CONTAINER_NAME_UI }}
-        image: ${{ steps.build-image.outputs.image }}
+        image: ${{ env.ECS_IMAGE_NAME_UI }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
