@@ -70,8 +70,15 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         UI_ECR_REPOSITORY: keep_ui
         IMAGE_TAG: latest
+        VITE_API_CLIENT_ID: ${{ secrets.VITE_API_CLIENT_ID }}
+        VITE_API_CLIENT_SECRET: ${{ secrets.VITE_API_CLIENT_SECRET }}
+        VITE_API_GRAPHQL_ENDPOINT: ${{ secrets.VITE_API_GRAPHQL_ENDPOINT }}
       run: |
-        docker build -t $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG ./ui
+        docker build \
+          --build-arg VITE_API_CLIENT_ID="${VITE_API_CLIENT_ID}" \
+          --build-arg VITE_API_CLIENT_SECRET="${VITE_API_CLIENT_SECRET}" \
+          --build-arg VITE_API_GRAPHQL_ENDPOINT="${VITE_API_GRAPHQL_ENDPOINT}" \
+          -t $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG ./ui
         docker tag $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$UI_ECR_REPOSITORY:$GITHUB_SHA
         docker push $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$UI_ECR_REPOSITORY:$GITHUB_SHA
