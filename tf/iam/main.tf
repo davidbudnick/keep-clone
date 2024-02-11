@@ -43,12 +43,12 @@ resource "aws_iam_policy" "allow_push_pull_policy_keep" {
   })
 }
 
-resource "aws_iam_group" "keep_users" {
+resource "aws_iam_group" "keep_users_group" {
   name = "KeepUsersGroup"
 }
 
 resource "aws_iam_group_policy_attachment" "keep_users_policy_attachment" {
-  group      = aws_iam_group.keep_users.name
+  group      = aws_iam_group.keep_users_group.name
   policy_arn = aws_iam_policy.allow_push_pull_policy_keep.arn
 }
 
@@ -63,9 +63,38 @@ resource "aws_iam_group_membership" "keep_user_github_membership" {
     aws_iam_user.keep_user_github.name,
   ]
 
-  group = aws_iam_group.keep_users.name
+  group = aws_iam_group.keep_users_group.name
 }
 
 resource "aws_iam_access_key" "keep_user_github_access_key" {
   user = aws_iam_user.keep_user_github.name
+}
+
+locals {
+  repository_name = "keep-clone"
+}
+
+resource "github_actions_secret" "aws_access_key_id" {
+  repository      = local.repository_name
+  secret_name     = "AWS_ACCESS_KEY_ID"
+  plaintext_value = aws_iam_access_key.keep_user_github_access_key.id
+}
+
+resource "github_actions_secret" "aws_secret_access_key" {
+  repository      = local.repository_name
+  secret_name     = "AWS_SECRET_ACCESS_KEY"
+  plaintext_value = aws_iam_access_key.keep_user_github_access_key.secret
+}
+
+resource "github_actions_secret" "aws_region" {
+  repository      = local.repository_name
+  secret_name     = "AWS_REGION"
+  plaintext_value = "us-east-1"
+}
+
+resource "github_actions_environment_secret" "staging_ui_env_file_content" {
+  repository      = local.repository_name
+  environment     = "build"
+  secret_name     = "UI_ENV"
+  plaintext_value = file("./env/staging.ui.env")
 }
