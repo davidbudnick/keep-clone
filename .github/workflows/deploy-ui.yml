@@ -43,8 +43,8 @@ jobs:
       run: yarn build
       working-directory: ui
   
-  build-and-push:
-    name: Build/Push UI
+  build-and-push-staging:
+    name: Build/Push UI Staging
     needs: 
       - build-test-ui
     
