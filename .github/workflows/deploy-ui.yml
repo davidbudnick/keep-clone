@@ -54,11 +54,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     
-    - name: Create .env file
+    - name: Create .env file from STAGING_UI_ENV
       run: |
-        echo "VITE_API_CLIENT_ID=${{ secrets.VITE_API_CLIENT_ID }}" >> .env
-        echo "VITE_API_CLIENT_SECRET=${{ secrets.VITE_API_CLIENT_SECRET }}" >> .env
-        echo "VITE_API_GRAPHQL_ENDPOINT=${{ secrets.VITE_API_GRAPHQL_ENDPOINT }}" >> .env
+        echo -e "${{ secrets.STAGING_UI_ENV }}" > .env
+      shell: bash
       working-directory: ui
   
     - name: Configure AWS credentials
