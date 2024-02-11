@@ -43,6 +43,10 @@ resource "aws_ecs_task_definition" "keep_ui_task_staging" {
           protocol      = "tcp"
         }
       ]
+      environmentFiles = [{
+        value = "${var.keep_secrets_arn}/staging.ui.env",
+        type  = "s3"
+      }]
     }
   ])
 }

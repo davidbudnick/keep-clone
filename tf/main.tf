@@ -2,6 +2,10 @@ provider "aws" {
   region = "us-east-1"
 }
 
+module "s3" {
+  source = "./s3"
+}
+
 module "ecr" {
   source = "./ecr"
 }
@@ -23,11 +27,13 @@ output "secret_access_key" {
 }
 
 module "networking" {
-  source = "./networking"
+  source           = "./networking"
+  keep_secrets_arn = module.s3.keep_secrets_arn
 }
 
 module "ecs" {
   source                      = "./ecs"
+  keep_secrets_arn            = module.s3.keep_secrets_arn
   keep_ui_ecr_image_name      = module.ecr.keep_ui_ecr_image_name
   ecs_task_execution_role_arn = module.networking.ecs_task_execution_role_arn
   keep_ui_alb_staging_arn     = module.networking.keep_ui_alb_staging_arn
