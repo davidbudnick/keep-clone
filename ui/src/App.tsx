@@ -40,6 +40,7 @@ i18n.use(initReactI18next)
     });
 
 export const App = () => {
+    console.log("QUERY ENDPOINT", import.meta.env.VITE_API_GRAPHQL_ENDPOINT)
     return (
         <GoogleOAuthProvider clientId={import.meta.env.VITE_API_CLIENT_ID}>
             <AuthProvider>
