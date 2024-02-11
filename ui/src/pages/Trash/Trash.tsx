@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { DeletedCard, SkeletonList } from "@/components"
 import { Status, useGetNotesQuery, useRemoveDeletedMutation } from "@/graphql/generated/schema";
 import { useToast } from "@/components/ui/use-toast";
@@ -18,13 +18,10 @@ const Trash: React.FC = () => {
         }
     );
 
-    const { loading, error, data, refetch } = useGetNotesQuery({
+    const { loading, error, data } = useGetNotesQuery({
         variables: { status: Status.Deleted },
+        skip: !auth.isAuthenticated
     });
-
-    useEffect(() => {
-        refetch();
-    }, [auth.isAuthenticated]);
 
     if (loading || error) {
         return (

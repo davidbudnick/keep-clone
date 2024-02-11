@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { Status, useGetNotesQuery } from "@/graphql/generated/schema";
 import { SkeletonList } from "@/components";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,13 +9,10 @@ import { useTranslation } from "react-i18next";
 const Archived: React.FC = () => {
     const auth = useAuth();
     const { t } = useTranslation();
-    const { loading, error, data, refetch } = useGetNotesQuery({
+    const { loading, error, data } = useGetNotesQuery({
         variables: { status: Status.Archived },
+        skip: !auth.isAuthenticated
     });
-
-    useEffect(() => {
-        refetch();
-    }, [auth.isAuthenticated]);
 
     if (loading || error) {
         return (

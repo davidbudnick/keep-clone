@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { CreateNote, HomeCard, SkeletonList } from "@/components";
 import { Status, useGetNotesQuery } from "@/graphql/generated/schema";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,13 +9,10 @@ import { FaGoogle } from "react-icons/fa";
 const Home: React.FC = () => {
     const auth = useAuth();
     const { t } = useTranslation();
-    const { loading, error, data, refetch } = useGetNotesQuery({
+    const { loading, error, data } = useGetNotesQuery({
         variables: { status: Status.Active },
+        skip: !auth.isAuthenticated
     });
-
-    useEffect(() => {
-        refetch();
-    }, [auth.isAuthenticated]);
 
     if (loading || error) {
         return (
