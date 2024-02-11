@@ -45,6 +45,7 @@ jobs:
   
   build-and-push-staging:
     name: Build/Push UI Staging
+    environment: staging
     needs: 
       - build-test-ui
     
@@ -54,9 +55,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     
-    - name: Create .env file from STAGING_UI_ENV
+    - name: Create .env file from UI_ENV
       run: |
-        echo -e "${{ secrets.STAGING_UI_ENV }}" > .env
+        echo -e "${{ secrets.UI_ENV }}" > .env
       shell: bash
       working-directory: ui
   
@@ -72,6 +73,7 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v2
 
     - name: Build, tag, and push UI image to Amazon ECR
+      id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         UI_ECR_REPOSITORY: keep_ui
@@ -81,3 +83,30 @@ jobs:
         docker tag $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$UI_ECR_REPOSITORY:$GITHUB_SHA
         docker push $ECR_REGISTRY/$UI_ECR_REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$UI_ECR_REPOSITORY:$GITHUB_SHA
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+
+  deploy-staging:
+    name: Deploy UI Staging
+    environment: staging-deploy
+    needs: 
+      - build-and-push-staging
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Update Image
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ${{ env.ECS_TASK_DEFINITION_UI }}
+        container-name: ${{ env.ECS_CONTAINER_NAME_UI }}
+        image: ${{ steps.build-image.outputs.image }}
+
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: ${{ env.ECS_SERVICE_NAME_UI }}
+        cluster: ${{ env.ECS_CLUSTER_NAME_UI }}
+        wait-for-service-stability: true
