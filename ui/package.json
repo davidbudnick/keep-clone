@@ -31,7 +31,7 @@
     "date-fns": "^3.3.1",
     "graphql": "^16.8.1",
     "i18next": "^23.8.2",
-    "lucide-react": "^0.323.0",
+    "lucide-react": "^0.325.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.50.1",
