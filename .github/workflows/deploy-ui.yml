@@ -100,7 +100,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
   
-    # TODO: add these secrets to the repository
     - name: Download task definition
       env:
         ECS_FAMILY_NAME_UI: ${{ secrets.ECS_FAMILY_NAME_UI }}
