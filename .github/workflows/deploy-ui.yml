@@ -99,19 +99,27 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
+  
+    # TODO: add these secrets to the repository
+    - name: Download task definition
+      env:
+        ECS_FAMILY_NAME_UI: ${{ secrets.ECS_FAMILY_NAME_UI }}
+        ECS_CONTAINER_NAME_UI: ${{ secrets.ECS_CONTAINER_NAME_UI }}
+      run: |
+        aws ecs describe-task-definition --task-definition $ECS_FAMILY_NAME_UI --query $ECS_CONTAINER_NAME_UI > task-definition.json
 
     - name: Update Image
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION_UI }}
-        container-name: ${{ env.ECS_CONTAINER_NAME_UI }}
-        image: ${{ env.ECS_IMAGE_NAME_UI }}
+        task-definition: task-definition.json
+        container-name: ${{ secrets.ECS_CONTAINER_NAME_UI }}
+        image: ${{ secrets.ECS_IMAGE_NAME_UI }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ${{ env.ECS_SERVICE_NAME_UI }}
-        cluster: ${{ env.ECS_CLUSTER_NAME_UI }}
+        service: ${{ secrets.ECS_SERVICE_NAME_UI }}
+        cluster: ${{ secrets.ECS_CLUSTER_NAME_UI }}
         wait-for-service-stability: true
