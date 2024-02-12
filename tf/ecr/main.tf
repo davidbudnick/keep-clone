@@ -1,3 +1,7 @@
+locals {
+  repository_name = "keep-clone"
+}
+
 resource "aws_ecr_repository" "keep_ui_staging" {
   name                 = "keep_ui_staging"
   image_tag_mutability = "MUTABLE"
@@ -37,11 +41,4 @@ resource "aws_ecr_repository" "keep_server_staging" {
     encryption_type = "AES256"
   }
 }
-
-locals {
-  repository_name = "keep-clone"
-
-}
-
-
 

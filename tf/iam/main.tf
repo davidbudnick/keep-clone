@@ -1,3 +1,7 @@
+resource "aws_iam_group" "keep_users_group" {
+  name = "KeepUsersGroup"
+}
+
 resource "aws_iam_policy" "allow_push_pull_policy_keep" {
   name        = "AllowPushPullPolicyKeep"
   path        = "/"
@@ -43,13 +47,72 @@ resource "aws_iam_policy" "allow_push_pull_policy_keep" {
   })
 }
 
-resource "aws_iam_group" "keep_users_group" {
-  name = "KeepUsersGroup"
-}
-
 resource "aws_iam_group_policy_attachment" "keep_users_policy_attachment" {
   group      = aws_iam_group.keep_users_group.name
   policy_arn = aws_iam_policy.allow_push_pull_policy_keep.arn
+}
+
+resource "aws_iam_policy" "allow_update_and_deploy_keep" {
+  name        = "AllowUpdateAndDeployKeep"
+  path        = "/"
+  description = "Policy that allows updating ECS task definitions and deploying updates to ECS services, with specific permissions for ECR."
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "ecr:GetAuthorizationToken",
+        ],
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:PutImage",
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "ecr:DescribeRepositories",
+          "ecr:GetRepositoryPolicy",
+          "ecr:ListImages",
+          "ecr:DeleteRepository",
+          "ecr:DeleteRepositoryPolicy",
+          "ecr:SetRepositoryPolicy",
+          "ecr:DeleteImage",
+          "ecr:ListTagsForResource",
+          "ecr:TagResource",
+          "ecr:UntagResource",
+        ],
+        Resource = "*",
+      },
+      {
+        Effect : "Allow",
+        Action : [
+          "ecs:RegisterTaskDefinition",
+          "ecs:DeregisterTaskDefinition",
+          "ecs:UpdateService",
+          "ecs:DescribeServices",
+          "ecs:DescribeTaskDefinition",
+          "ecs:DescribeTasks",
+          "ecs:ListTasks",
+          "ecs:StartTask",
+          "ecs:StopTask",
+          "ecs:ListClusters",
+        ],
+        Resource : "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_group_policy_attachment" "keep_users_policy_attachment_2" {
+  group      = aws_iam_group.keep_users_group.name
+  policy_arn = aws_iam_policy.allow_update_and_deploy_keep.arn
 }
 
 resource "aws_iam_user" "keep_user_github" {
@@ -58,7 +121,6 @@ resource "aws_iam_user" "keep_user_github" {
 
 resource "aws_iam_group_membership" "keep_user_github_membership" {
   name = "keep-user-github-membership"
-
   users = [
     aws_iam_user.keep_user_github.name,
   ]
