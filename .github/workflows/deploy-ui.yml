@@ -103,9 +103,8 @@ jobs:
     - name: Download task definition
       env:
         ECS_FAMILY_NAME_UI: ${{ secrets.ECS_FAMILY_NAME_UI }}
-        ECS_CONTAINER_NAME_UI: ${{ secrets.ECS_CONTAINER_NAME_UI }}
       run: |
-        aws ecs describe-task-definition --task-definition $ECS_FAMILY_NAME_UI --query $ECS_CONTAINER_NAME_UI > task-definition.json
+        aws ecs describe-task-definition --task-definition $ECS_FAMILY_NAME_UI > task-definition.json
 
     - name: Update Image
       id: task-def
