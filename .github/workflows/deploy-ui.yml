@@ -52,6 +52,14 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Create .env file from UI_ENV
+      run: |
+        echo -e "${{ secrets.UI_ENV }}" > .env
+      shell: bash
+    
     - name: Configure AWS credentials
       id: login-aws
       uses: aws-actions/configure-aws-credentials@v4
@@ -63,12 +71,6 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
-
-    - name: Create .env file from UI_ENV
-      run: |
-        echo -e "${{ secrets.UI_ENV }}" > .env
-      shell: bash
-      working-directory: ui
 
     - name: Build, tag, and push UI image to Amazon ECR
       id: build-image
