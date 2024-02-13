@@ -55,7 +55,7 @@ resource "aws_iam_group_policy_attachment" "keep_users_policy_attachment" {
 resource "aws_iam_policy" "allow_update_and_deploy_keep" {
   name        = "AllowUpdateAndDeployKeep"
   path        = "/"
-  description = "Policy that allows updating ECS task definitions and deploying updates to ECS services, with specific permissions for ECR."
+  description = "Policy that allows updating ECS task definitions and deploying updates to ECS services, with specific permissions for ECR and the ability to pass IAM roles to ECS."
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -103,6 +103,7 @@ resource "aws_iam_policy" "allow_update_and_deploy_keep" {
           "ecs:StartTask",
           "ecs:StopTask",
           "ecs:ListClusters",
+          "iam:PassRole",
         ],
         Resource : "*"
       }
