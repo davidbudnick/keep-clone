@@ -104,8 +104,16 @@ jobs:
       env:
         ECS_FAMILY_NAME_UI: ${{ secrets.ECS_FAMILY_NAME_UI }}
       run: |
-        aws ecs describe-task-definition --task-definition $ECS_FAMILY_NAME_UI --query taskDefinition > task-definition.json
-
+        aws ecs describe-task-definition --task-definition $ECS_FAMILY_NAME_UI --query taskDefinition | jq -r 'del(
+          .taskDefinitionArn,
+          .requiresAttributes,
+          .compatibilities,
+          .revision,
+          .status,
+          .registeredAt,
+          .registeredBy
+        )' > task-definition.json
+        
     - name: Update Image
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
