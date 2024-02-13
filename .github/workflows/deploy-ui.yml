@@ -59,6 +59,7 @@ jobs:
       run: |
         echo -e "${{ secrets.UI_ENV }}" > .env
       shell: bash
+      working-directory: ui
     
     - name: Configure AWS credentials
       id: login-aws
