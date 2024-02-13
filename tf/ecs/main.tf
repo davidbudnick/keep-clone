@@ -198,6 +198,10 @@ resource "aws_ecs_service" "keep_ui_service_staging" {
     container_port   = 80
   }
 
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
+
   depends_on = [
     aws_iam_role_policy.ecs_task_execution_role_policy,
     aws_lb.keep_ui_alb_staging,
