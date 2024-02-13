@@ -15,10 +15,10 @@ resource "aws_ecr_repository" "keep_ui_staging" {
   }
 }
 
-resource "github_actions_environment_secret" "aws_access_key_id" {
+resource "github_actions_environment_secret" "keep_ui_ecr_respository_name_staging" {
   repository      = local.repository_name
-  environment     = "build"
-  secret_name     = "AWS_ECR_UI_REPO"
+  environment     = "staging"
+  secret_name     = "ECR_REPO_NAME_UI"
   plaintext_value = aws_ecr_repository.keep_ui_staging.name
 }
 

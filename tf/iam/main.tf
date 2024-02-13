@@ -157,7 +157,7 @@ resource "github_actions_secret" "aws_region" {
 
 resource "github_actions_environment_secret" "staging_ui_env_file_content" {
   repository      = local.repository_name
-  environment     = "build"
+  environment     = "staging"
   secret_name     = "UI_ENV"
   plaintext_value = file("./env/staging.ui.env")
 }
