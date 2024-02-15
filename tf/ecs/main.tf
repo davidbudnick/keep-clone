@@ -179,12 +179,17 @@ resource "github_actions_environment_secret" "keep_ui_ecs_cluster_name_staging" 
   plaintext_value = aws_ecs_cluster.keep_cluster_staging.name
 }
 
+data "aws_ecs_task_definition" "keep_ui_task_staging" {
+  task_definition = aws_ecs_task_definition.keep_ui_task_staging.family
+  depends_on      = [aws_ecs_task_definition.keep_ui_task_staging]
+}
+
 resource "aws_ecs_service" "keep_ui_service_staging" {
   name            = "keep-ui-service-staging"
-  task_definition = aws_ecs_task_definition.keep_ui_task_staging.arn
+  task_definition = data.aws_ecs_task_definition.keep_ui_task_staging.arn
   cluster         = aws_ecs_cluster.keep_cluster_staging.id
   launch_type     = "FARGATE"
-  desired_count   = 1
+  desired_count   = 2
 
   network_configuration {
     subnets          = data.aws_subnets.default.ids
@@ -196,10 +201,6 @@ resource "aws_ecs_service" "keep_ui_service_staging" {
     target_group_arn = aws_lb_target_group.keep_ui_tg_staging.arn
     container_name   = "keep_ui_staging"
     container_port   = 80
-  }
-
-  lifecycle {
-    ignore_changes = [task_definition]
   }
 
   depends_on = [
