@@ -63,7 +63,7 @@ jobs:
         ECR_REPO_NAME_SERVER: ${{ secrets.ECR_REPO_NAME_SERVER }}
         IMAGE_TAG: latest
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPO_NAME_SERVER:$IMAGE_TAG ./ui
+        docker build -t $ECR_REGISTRY/$ECR_REPO_NAME_SERVER:$IMAGE_TAG ./server
         docker tag $ECR_REGISTRY/$ECR_REPO_NAME_SERVER:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPO_NAME_SERVER:$GITHUB_SHA
         docker push $ECR_REGISTRY/$ECR_REPO_NAME_SERVER:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPO_NAME_SERVER:$GITHUB_SHA
