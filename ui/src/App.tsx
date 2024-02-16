@@ -44,21 +44,22 @@ export const App = () => {
     console.log("API_ENDPOINT", import.meta.env.VITE_API_GRAPHQL_ENDPOINT)
     return (
         <GoogleOAuthProvider clientId={import.meta.env.VITE_API_CLIENT_ID}>
-            <AuthProvider>
-                <ApolloProvider client={client}>
-                    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-                        <BrowserRouter>
+            <ApolloProvider client={client}>
+                <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+                    <BrowserRouter>
+                        <AuthProvider>
                             <Navbar />
                             <Sidebar />
+
                             <Routes>
                                 <Route path={ROUTES.HOME} element={<Home />} />
                                 <Route path={ROUTES.ARCHIVED} element={<Archived />} />
                                 <Route path={ROUTES.TRASH} element={<Trash />} />
                             </Routes>
-                        </BrowserRouter>
-                    </ThemeProvider>
-                </ApolloProvider>
-            </AuthProvider>
+                        </AuthProvider>
+                    </BrowserRouter>
+                </ThemeProvider>
+            </ApolloProvider>
         </GoogleOAuthProvider>
     )
 }

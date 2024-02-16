@@ -1,6 +1,8 @@
 import { AUTH } from "@/constants/auth";
+import { ROUTES } from "@/constants/routes";
 import { CredentialResponse, googleLogout } from "@react-oauth/google";
 import { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextValue {
     isAuthenticated: boolean;
@@ -38,6 +40,7 @@ export interface User {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<User>();
+    const navigate = useNavigate();
 
     const login = (response: CredentialResponse) => {
         localStorage.setItem(AUTH.GOOGLE_CLIENT, response.clientId || "");
@@ -52,6 +55,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.removeItem(AUTH.GOOGLE_CREDENTIAL);
         googleLogout();
         setUser(undefined);
+        navigate(ROUTES.HOME);
     };
 
     const decodeUser = (credential: string) => {
