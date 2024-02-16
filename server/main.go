@@ -92,7 +92,7 @@ func main() {
 	r.GET("/", playgroundHandler())
 
 	slog.InfoContext(ctx, "Starting GIN server", "port", c.Ports.HTTP)
-	if err = r.Run(fmt.Sprintf(":%d", c.Ports.HTTP)); err != nil {
+	if err = r.Run(fmt.Sprintf(":%s", c.Ports.HTTP)); err != nil {
 		slog.ErrorContext(ctx, "Error starting GIN server", "error", err)
 	}
 }

@@ -3,10 +3,11 @@ package config
 import (
 	"context"
 	"errors"
+	"os"
 
 	"log/slog"
 
-	"github.com/spf13/viper"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -22,7 +23,7 @@ type Database struct {
 }
 
 type Ports struct {
-	HTTP int
+	HTTP string
 }
 
 type JWT struct {
@@ -30,31 +31,28 @@ type JWT struct {
 }
 
 var (
-	ErrConfigFileNameEmpty = errors.New("error config file is empty")
-	ErrReadingConfigFile   = errors.New("error reading config file")
-	ErrDecodingConfigFile  = errors.New("error decoding config file")
+	ErrReadingEnvFile = errors.New("error reading env file")
 )
 
 func GetConfig(ctx context.Context, fileName string) (*Config, error) {
-	v := viper.New()
-	if fileName == "" {
-		slog.ErrorContext(ctx, ErrConfigFileNameEmpty.Error())
-		return nil, ErrConfigFileNameEmpty
+	err := godotenv.Load()
+	if err != nil {
+		slog.ErrorContext(ctx, "Error loading .env file", "error", err)
+		return nil, ErrReadingEnvFile
 	}
 
-	v.SetConfigFile(fileName)
-
-	err := v.ReadInConfig()
-	if err != nil {
-		slog.ErrorContext(ctx, "Fatal error config file", "error", err)
-		return nil, err
-	}
-
-	var conf Config
-	err = v.Unmarshal(&conf)
-	if err != nil {
-		slog.ErrorContext(ctx, "unable to decode into config struct", "error", err)
-		return nil, err
+	var conf Config = Config{
+		Database{
+			Connection: os.Getenv("DB_CONNECTION"),
+			Username:   os.Getenv("DB_USERNAME"),
+			Password:   os.Getenv("DB_PASSWORD"),
+		},
+		Ports{
+			HTTP: os.Getenv("PORT"),
+		},
+		JWT{
+			ClientID: os.Getenv("JWT_CLIENT_ID"),
+		},
 	}
 
 	return &conf, nil
