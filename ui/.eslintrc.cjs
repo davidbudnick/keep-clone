@@ -21,7 +21,6 @@ module.exports = {
     "eol-last": ["error", "always"],
     "newline-per-chained-call": ["error", { "ignoreChainWithDepth": 2 }],
     "quotes": ["error", "double"],
-    "tailwindcss/classnames-order": "warn",
     "tailwindcss/no-custom-classname": "off",
     "tailwindcss/no-contradicting-classname": "error"
   },
