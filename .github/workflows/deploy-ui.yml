@@ -44,7 +44,7 @@ jobs:
       working-directory: ui
 
   build-staging:
-    name: Deploy UI Staging
+    name: Build UI Staging
     environment: staging
     needs: 
       - build-test-ui
