@@ -42,8 +42,8 @@ jobs:
     - name: Build
       run: yarn build
       working-directory: ui
-  
-  deploy-staging:
+
+  build-staging:
     name: Deploy UI Staging
     environment: staging
     needs: 
@@ -84,7 +84,28 @@ jobs:
         docker tag $ECR_REGISTRY/$ECR_REPO_NAME_UI:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPO_NAME_UI:$GITHUB_SHA
         docker push $ECR_REGISTRY/$ECR_REPO_NAME_UI:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPO_NAME_UI:$GITHUB_SHA
-  
+
+  deploy-staging:
+    name: Deploy UI Staging
+    environment: staging
+    needs: 
+      - build-test-ui
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Configure AWS credentials
+      id: login-aws
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
     - name: Download task definition
       env:
         ECS_FAMILY_NAME_UI: ${{ secrets.ECS_FAMILY_NAME_UI }}
