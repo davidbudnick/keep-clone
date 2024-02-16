@@ -89,7 +89,7 @@ jobs:
     name: Deploy UI Staging
     environment: staging
     needs: 
-      - build-test-ui
+      - build-staging
     
     runs-on: ubuntu-latest
     
