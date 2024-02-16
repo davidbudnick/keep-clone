@@ -9,10 +9,9 @@ data "aws_subnets" "default" {
   }
 }
 
-resource "aws_security_group" "keep_ui_alb_sg" {
-  name        = "keep-ui-alb-sg-staging"
-  description = "ALB security group for keep-ui in staging"
-  vpc_id      = data.aws_vpc.default.id
+resource "aws_security_group" "alb_security_group" {
+  name   = "keep-alb-security-group-${var.environment}"
+  vpc_id = data.aws_vpc.default.id
 
   ingress {
     from_port   = 80
@@ -29,16 +28,16 @@ resource "aws_security_group" "keep_ui_alb_sg" {
   }
 }
 
-resource "aws_lb" "keep_ui_alb_staging" {
-  name               = "keep-ui-alb-staging"
+resource "aws_lb" "load_balancer" {
+  name               = "keep-load-balancer-${var.environment}"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.keep_ui_alb_sg.id]
+  security_groups    = [aws_security_group.alb_security_group.id]
   subnets            = data.aws_subnets.default.ids
 }
 
-resource "aws_lb_target_group" "keep_ui_tg_staging" {
-  name        = "keep-ui-tg-staging"
+resource "aws_lb_target_group" "target_group_ui" {
+  name        = "target-group-ui-${var.environment}"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = data.aws_vpc.default.id
@@ -55,20 +54,19 @@ resource "aws_lb_target_group" "keep_ui_tg_staging" {
   }
 }
 
-resource "aws_lb_listener" "keep_ui_listener_staging" {
-  load_balancer_arn = aws_lb.keep_ui_alb_staging.arn
+resource "aws_lb_listener" "load_balancer_listener_ui" {
+  load_balancer_arn = aws_lb.load_balancer.arn
   port              = 80
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.keep_ui_tg_staging.arn
+    target_group_arn = aws_lb_target_group.target_group_ui.arn
   }
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
   name = "ecs-task-execution-role"
-
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -108,23 +106,23 @@ resource "aws_iam_role_policy" "ecs_task_execution_role_policy" {
 
 resource "aws_iam_role" "ecs_task_role" {
   name = "ecs-task-role"
-
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
-        Action = "sts:AssumeRole",
+        Effect = "Allow",
         Principal = {
           Service = "ecs-tasks.amazonaws.com"
         },
-        Effect = "Allow",
+        Action = "sts:AssumeRole",
       },
     ],
   })
 }
 
-resource "aws_ecs_task_definition" "keep_ui_task_staging" {
-  family                   = "keep-ui-task-staging"
+
+resource "aws_ecs_task_definition" "keep_ui_task_definition" {
+  family                   = "keep-ui-task-${var.environment}"
   cpu                      = "256"
   memory                   = "512"
   network_mode             = "awsvpc"
@@ -133,8 +131,8 @@ resource "aws_ecs_task_definition" "keep_ui_task_staging" {
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   container_definitions = jsonencode([
     {
-      name      = "keep_ui_staging"
-      image     = var.keep_ui_ecr_image_name
+      name      = "keep-ui-${var.environment}"
+      image     = var.keep_ui_image_name
       cpu       = 256
       memory    = 512
       essential = true
@@ -149,69 +147,59 @@ resource "aws_ecs_task_definition" "keep_ui_task_staging" {
   ])
 }
 
-locals {
-  repository_name = "keep-clone"
-  environment     = "staging"
-}
-
-resource "github_actions_environment_secret" "keep_ui_ecs_family_name_staging" {
-  repository      = local.repository_name
-  environment     = "staging"
+resource "github_actions_environment_secret" "family_name" {
+  repository      = var.repository_name
+  environment     = var.environment
   secret_name     = "ECS_FAMILY_NAME_UI"
-  plaintext_value = aws_ecs_task_definition.keep_ui_task_staging.family
+  plaintext_value = aws_ecs_task_definition.keep_ui_task_definition.family
 }
 
-resource "github_actions_environment_secret" "keep_ui_ecs_container_name_staging" {
-  repository      = local.repository_name
-  environment     = "staging"
+resource "github_actions_environment_secret" "container_name" {
+  repository      = var.repository_name
+  environment     = var.environment
   secret_name     = "ECS_CONTAINER_NAME_UI"
-  plaintext_value = "keep_ui_staging"
+  plaintext_value = "keep-ui-${var.environment}"
 }
 
-resource "aws_ecs_cluster" "keep_cluster_staging" {
-  name = "keep-cluster-staging"
+resource "aws_ecs_cluster" "keep_cluster" {
+  name = "keep-cluster-${var.environment}"
 }
 
-resource "github_actions_environment_secret" "keep_ui_ecs_cluster_name_staging" {
-  repository      = local.repository_name
-  environment     = "staging"
-  secret_name     = "ECS_CLUSTER_NAME_UI"
-  plaintext_value = aws_ecs_cluster.keep_cluster_staging.name
+resource "github_actions_environment_secret" "cluster_name" {
+  repository      = var.repository_name
+  environment     = var.environment
+  secret_name     = "ECS_CLUSTER_NAME"
+  plaintext_value = aws_ecs_cluster.keep_cluster.name
 }
 
-data "aws_ecs_task_definition" "keep_ui_task_staging" {
-  task_definition = aws_ecs_task_definition.keep_ui_task_staging.family
-  depends_on      = [aws_ecs_task_definition.keep_ui_task_staging]
-}
-
-resource "aws_ecs_service" "keep_ui_service_staging" {
-  name            = "keep-ui-service-staging"
-  task_definition = data.aws_ecs_task_definition.keep_ui_task_staging.arn
-  cluster         = aws_ecs_cluster.keep_cluster_staging.id
+resource "aws_ecs_service" "keep_ui_service" {
+  name            = "keep-ui-service-${var.environment}"
+  task_definition = aws_ecs_task_definition.keep_ui_task_definition.arn
+  cluster         = aws_ecs_cluster.keep_cluster.id
   launch_type     = "FARGATE"
   desired_count   = 2
 
   network_configuration {
     subnets          = data.aws_subnets.default.ids
     assign_public_ip = true
-    security_groups  = [aws_security_group.keep_ui_alb_sg.id]
+    security_groups  = [aws_security_group.alb_security_group.id]
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.keep_ui_tg_staging.arn
-    container_name   = "keep_ui_staging"
+    target_group_arn = aws_lb_target_group.target_group_ui.arn
+    container_name   = "keep-ui-${var.environment}"
     container_port   = 80
   }
 
   depends_on = [
     aws_iam_role_policy.ecs_task_execution_role_policy,
-    aws_lb.keep_ui_alb_staging,
+    aws_lb.load_balancer,
   ]
 }
 
-resource "github_actions_environment_secret" "keep_ui_ecs_service_name_staging" {
-  repository      = local.repository_name
-  environment     = "staging"
+resource "github_actions_environment_secret" "keep_ui_ecs_service_name" {
+  repository      = var.repository_name
+  environment     = var.environment
   secret_name     = "ECS_SERVICE_NAME_UI"
-  plaintext_value = aws_ecs_service.keep_ui_service_staging.name
+  plaintext_value = aws_ecs_service.keep_ui_service.name
 }
