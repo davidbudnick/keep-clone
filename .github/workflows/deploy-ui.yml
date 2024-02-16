@@ -80,8 +80,8 @@ jobs:
         ECR_REPO_NAME_UI: ${{ secrets.ECR_REPO_NAME_UI }}
         IMAGE_TAG: latest
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPO_NAME_UI:$IMAGE_TAG ./ui
-        docker tag $ECR_REGISTRY/$ECR_REPO_NAME_UI:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPO_NAME_UI:$GITHUB_SHA
+        docker build -t $ECR_REPO_URL_UI:$IMAGE_TAG ./ui
+        docker tag $ECR_REPO_URL_UI$IMAGE_TAG $ECR_REGISTRY/$ECR_REPO_NAME_UI:$GITHUB_SHA
         docker push $ECR_REGISTRY/$ECR_REPO_NAME_UI:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPO_NAME_UI:$GITHUB_SHA
   
@@ -102,15 +102,18 @@ jobs:
     - name: Update Image
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPO_NAME_UI: ${{ secrets.ECR_REPO_NAME_UI }}
       with:
         task-definition: task-definition.json
         container-name: ${{ secrets.ECS_CONTAINER_NAME_UI }}
-        image: ${{ secrets.ECS_IMAGE_NAME_UI }}
+        image: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO_NAME_UI }}:latest
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: ${{ secrets.ECS_SERVICE_NAME_UI }}
-        cluster: ${{ secrets.ECS_CLUSTER_NAME_UI }}
+        cluster: ${{ secrets.ECS_CLUSTER_NAME }}
         wait-for-service-stability: true
