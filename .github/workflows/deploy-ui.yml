@@ -81,7 +81,7 @@ jobs:
         IMAGE_TAG: latest
       run: |
         docker build -t $ECR_REPO_URL_UI:$IMAGE_TAG ./ui
-        docker tag $ECR_REPO_URL_UI$IMAGE_TAG $ECR_REGISTRY/$ECR_REPO_NAME_UI:$GITHUB_SHA
+        docker tag $ECR_REPO_URL_UI:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPO_NAME_UI:$GITHUB_SHA
         docker push $ECR_REGISTRY/$ECR_REPO_NAME_UI:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPO_NAME_UI:$GITHUB_SHA
   
