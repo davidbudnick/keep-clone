@@ -25,7 +25,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	c, err := config.GetConfig(ctx, "config.yml")
+	cfg, err := config.GetConfig(ctx, "config.yml")
 	if err != nil {
 		slog.ErrorContext(ctx, "Error getting config", "error", err)
 		panic(err)
@@ -36,14 +36,14 @@ func main() {
 	}))
 	slog.SetDefault(l)
 
-	databaseService, err := db.NewDatabaseService(ctx, c.Database.Connection, c.Database.Username, c.Database.Password)
+	databaseService, err := db.NewDatabaseService(ctx, cfg)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error creating database service", "error", err)
 		panic(err)
 	}
 	defer databaseService.Client().Disconnect(ctx)
 
-	notesCollection := databaseService.Client().Database(db.NAME).Collection(notes.NOTES_COLLECTION)
+	notesCollection := databaseService.Client().Database(databaseService.Name()).Collection(notes.NOTES_COLLECTION)
 	_, err = notesCollection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys: bson.D{
 			{
@@ -83,16 +83,16 @@ func main() {
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 
 	r.Use(cors.New(config))
-	r.Use(middleware.JWT(ctx, c))
+	r.Use(middleware.JWT(ctx, cfg))
 	r.POST("/query", graphqlHandler(
 		notes.NewNotesService(
-			notes.NewNotesRepo(databaseService.Client()),
+			notes.NewNotesRepo(databaseService.Client(), databaseService.Name()),
 		),
 	))
 	r.GET("/", playgroundHandler())
 
-	slog.InfoContext(ctx, "Starting GIN server", "port", c.Ports.HTTP)
-	if err = r.Run(fmt.Sprintf(":%s", c.Ports.HTTP)); err != nil {
+	slog.InfoContext(ctx, "Starting GIN server", "port", cfg.Ports.HTTP)
+	if err = r.Run(fmt.Sprintf(":%s", cfg.Ports.HTTP)); err != nil {
 		slog.ErrorContext(ctx, "Error starting GIN server", "error", err)
 	}
 }

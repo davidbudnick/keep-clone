@@ -18,8 +18,7 @@ type Config struct {
 
 type Database struct {
 	Connection string
-	Username   string
-	Password   string
+	Name       string
 }
 
 type Ports struct {
@@ -44,8 +43,7 @@ func GetConfig(ctx context.Context, fileName string) (*Config, error) {
 	var conf Config = Config{
 		Database{
 			Connection: os.Getenv("DB_CONNECTION"),
-			Username:   os.Getenv("DB_USERNAME"),
-			Password:   os.Getenv("DB_PASSWORD"),
+			Name:       os.Getenv("DB_NAME"),
 		},
 		Ports{
 			HTTP: os.Getenv("PORT"),
