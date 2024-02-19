@@ -9,7 +9,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/samber/slog-gin v1.10.1
 	github.com/vektah/gqlparser/v2 v2.5.11
-	go.mongodb.org/mongo-driver v1.13.1
+	go.mongodb.org/mongo-driver v1.14.0
 	google.golang.org/api v0.163.0
 )
 
