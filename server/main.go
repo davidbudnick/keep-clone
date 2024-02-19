@@ -90,6 +90,11 @@ func main() {
 		),
 	))
 	r.GET("/", playgroundHandler())
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status": "ok",
+		})
+	})
 
 	slog.InfoContext(ctx, "Starting GIN server", "port", cfg.Ports.HTTP)
 	if err = r.Run(fmt.Sprintf(":%s", cfg.Ports.HTTP)); err != nil {
