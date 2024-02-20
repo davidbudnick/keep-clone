@@ -24,6 +24,35 @@ resource "aws_ecs_task_definition" "keep_ui_task_definition" {
   ])
 }
 
+resource "aws_ecs_task_definition" "keep_server_task_definition" {
+  family                   = "keep-server-task-${var.environment}"
+  cpu                      = "256"
+  memory                   = "512"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
+  container_definitions = jsonencode([
+    {
+      name      = "keep-server-${var.environment}"
+      image     = var.keep_server_image_name
+      cpu       = 256
+      memory    = 512
+      essential = true
+      portMappings = [
+        {
+          containerPort = 3333,
+          protocol      = "tcp"
+        }
+      ],
+      environmentFiles = [{
+        value = "${var.bucket_arn}/.env",
+        type  = "s3"
+      }]
+    }
+  ])
+}
+
 
 resource "aws_ecs_cluster" "keep_cluster" {
   name = "keep-cluster-${var.environment}"
@@ -54,3 +83,28 @@ resource "aws_ecs_service" "keep_ui_service" {
   ]
 }
 
+
+resource "aws_ecs_service" "keep_server_service" {
+  name            = "keep-server-service-${var.environment}"
+  task_definition = aws_ecs_task_definition.keep_server_task_definition.arn
+  cluster         = aws_ecs_cluster.keep_cluster.id
+  launch_type     = "FARGATE"
+  desired_count   = 2
+
+  network_configuration {
+    subnets          = data.aws_subnets.default.ids
+    assign_public_ip = true
+    security_groups  = [aws_security_group.alb_security_group.id]
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.target_group_server.arn
+    container_name   = "keep-server-${var.environment}"
+    container_port   = 3333
+  }
+
+  depends_on = [
+    aws_lb_listener_rule.load_balancer_listener_server,
+    aws_lb.load_balancer,
+  ]
+}

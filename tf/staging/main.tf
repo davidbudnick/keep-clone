@@ -35,8 +35,10 @@ module "iam" {
 }
 
 module "ecs" {
-  environment        = var.environment
-  repository_name    = var.repository_name
-  keep_ui_image_name = module.ecr.keep_ui_image_name
-  source             = "../modules/ecs"
+  environment            = var.environment
+  repository_name        = var.repository_name
+  keep_ui_image_name     = module.ecr.keep_ui_image_name
+  keep_server_image_name = module.ecr.keep_server_image_name
+  bucket_arn             = module.s3.bucket_arn
+  source                 = "../modules/ecs"
 }
