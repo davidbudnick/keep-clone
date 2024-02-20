@@ -11,9 +11,10 @@ import (
 )
 
 type Config struct {
-	Database Database
-	Ports    Ports
-	JWT      JWT
+	Environment Environment
+	Database    Database
+	Ports       Ports
+	JWT         JWT
 }
 
 type Database struct {
@@ -33,14 +34,31 @@ var (
 	ErrReadingEnvFile = errors.New("error reading env file")
 )
 
+type Environment struct {
+	Env string
+}
+
+type Env string
+
+const (
+	Staging    Env = "staging"
+	Production Env = "production"
+)
+
 func GetConfig(ctx context.Context, fileName string) (*Config, error) {
-	err := godotenv.Load()
-	if err != nil {
-		slog.ErrorContext(ctx, "Error loading .env file", "error", err)
-		return nil, ErrReadingEnvFile
+
+	if os.Getenv("ENV") != string(Staging) && os.Getenv("ENV") != string(Production) {
+		err := godotenv.Load()
+		if err != nil {
+			slog.ErrorContext(ctx, "Error loading .env file", "error", err)
+			return nil, ErrReadingEnvFile
+		}
 	}
 
 	var conf Config = Config{
+		Environment{
+			Env: os.Getenv("ENV"),
+		},
 		Database{
 			Connection: os.Getenv("DB_CONNECTION"),
 			Name:       os.Getenv("DB_NAME"),
