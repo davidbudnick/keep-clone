@@ -1,4 +1,4 @@
-# keep-clone [![Server](https://github.com/davidbudnick/keep-clone/actions/workflows/server.yml/badge.svg)](https://github.com/davidbudnick/keep-clone/actions/workflows/server.yml) [![UI](https://github.com/davidbudnick/keep-clone/actions/workflows/ui.yml/badge.svg)](https://github.com/davidbudnick/keep-clone/actions/workflows/ui.yml)
+# keep-clone [![Server](https://github.com/davidbudnick/keep-clone/actions/workflows/server.yml/badge.svg)](https://github.com/davidbudnick/keep-clone/actions/workflows/server.yml) [![UI](https://github.com/davidbudnick/keep-clone/actions/workflows/ui.yml/badge.svg)](https://github.com/davidbudnick/keep-clone/actions/workflows/ui.yml) [![Amazon AWS](https://img.shields.io/badge/Amazon_AWS-FF9900?style=flat-square&logo=amazonaws&logoColor=white)](https://staging.budnick.io/)
 
 ## Description
 Purpose of this project is to create a clone of the [Google Keep](https://keep.google.com) notes app using the following technology
@@ -11,6 +11,11 @@ Purpose of this project is to create a clone of the [Google Keep](https://keep.g
 - [Tailwind](https://tailwindcss.com/)
 - [Shadcn/ui](https://ui.shadcn.com/)
 - [Terraform](https://www.terraform.io/)
+- [AWS](https://aws.amazon.com/)
+
+
+## Staging Deployment
+- [UI](https://staging.budnick.io/)
 
 
 ---
