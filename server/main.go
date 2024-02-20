@@ -43,7 +43,7 @@ func main() {
 	}
 	defer databaseService.Client().Disconnect(ctx)
 
-	notesCollection := databaseService.Client().Database(databaseService.Name()).Collection(notes.NOTES_COLLECTION)
+	notesCollection := databaseService.Client().Database(databaseService.Name()).Collection(db.NOTES_COLLECTION)
 	_, err = notesCollection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys: bson.D{
 			{
@@ -83,18 +83,19 @@ func main() {
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 
 	r.Use(cors.New(config))
-	r.Use(middleware.JWT(ctx, cfg))
-	r.POST("/query", graphqlHandler(
-		notes.NewNotesService(
-			notes.NewNotesRepo(databaseService.Client(), databaseService.Name()),
-		),
-	))
-	r.GET("/", playgroundHandler())
+
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"status": "ok",
 		})
 	})
+
+	r.POST("/query", graphqlHandler(
+		notes.NewNotesService(
+			notes.NewNotesRepo(databaseService.Client(), databaseService.Name()),
+		),
+	)).Use(middleware.JWT(ctx, cfg))
+	r.GET("/", playgroundHandler()).Use(middleware.JWT(ctx, cfg))
 
 	slog.InfoContext(ctx, "Starting GIN server", "port", cfg.Ports.HTTP)
 	if err = r.Run(fmt.Sprintf(":%s", cfg.Ports.HTTP)); err != nil {

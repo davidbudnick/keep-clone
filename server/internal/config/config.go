@@ -41,8 +41,9 @@ type Environment struct {
 type Env string
 
 const (
-	Staging    Env = "staging"
-	Production Env = "production"
+	Staging     Env = "staging"
+	Production  Env = "production"
+	Development Env = "development"
 )
 
 func GetConfig(ctx context.Context, fileName string) (*Config, error) {

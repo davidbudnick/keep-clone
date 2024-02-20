@@ -19,6 +19,10 @@ const (
 	SET = "$set"
 )
 
+const (
+	NOTES_COLLECTION = "notes"
+)
+
 type DatabaseService interface {
 	Client() *mongo.Client
 	Name() string
@@ -33,6 +37,11 @@ func NewDatabaseService(ctx context.Context, cfg *config.Config) (DatabaseServic
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(cfg.Database.Connection).SetServerAPIOptions(options.ServerAPI(options.ServerAPIVersion1)))
 	if err != nil {
 		slog.ErrorContext(ctx, "Error creating database connection", "error", err)
+		return nil, err
+	}
+
+	if err := client.Database(cfg.Database.Name).CreateCollection(ctx, NOTES_COLLECTION); err != nil {
+		slog.ErrorContext(ctx, "Error creating notes collection", "error", err)
 		return nil, err
 	}
 

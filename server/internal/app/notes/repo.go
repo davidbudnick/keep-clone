@@ -13,10 +13,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const (
-	NOTES_COLLECTION = "notes"
-)
-
 //go:generate counterfeiter -o fakes/fake_notes_repo.go . NotesRepo
 type NotesRepo interface {
 	List(ctx context.Context, userID string, status string) ([]Note, error)
@@ -62,7 +58,7 @@ type ListFilter struct {
 }
 
 func (r *notesRepo) List(ctx context.Context, userID string, status string) ([]Note, error) {
-	cursor, err := r.Client.Database(r.Name).Collection(NOTES_COLLECTION).Find(ctx, ListFilter{
+	cursor, err := r.Client.Database(r.Name).Collection(db.NOTES_COLLECTION).Find(ctx, ListFilter{
 		UserID: userID,
 		Status: status,
 	})
@@ -89,7 +85,7 @@ func (r *notesRepo) Get(ctx context.Context, userID string, noteID string) (*Not
 	}
 
 	var note Note
-	err = r.Client.Database(r.Name).Collection(NOTES_COLLECTION).FindOne(ctx,
+	err = r.Client.Database(r.Name).Collection(db.NOTES_COLLECTION).FindOne(ctx,
 		GetFilter{
 			ID:     objectId,
 			UserID: userID,
@@ -110,7 +106,7 @@ func (r *notesRepo) Create(ctx context.Context, userID string, note model.Create
 		deletedAt = &now
 	}
 
-	notesCollection := r.Client.Database(r.Name).Collection(NOTES_COLLECTION)
+	notesCollection := r.Client.Database(r.Name).Collection(db.NOTES_COLLECTION)
 	res, err := notesCollection.InsertOne(ctx, Note{
 		ID:        primitive.NewObjectID(),
 		UserID:    userID,
@@ -140,7 +136,7 @@ type UpdateFilter struct {
 }
 
 func (r *notesRepo) Update(ctx context.Context, userID string, note model.UpdateNote) error {
-	notesCollection := r.Client.Database(r.Name).Collection(NOTES_COLLECTION)
+	notesCollection := r.Client.Database(r.Name).Collection(db.NOTES_COLLECTION)
 
 	objectId, err := primitive.ObjectIDFromHex(note.ID)
 	if err != nil {
@@ -182,7 +178,7 @@ func (r *notesRepo) Delete(ctx context.Context, userID string, noteID string) (*
 		return nil, err
 	}
 
-	notesCollection := r.Client.Database(r.Name).Collection(NOTES_COLLECTION)
+	notesCollection := r.Client.Database(r.Name).Collection(db.NOTES_COLLECTION)
 	_, err = notesCollection.DeleteOne(ctx, GetFilter{
 		ID:     objectId,
 		UserID: userID,
@@ -201,7 +197,7 @@ type RemoveDeletedFilter struct {
 }
 
 func (r *notesRepo) RemoveDeleted(ctx context.Context, userID string) error {
-	_, err := r.Client.Database(r.Name).Collection(NOTES_COLLECTION).DeleteMany(ctx, RemoveDeletedFilter{
+	_, err := r.Client.Database(r.Name).Collection(db.NOTES_COLLECTION).DeleteMany(ctx, RemoveDeletedFilter{
 		UserID: userID,
 		Status: model.StatusDeleted.String(),
 	})
