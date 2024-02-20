@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log/slog"
 	"server/graph/model"
+	"server/internal/middleware"
 )
 
 // CreateNote is the resolver for the createNote field.
@@ -16,6 +17,11 @@ func (r *mutationResolver) CreateNote(ctx context.Context, input model.CreateNot
 	if !model.Status(input.Status).IsValid() {
 		slog.ErrorContext(ctx, "invalid status", "status", input.Status)
 		return nil, fmt.Errorf("invalid status")
+	}
+
+	err := middleware.ValidateUserID(ctx, r.UserID)
+	if err != nil {
+		return nil, err
 	}
 
 	note, err := r.NotesService.Create(ctx, r.UserID, input)
@@ -28,6 +34,11 @@ func (r *mutationResolver) CreateNote(ctx context.Context, input model.CreateNot
 
 // UpdateNote is the resolver for the updateNote field.
 func (r *mutationResolver) UpdateNote(ctx context.Context, input model.UpdateNote) (*model.Note, error) {
+	err := middleware.ValidateUserID(ctx, r.UserID)
+	if err != nil {
+		return nil, err
+	}
+
 	res, err := r.NotesService.Update(ctx, r.UserID, input)
 	if err != nil {
 		return nil, err
@@ -38,6 +49,11 @@ func (r *mutationResolver) UpdateNote(ctx context.Context, input model.UpdateNot
 
 // DeleteNote is the resolver for the deleteNote field.
 func (r *mutationResolver) DeleteNote(ctx context.Context, id string) (string, error) {
+	err := middleware.ValidateUserID(ctx, r.UserID)
+	if err != nil {
+		return "", err
+	}
+
 	res, err := r.NotesService.Delete(ctx, r.UserID, id)
 	if err != nil {
 		return "", err
@@ -48,6 +64,11 @@ func (r *mutationResolver) DeleteNote(ctx context.Context, id string) (string, e
 
 // EmptyTrash is the resolver for the emptyTrash field.
 func (r *mutationResolver) EmptyTrash(ctx context.Context) ([]*model.Note, error) {
+	err := middleware.ValidateUserID(ctx, r.UserID)
+	if err != nil {
+		return nil, err
+	}
+
 	notes, err := r.NotesService.RemoveDeleted(ctx, r.UserID)
 	if err != nil {
 		return nil, err
@@ -58,6 +79,11 @@ func (r *mutationResolver) EmptyTrash(ctx context.Context) ([]*model.Note, error
 
 // Notes is the resolver for the Notes field.
 func (r *queryResolver) Notes(ctx context.Context, status *model.Status) ([]*model.Note, error) {
+	err := middleware.ValidateUserID(ctx, r.UserID)
+	if err != nil {
+		return nil, err
+	}
+
 	notes, err := r.NotesService.List(ctx, status.String(), r.UserID)
 	if err != nil {
 		return nil, err
@@ -68,6 +94,11 @@ func (r *queryResolver) Notes(ctx context.Context, status *model.Status) ([]*mod
 
 // Note is the resolver for the Note field.
 func (r *queryResolver) Note(ctx context.Context, id string) (*model.Note, error) {
+	err := middleware.ValidateUserID(ctx, r.UserID)
+	if err != nil {
+		return nil, err
+	}
+
 	note, err := r.NotesService.Get(ctx, r.UserID, id)
 	if err != nil {
 		return nil, err

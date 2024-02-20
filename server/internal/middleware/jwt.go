@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"server/internal/config"
+	"server/internal/health"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -17,6 +18,11 @@ const (
 
 func JWT(ctx context.Context, conf *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if c.Request.URL.Path == health.EXTERNAL_ENDPOINT || c.Request.URL.Path == health.INTERNAL_ENDPOINT {
+			c.Next()
+			return
+		}
+
 		tokenString := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
 		if tokenString == "" {
 			slog.ErrorContext(ctx, "No token provided")

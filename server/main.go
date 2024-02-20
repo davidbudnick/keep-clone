@@ -8,6 +8,7 @@ import (
 	"server/internal/app/notes"
 	"server/internal/config"
 	"server/internal/db"
+	"server/internal/health"
 	"server/internal/middleware"
 
 	"log/slog"
@@ -83,26 +84,17 @@ func main() {
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 
 	r.Use(cors.New(config))
+	r.Use(middleware.JWT(ctx, cfg))
 
-	r.GET("/api/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"status": "ok",
-		})
-	})
-
-	//TODO: ONLY used for interal health check (Update task definition to use /api/health)
-	r.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"status": "ok",
-		})
-	})
+	health.Register(health.EXTERNAL_ENDPOINT, r)
+	health.Register(health.INTERNAL_ENDPOINT, r)
 
 	r.POST("/api/query", graphqlHandler(
 		notes.NewNotesService(
 			notes.NewNotesRepo(databaseService.Client(), databaseService.Name()),
 		),
-	)).Use(middleware.JWT(ctx, cfg))
-	r.GET("/api/playground", playgroundHandler()).Use(middleware.JWT(ctx, cfg))
+	))
+	r.GET("/api/playground", playgroundHandler())
 
 	slog.InfoContext(ctx, "Starting GIN server", "port", cfg.Ports.HTTP)
 	if err = r.Run(fmt.Sprintf(":%s", cfg.Ports.HTTP)); err != nil {
@@ -125,6 +117,6 @@ func graphqlHandler(notesService notes.NotesService) gin.HandlerFunc {
 
 func playgroundHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		playground.Handler("GraphQL", "/query").ServeHTTP(c.Writer, c.Request)
+		playground.Handler("GraphQL", "/api/query").ServeHTTP(c.Writer, c.Request)
 	}
 }
