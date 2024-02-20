@@ -38,7 +38,7 @@ resource "aws_lb_listener" "load_balancer_listener_ui" {
 
 resource "aws_lb_target_group" "target_group_server" {
   name        = "target-group-server-${var.environment}"
-  port        = 3333
+  port        = 80
   protocol    = "HTTP"
   vpc_id      = data.aws_vpc.default.id
   target_type = "ip"

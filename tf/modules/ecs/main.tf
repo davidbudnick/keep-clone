@@ -41,7 +41,7 @@ resource "aws_ecs_task_definition" "keep_server_task_definition" {
       essential = true
       portMappings = [
         {
-          containerPort = 3333,
+          containerPort = 80,
           protocol      = "tcp"
         }
       ],
@@ -100,7 +100,7 @@ resource "aws_ecs_service" "keep_server_service" {
   load_balancer {
     target_group_arn = aws_lb_target_group.target_group_server.arn
     container_name   = "keep-server-${var.environment}"
-    container_port   = 3333
+    container_port   = 80
   }
 
   depends_on = [
