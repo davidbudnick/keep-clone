@@ -35,6 +35,7 @@ module "iam" {
 }
 
 module "ecs" {
+  region                 = var.region
   environment            = var.environment
   repository_name        = var.repository_name
   keep_ui_image_name     = module.ecr.keep_ui_image_name

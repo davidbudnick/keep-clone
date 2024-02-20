@@ -19,7 +19,16 @@ resource "aws_ecs_task_definition" "keep_ui_task_definition" {
           hostPort      = 80,
           protocol      = "tcp"
         }
-      ]
+      ],
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/"
+          awslogs-region        = var.region
+          awslogs-stream-prefix = "ecs"
+          awslogs-create-group  = "true"
+        }
+      }
     }
   ])
 }
@@ -49,6 +58,15 @@ resource "aws_ecs_task_definition" "keep_server_task_definition" {
         value = "${var.bucket_arn}/.env",
         type  = "s3"
       }]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/"
+          awslogs-region        = var.region
+          awslogs-stream-prefix = "ecs"
+          awslogs-create-group  = "true"
+        }
+      }
     }
   ])
 }
@@ -104,7 +122,7 @@ resource "aws_ecs_service" "keep_server_service" {
   }
 
   depends_on = [
-    aws_lb_listener_rule.load_balancer_listener_server,
+    aws_iam_role_policy.ecs_task_execution_role_policy,
     aws_lb.load_balancer,
   ]
 }
