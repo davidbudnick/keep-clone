@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Status, useCreateNewNoteMutation } from "@/graphql/generated/schema";
 import { useTranslation } from "react-i18next";
+import { useMediaQuery } from "react-responsive";
+import { DEFUALT_MOBILE_WIDTH } from "@/constants/mobile";
 
 interface IFormInput {
     title: string;
@@ -17,6 +19,7 @@ interface CreateFormProps {
 
 const CreateForm: React.FC<CreateFormProps> = ({ setOpen }) => {
     const { t } = useTranslation();
+    const isMobile = useMediaQuery({ maxWidth: DEFUALT_MOBILE_WIDTH });
     const [createNote] = useCreateNewNoteMutation(
         {
             update(cache) {
@@ -54,7 +57,7 @@ const CreateForm: React.FC<CreateFormProps> = ({ setOpen }) => {
                 control={control}
                 render={({ field }) =>
                     <Input {...field}
-                        autoFocus
+                        autoFocus={!isMobile}
                         placeholder={t("pages.home.create_note.title_placeholder")}
                     />
                 }
