@@ -1,5 +1,9 @@
 # keep-clone [![Server](https://github.com/davidbudnick/keep-clone/actions/workflows/server.yml/badge.svg)](https://github.com/davidbudnick/keep-clone/actions/workflows/server.yml) [![UI](https://github.com/davidbudnick/keep-clone/actions/workflows/ui.yml/badge.svg)](https://github.com/davidbudnick/keep-clone/actions/workflows/ui.yml) [![Amazon AWS](https://img.shields.io/badge/Amazon_AWS-FF9900?style=flat-square&logo=amazonaws&logoColor=white)](https://staging.budnick.io/)
 
+[![Try](https://img.shields.io/badge/🚀%20Try%20it%20out!-blue?style=for-the-badge&logo=)](https://staging.budnick.io/)
+
+
+
 ## Description
 Purpose of this project is to create a clone of the [Google Keep](https://keep.google.com) notes app using the following technology
 - [ReactJS](https://reactjs.org/)
@@ -13,14 +17,20 @@ Purpose of this project is to create a clone of the [Google Keep](https://keep.g
 - [Terraform](https://www.terraform.io/)
 - [AWS](https://aws.amazon.com/)
 
-
-## Staging Deployment
-- [UI](https://staging.budnick.io/)
-
+---
+![image](./.assets/images/desktop.png)
 
 ---
 
-![image](./.assets/images/keep.png)
+<p align="center">
+  <img src="./.assets/images/mobile-1.png" alt="Image 1" style="margin-right: 20px;"/>
+  <img src="./.assets/images/mobile-2.png" alt="Image 2" style="margin-right: 20px;"/>
+  <img src="./.assets/images/mobile-3.png" alt="Image 3" style="margin-right: 20px;"/>
+  <img src="./.assets/images/mobile-4.png" alt="Image 4"/>
+</p>
+
+
+
 
 
 ### Disclaimer

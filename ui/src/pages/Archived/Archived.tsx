@@ -23,24 +23,22 @@ const Archived: React.FC = () => {
     if (data?.notes?.length === 0) {
         return (
             <>
-                <div className="ml-10 flex h-[calc(100vh-17rem)]  items-center justify-center p-4">
-                    <div>
-                        <MdOutlineArchive size={110} className="mx-auto text-gray-500" />
-                        <p className="mt-4 text-center text-2xl text-gray-600">{t("pages.archived.no_notes")}</p>
-                    </div>
+                <div className="mt-4">
+                    <MdOutlineArchive size={110} className="mx-auto text-gray-500" />
+                    <p className="mt-4 text-center text-2xl text-gray-600">{t("pages.archived.no_notes")}</p>
                 </div>
             </>
         )
     }
 
     return (
-        <div className="ml-10 mt-28 p-4">
-            <div className="ml-6 flex flex-wrap">
+        <>
+            <div className="flex flex-wrap items-center justify-center sm:items-start sm:justify-start mt-4">
                 {data?.notes?.map((note) => (
                     <ArchivedCard key={note.id} note={note} />
                 ))}
             </div>
-        </div>
+        </>
     )
 }
 

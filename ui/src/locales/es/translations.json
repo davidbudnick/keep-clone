@@ -3,7 +3,7 @@
         "home": {
             "logged_out": "Inicia sesión con tu cuenta de Google para empezar a tomar notas",
             "title": "Inicio",
-            "no_notes": "No tienes notas",
+            "no_notes": "Aún no hay notas. ¡Empecemos a escribir algo!",
             "pinned": "FIJADAS",
             "others": "OTRAS",
             "unpin": "Desfijar",
@@ -21,7 +21,7 @@
         },
         "archived": {
             "title": "Archivadas",
-            "no_notes": "No hay notas archivadas",
+            "no_notes": "No hay notas archivadas. ¡Es hora de crear algunos recuerdos!",
             "actions": {
                 "unarchive": "Desarchivar",
                 "delete": "Eliminar"
@@ -29,7 +29,7 @@
         },
         "trash": {
             "title": "Papelera",
-            "no_notes": "No hay notas en la papelera",
+            "no_notes": "No hay notas en la papelera. ¡Tu pizarra está limpia!",
             "auto_delete": "Las notas en la Papelera se eliminan automáticamente después de 7 días",
             "empty_trash": "Vaciar Papelera",
             "notes_deleted": "Las notas han sido eliminadas con éxito",

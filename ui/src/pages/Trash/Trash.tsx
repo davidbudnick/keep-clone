@@ -3,8 +3,9 @@ import { DeletedCard, SkeletonList } from "@/components"
 import { Status, useGetNotesQuery, useRemoveDeletedMutation } from "@/graphql/generated/schema";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { FaTrashCan } from "react-icons/fa6";
+import { MdDelete } from "react-icons/md";
 import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
 
 const Trash: React.FC = () => {
     const { toast } = useToast()
@@ -31,35 +32,42 @@ const Trash: React.FC = () => {
 
     if (data?.notes?.length === 0) {
         return (
-            <div className="ml-12 flex h-[calc(100vh-17rem)] items-center justify-center p-4">
-                <div>
-                    <FaTrashCan size={90} className="mx-auto text-gray-500" />
-                    <p className="mt-8 text-center text-2xl text-gray-600">{t("pages.trash.no_notes")}</p>
+            <>
+                <div className="mt-4">
+                    <MdDelete size={110} className="mx-auto text-gray-500" />
+                    <p className="mt-4 text-center text-2xl text-gray-600">{t("pages.trash.no_notes")}</p>
                 </div>
-            </div>
+            </>
 
         )
     }
 
     return (
-        <div className="ml-10 mt-14 p-4">
-            <div className="mb-4 mt-4 flex justify-center">
-                <p className="italic">{t("pages.trash.auto_delete")}</p>
+        <>
+            <div className="flex flex-col sm:flex-row justify-center items-center mx-2 my-4">
+                <p className="bold text-center sm:text-left">{t("pages.trash.auto_delete")}</p>
                 {data?.notes?.length !== 0 &&
-                    <button disabled={data?.notes?.length === 0} onClick={() => {
-                        removeDeleted();
-                        toast({
-                            title: t("pages.trash.notes_deleted"),
-                        })
-                    }} className="ml-4 cursor-pointer text-blue-500 hover:underline">{t("pages.trash.empty_trash")}</button>
+                    <Button
+                        variant="outline"
+                        disabled={data?.notes?.length === 0}
+                        onClick={() => {
+                            removeDeleted();
+                            toast({
+                                title: t("pages.trash.notes_deleted"),
+                            })
+                        }}
+                        className="mt-4 sm:mt-0 sm:ml-4 px-4 py-2 text-sm sm:text-base cursor-pointer"
+                    >
+                        {t("pages.trash.empty_trash")}
+                    </Button>
                 }
             </div>
-            <div className="ml-6 flex flex-wrap">
+            <div className="flex flex-wrap items-center justify-center sm:items-start sm:justify-start">
                 {data?.notes?.map((note) => (
                     <DeletedCard key={note.id} note={note} />
                 ))}
             </div>
-        </div >
+        </>
     )
 }
 

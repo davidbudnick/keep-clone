@@ -38,7 +38,7 @@ const Search: React.FC = () => {
     const { t } = useTranslation();
 
     return (
-        <div className="flex w-full max-w-lg">
+        <div className="hidden md:block w-full max-w-lg md:max-w-sm">
             <Input disabled={!isAuthenticated} type="text" placeholder={t("navbar.search")} onKeyDown={
                 (e) => {
                     if (e.key === "Enter") {

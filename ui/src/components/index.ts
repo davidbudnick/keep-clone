@@ -7,6 +7,7 @@ import ArchivedCard from "./ArchivedCard/ArchivedCard";
 import DeletedCard from "./DeletedCard/DeletedCard";
 import HomeCard from "@/components/HomeCard/HomeCard";
 import SkeletonList from "@/components/SkeletonList/SkeletonList";
+import CreateForm from "@/components/CreateForm/CreateForm";
 
 export {
     Navbar,
@@ -17,5 +18,6 @@ export {
     ArchivedCard,
     HomeCard,
     DeletedCard,
-    SkeletonList
+    SkeletonList,
+    CreateForm
 }

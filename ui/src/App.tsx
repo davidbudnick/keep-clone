@@ -42,6 +42,7 @@ i18n.use(initReactI18next)
 export const App = () => {
     console.log("CLIENT_ID", import.meta.env.VITE_API_CLIENT_ID);
     console.log("API_ENDPOINT", import.meta.env.VITE_API_GRAPHQL_ENDPOINT)
+
     return (
         <GoogleOAuthProvider clientId={import.meta.env.VITE_API_CLIENT_ID}>
             <ApolloProvider client={client}>
@@ -50,12 +51,13 @@ export const App = () => {
                         <AuthProvider>
                             <Navbar />
                             <Sidebar />
-
-                            <Routes>
-                                <Route path={ROUTES.HOME} element={<Home />} />
-                                <Route path={ROUTES.ARCHIVED} element={<Archived />} />
-                                <Route path={ROUTES.TRASH} element={<Trash />} />
-                            </Routes>
+                            <div className="pl-14 pt-16 md:pl-20 md:pt-20">
+                                <Routes>
+                                    <Route path={ROUTES.HOME} element={<Home />} />
+                                    <Route path={ROUTES.ARCHIVED} element={<Archived />} />
+                                    <Route path={ROUTES.TRASH} element={<Trash />} />
+                                </Routes>
+                            </div>
                         </AuthProvider>
                     </BrowserRouter>
                 </ThemeProvider>

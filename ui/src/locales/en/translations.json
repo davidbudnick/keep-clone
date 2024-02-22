@@ -3,7 +3,7 @@
         "home": {
             "logged_out": "Sign in with Google Account to start taking notes",
             "title": "Home",
-            "no_notes": "You have no notes",
+            "no_notes": "No notes yet. Let's start jotting something down!",
             "pinned": "PINNED",
             "others": "OTHERS",
             "unpin": "Unpin",
@@ -21,7 +21,7 @@
         },
         "archived": {
             "title": "Archived",
-            "no_notes": "No notes archived",
+            "no_notes": "No notes archived. Time to create some memories!",
             "actions": {
                 "unarchive": "Unarchive",
                 "delete": "Delete"
@@ -29,7 +29,7 @@
         },
         "trash": {
             "title": "Trash",
-            "no_notes": "No notes in trash",
+            "no_notes": "No notes in trash. Your slate is clean!",
             "auto_delete": "Notes in the Trash are deleted automatically after 7 days",
             "empty_trash": "Empty Trash",
             "notes_deleted": "Notes have been successfully deleted",

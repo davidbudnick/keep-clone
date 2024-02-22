@@ -1,0 +1,1 @@
+export const DEFUALT_MOBILE_WIDTH = 767;
