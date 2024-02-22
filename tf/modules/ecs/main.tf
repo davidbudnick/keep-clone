@@ -71,7 +71,6 @@ resource "aws_ecs_task_definition" "keep_server_task_definition" {
   ])
 }
 
-
 resource "aws_ecs_cluster" "keep_cluster" {
   name = "keep-cluster-${var.environment}"
 }
@@ -95,12 +94,17 @@ resource "aws_ecs_service" "keep_ui_service" {
     container_port   = 80
   }
 
+  lifecycle {
+    ignore_changes = [
+      task_definition,
+    ]
+  }
+
   depends_on = [
     aws_iam_role_policy.ecs_task_execution_role_policy,
     aws_lb.load_balancer,
   ]
 }
-
 
 resource "aws_ecs_service" "keep_server_service" {
   name            = "keep-server-service-${var.environment}"
@@ -119,6 +123,12 @@ resource "aws_ecs_service" "keep_server_service" {
     target_group_arn = aws_lb_target_group.target_group_server.arn
     container_name   = "keep-server-${var.environment}"
     container_port   = 80
+  }
+
+  lifecycle {
+    ignore_changes = [
+      task_definition,
+    ]
   }
 
   depends_on = [

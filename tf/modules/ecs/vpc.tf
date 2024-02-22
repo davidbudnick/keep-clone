@@ -9,6 +9,12 @@ data "aws_subnets" "default" {
   }
 }
 
+
+# data "aws_ecs_task_definition" "keep_ui_task_staging" {
+#   task_definition = "keep-ui-task-staging-family"
+#   depends_on = [aws_ecs_task_definition.keep_ui_task_staging]
+# }
+
 resource "aws_security_group" "alb_security_group" {
   name   = "keep-alb-security-group-${var.environment}"
   vpc_id = data.aws_vpc.default.id
@@ -18,6 +24,18 @@ resource "aws_security_group" "alb_security_group" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    cidr_blocks      = []
+    description      = "MongoDB"
+    from_port        = 27017
+    ipv6_cidr_blocks = []
+    prefix_list_ids  = []
+    protocol         = "tcp"
+    security_groups  = []
+    self             = true
+    to_port          = 27017
   }
 
   egress {
