@@ -9,12 +9,6 @@ data "aws_subnets" "default" {
   }
 }
 
-
-# data "aws_ecs_task_definition" "keep_ui_task_staging" {
-#   task_definition = "keep-ui-task-staging-family"
-#   depends_on = [aws_ecs_task_definition.keep_ui_task_staging]
-# }
-
 resource "aws_security_group" "alb_security_group" {
   name   = "keep-alb-security-group-${var.environment}"
   vpc_id = data.aws_vpc.default.id
