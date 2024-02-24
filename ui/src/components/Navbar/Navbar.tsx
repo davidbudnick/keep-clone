@@ -62,8 +62,9 @@ const Navbar: React.FC = () => {
                                         <SelectValue placeholder={localStorage.getItem(localStorageKey) || locales.en} />
                                     </SelectTrigger>
                                     <SelectContent className="w-[70px]" defaultValue={localStorage.getItem(localStorageKey) || locales.en} defaultChecked>
-                                        <SelectItem value={locales.en}>{locales.en}</SelectItem>
-                                        <SelectItem value={locales.es}>{locales.es}</SelectItem>
+                                        {Object.keys(locales).map((locale) => (
+                                            <SelectItem key={locale} value={locale}>{locale}</SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>

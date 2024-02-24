@@ -1,0 +1,50 @@
+{
+    "pages": {
+        "home": {
+            "logged_out": "Googleアカウントでログインしてメモを取り始めましょう",
+            "title": "ホーム",
+            "no_notes": "まだメモはありません。何か書き留めてみましょう！",
+            "pinned": "固定",
+            "others": "その他",
+            "unpin": "固定解除",
+            "pin": "固定する",
+            "actions": {
+                "delete": "削除",
+                "archive": "アーカイブ"
+            },
+            "create_note": {
+                "take_a_note": "メモを取る...",
+                "whats_on_your_mind": "何を考えていますか？",
+                "add_note": "メモを追加",
+                "title_placeholder": "タイトル"
+            }
+        },
+        "archived": {
+            "title": "アーカイブ済み",
+            "no_notes": "アーカイブされたメモはありません。いくつかの思い出を作りましょう！",
+            "actions": {
+                "unarchive": "アーカイブ解除",
+                "delete": "削除"
+            }
+        },
+        "trash": {
+            "title": "ごみ箱",
+            "no_notes": "ごみ箱にメモはありません。あなたのスレートはきれいです！",
+            "auto_delete": "ごみ箱のメモは7日後に自動的に削除されます",
+            "empty_trash": "ごみ箱を空にする",
+            "notes_deleted": "メモは正常に削除されました",
+            "actions": {
+                "restore": "復元",
+                "archive": "アーカイブ",
+                "delete": "削除"
+            }
+        }
+    },
+    "navbar": {
+        "logout": "ログアウト",
+        "managed_by": "管理者:",
+        "hi": "こんにちは",
+        "search": "検索",
+        "refresh": "更新"
+    }
+}

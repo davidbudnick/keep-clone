@@ -1,0 +1,50 @@
+{
+    "pages": {
+        "home": {
+            "logged_out": "Melden Sie sich mit Ihrem Google-Konto an, um Notizen zu erstellen",
+            "title": "Startseite",
+            "no_notes": "Noch keine Notizen. Lassen Sie uns etwas aufschreiben!",
+            "pinned": "ANGEHEFTET",
+            "others": "ANDERE",
+            "unpin": "Lösen",
+            "pin": "Anheften",
+            "actions": {
+                "delete": "Löschen",
+                "archive": "Archivieren"
+            },
+            "create_note": {
+                "take_a_note": "Notiz aufnehmen...",
+                "whats_on_your_mind": "Was denken Sie?",
+                "add_note": "Notiz hinzufügen",
+                "title_placeholder": "Titel"
+            }
+        },
+        "archived": {
+            "title": "Archiviert",
+            "no_notes": "Keine Notizen archiviert. Zeit, einige Erinnerungen zu schaffen!",
+            "actions": {
+                "unarchive": "Aus Archiv entfernen",
+                "delete": "Löschen"
+            }
+        },
+        "trash": {
+            "title": "Papierkorb",
+            "no_notes": "Keine Notizen im Papierkorb. Ihr Blatt ist sauber!",
+            "auto_delete": "Notizen im Papierkorb werden automatisch nach 7 Tagen gelöscht",
+            "empty_trash": "Papierkorb leeren",
+            "notes_deleted": "Notizen wurden erfolgreich gelöscht",
+            "actions": {
+                "restore": "Wiederherstellen",
+                "archive": "Archivieren",
+                "delete": "Löschen"
+            }
+        }
+    },
+    "navbar": {
+        "logout": "Abmelden",
+        "managed_by": "Verwaltet von",
+        "hi": "Hallo",
+        "search": "Suche",
+        "refresh": "Aktualisieren"
+    }
+}
