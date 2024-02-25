@@ -24,6 +24,8 @@ import {
 import { locales } from "@/locales/i18n";
 import i18n from "i18next";
 import { UpdateTheme } from "@/lib/theme";
+import { DEFUALT_MOBILE_WIDTH } from "@/constants/mobile";
+import { useMediaQuery } from "react-responsive";
 
 
 const Navbar: React.FC = () => {
@@ -32,6 +34,9 @@ const Navbar: React.FC = () => {
     const { t } = useTranslation();
     const [theme, setTheme] = React.useState(auth.user?.settings.theme);
     const [locale, setLocale] = useState(auth.user?.settings.locale);
+    const [isSelectOpen, setIsSelectOpen] = useState(false);
+    const isMobile = useMediaQuery({ maxWidth: DEFUALT_MOBILE_WIDTH });
+
 
     useEffect(() => {
         setLocale(auth.user?.settings.locale);
@@ -62,30 +67,48 @@ const Navbar: React.FC = () => {
                     </div>
                     <div className="flex items-center">
                         <div className="flex items-center">
-                            <div className="mx-2 hidden md:block">
+                            <div className="mx-2">
                                 {auth.isAuthenticated &&
-                                    <Select
-                                        onValueChange={(e) => {
-                                            setLocale(e);
-                                            auth.update({
-                                                settings: {
-                                                    theme: theme,
-                                                    locale: e
-                                                },
-                                            });
-                                            i18n.changeLanguage(
-                                                e || locales.en
-                                            );
-                                        }}>
-                                        <SelectTrigger className="w-[70px]">
-                                            <SelectValue placeholder={locale} />
-                                        </SelectTrigger>
-                                        <SelectContent className="w-[70px]" defaultValue={locale} defaultChecked>
-                                            {Object.keys(locales).map((locale) => (
-                                                <SelectItem key={locale} value={locale}>{locale}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                    <>
+                                        {isSelectOpen && isMobile && (
+                                            <div
+                                                style={{
+                                                    position: "fixed",
+                                                    top: 0,
+                                                    left: 0,
+                                                    width: "100%",
+                                                    height: "100%",
+                                                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                                    zIndex: 50,
+                                                }}
+                                                onClick={() => setIsSelectOpen(false)}
+                                            />
+                                        )}
+                                        <Select
+                                            onValueChange={(e) => {
+                                                if (auth.isAuthenticated) {
+                                                    auth.update({
+                                                        settings: {
+                                                            locale: e
+                                                        },
+                                                    });
+                                                    i18n.changeLanguage(
+                                                        e || locales.en
+                                                    );
+                                                }
+                                            }}
+                                            onOpenChange={setIsSelectOpen}
+                                        >
+                                            <SelectTrigger className="w-[70px]">
+                                                <SelectValue placeholder={locale} />
+                                            </SelectTrigger>
+                                            <SelectContent className="w-[70px]" defaultValue={locale} defaultChecked>
+                                                {Object.keys(locales).map((locale) => (
+                                                    <SelectItem key={locale} value={locale}>{locale}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </>
                                 }
                             </div>
                             <div className="mt-1 mx-2">
