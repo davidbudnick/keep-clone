@@ -32,15 +32,14 @@ const Navbar: React.FC = () => {
     const location = useLocation();
     const auth = useAuth();
     const { t } = useTranslation();
-    const [theme, setTheme] = React.useState(auth.user?.settings.theme);
-    const [locale, setLocale] = useState(auth.user?.settings.locale);
+    const [theme, setTheme] = useState<string>(auth.user?.settings.theme || DARK);
+    const [locale, setLocale] = useState<string>(auth.user?.settings.locale || "");
     const [isSelectOpen, setIsSelectOpen] = useState(false);
     const isMobile = useMediaQuery({ maxWidth: DEFUALT_MOBILE_WIDTH });
 
-
     useEffect(() => {
-        setLocale(auth.user?.settings.locale);
-        setTheme(auth.user?.settings.theme);
+        setTheme(auth.user?.settings.theme || DARK);
+        setLocale(auth.user?.settings.locale || "");
     }, [auth.user?.settings.locale, auth.user?.settings.theme]);
 
     const GetPageName = () => {

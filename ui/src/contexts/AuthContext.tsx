@@ -32,7 +32,7 @@ interface AuthContextValue {
     login: (response: CredentialResponse) => void;
     logout: () => void;
     update: (updateUser: UpdateUser
-    ) => void;
+    ) => Promise<FetchResult<UpdateUserMutation>>;
     loading: boolean;
     user?: User;
 }
@@ -76,13 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
     const [googleUser, setGoogleUser] = useState<GoogleUser>()
     const navigate = useNavigate();
 
-    const [UpdateUserMutation] = useUpdateUserMutation(
-        {
-            update(cache) {
-                cache.evict({ fieldName: "user" });
-            }
-        }
-    );
+    const [UpdateUserMutation] = useUpdateUserMutation();
 
     const { loading: userLoading, data: userData } = useGetUserQuery({
         variables: { id: googleUser?.sub || "" },
@@ -99,6 +93,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
 
     const logout = () => {
         client.resetStore()
+        i18n.changeLanguage(locales.en)
         setIsAuthenticated(false);
         localStorage.removeItem(AUTH.GOOGLE_CLIENT);
         localStorage.removeItem(AUTH.GOOGLE_CREDENTIAL);
@@ -177,7 +172,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
                 }
             }
         }
-    }, [user, userLoading])
+    }, [userLoading])
 
 
     return (
