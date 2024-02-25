@@ -35,11 +35,8 @@ const Navbar: React.FC = () => {
 
     useEffect(() => {
         setLocale(auth.user?.settings.locale);
-    }, [auth.user?.settings.locale]);
-
-    useEffect(() => {
         setTheme(auth.user?.settings.theme);
-    }, [auth.user?.settings.theme]);
+    }, [auth.user?.settings.locale, auth.user?.settings.theme]);
 
     const GetPageName = () => {
         if (location.pathname === ROUTES.HOME) {
