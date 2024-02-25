@@ -80,7 +80,7 @@ resource "aws_ecs_service" "keep_ui_service" {
   task_definition = aws_ecs_task_definition.keep_ui_task_definition.arn
   cluster         = aws_ecs_cluster.keep_cluster.id
   launch_type     = "FARGATE"
-  desired_count   = 2
+  desired_count   = 1
 
   network_configuration {
     subnets          = data.aws_subnets.default.ids
@@ -111,7 +111,7 @@ resource "aws_ecs_service" "keep_server_service" {
   task_definition = aws_ecs_task_definition.keep_server_task_definition.arn
   cluster         = aws_ecs_cluster.keep_cluster.id
   launch_type     = "FARGATE"
-  desired_count   = 2
+  desired_count   = 1
 
   network_configuration {
     subnets          = data.aws_subnets.default.ids
