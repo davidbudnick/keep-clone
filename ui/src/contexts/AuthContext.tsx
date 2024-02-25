@@ -95,9 +95,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
         setIsAuthenticated(true);
         const googleUser = decodeUser(response.credential || "")
         setGoogleUser(googleUser);
-
-
-
     };
 
     const logout = () => {
@@ -112,7 +109,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
 
     const update = async (updateUser: UpdateUser
     ) => {
-        await UpdateUserMutation({
+        const updatedUser = await UpdateUserMutation({
             variables: {
                 input: {
                     email: updateUser.email || user?.email || "",
@@ -130,6 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
                 }
             }
         });
+        return updatedUser;
     }
 
     const formatLastLogin = (date: Date | string): string => {
@@ -143,7 +141,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
 
     const setupUser = async (googleUser: GoogleUser) => {
         if (!userLoading && userData?.user === null) {
-            await update({
+            const nu = await update({
                 email: googleUser.email,
                 familyName: googleUser.family_name,
                 givenName: googleUser.given_name,
@@ -153,6 +151,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
                 hd: googleUser.hd,
                 userId: googleUser.sub
             });
+            setUser(nu.data?.updateUser);
         } else if (!userLoading && userData?.user) {
             setUser(userData.user);
             i18n.changeLanguage(
@@ -160,9 +159,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
             );
             UpdateTheme(userData.user.settings?.theme)
         }
-
-
-
     }
 
     useEffect(() => {

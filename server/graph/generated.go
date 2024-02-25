@@ -99,7 +99,7 @@ type MutationResolver interface {
 	UpdateNote(ctx context.Context, input model.UpdateNote) (*model.Note, error)
 	DeleteNote(ctx context.Context, id string) (string, error)
 	EmptyTrash(ctx context.Context) ([]*model.Note, error)
-	UpdateUser(ctx context.Context, input model.UpdateUser) (bool, error)
+	UpdateUser(ctx context.Context, input model.UpdateUser) (*model.User, error)
 }
 type QueryResolver interface {
 	Notes(ctx context.Context, status *model.Status) ([]*model.Note, error)
@@ -959,9 +959,9 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖserverᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -971,7 +971,33 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_User_userId(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "picture":
+				return ec.fieldContext_User_picture(ctx, field)
+			case "givenName":
+				return ec.fieldContext_User_givenName(ctx, field)
+			case "familyName":
+				return ec.fieldContext_User_familyName(ctx, field)
+			case "hd":
+				return ec.fieldContext_User_hd(ctx, field)
+			case "settings":
+				return ec.fieldContext_User_settings(ctx, field)
+			case "lastLogin":
+				return ec.fieldContext_User_lastLogin(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
 	}
 	defer func() {
@@ -5207,6 +5233,20 @@ func (ec *executionContext) unmarshalNUpdateSettings2ᚖserverᚋgraphᚋmodel�
 func (ec *executionContext) unmarshalNUpdateUser2serverᚋgraphᚋmodelᚐUpdateUser(ctx context.Context, v interface{}) (model.UpdateUser, error) {
 	res, err := ec.unmarshalInputUpdateUser(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUser2serverᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
+	return ec._User(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUser2ᚖserverᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._User(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {

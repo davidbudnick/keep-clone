@@ -79,5 +79,5 @@ type Mutation {
   updateNote(input: UpdateNote!): Note!
   deleteNote(id: String!): String!
   emptyTrash: [Note!]!
-  updateUser(input: UpdateUser!): Boolean!
+  updateUser(input: UpdateUser!): User!
 }

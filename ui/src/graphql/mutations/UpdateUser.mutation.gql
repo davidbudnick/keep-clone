@@ -1,3 +1,19 @@
 mutation UpdateUser($input: UpdateUser!) {
-  updateUser(input: $input)
+  updateUser(input: $input){
+    id 
+    userId
+    email
+    name
+    picture
+    givenName
+    familyName
+    hd
+    settings {
+      theme
+      locale
+    }
+    lastLogin
+    createdAt
+    updatedAt
+  }
 }

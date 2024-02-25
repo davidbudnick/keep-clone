@@ -30,7 +30,7 @@ export type Mutation = {
   deleteNote: Scalars['String']['output'];
   emptyTrash: Array<Note>;
   updateNote: Note;
-  updateUser: Scalars['Boolean']['output'];
+  updateUser: User;
 };
 
 
@@ -172,7 +172,7 @@ export type UpdateUserMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: boolean };
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, userId: string, email: string, name: string, picture: string, givenName: string, familyName: string, hd: string, lastLogin: string, createdAt: string, updatedAt: string, settings: { __typename?: 'Settings', theme: string, locale: string } } };
 
 export type GetNotesQueryVariables = Exact<{
   status: Status;
@@ -341,7 +341,23 @@ export type UpdateNoteMutationResult = Apollo.MutationResult<UpdateNoteMutation>
 export type UpdateNoteMutationOptions = Apollo.BaseMutationOptions<UpdateNoteMutation, UpdateNoteMutationVariables>;
 export const UpdateUserDocument = gql`
     mutation UpdateUser($input: UpdateUser!) {
-  updateUser(input: $input)
+  updateUser(input: $input) {
+    id
+    userId
+    email
+    name
+    picture
+    givenName
+    familyName
+    hd
+    settings {
+      theme
+      locale
+    }
+    lastLogin
+    createdAt
+    updatedAt
+  }
 }
     `;
 export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, UpdateUserMutationVariables>;

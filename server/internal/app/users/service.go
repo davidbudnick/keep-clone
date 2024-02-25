@@ -8,7 +8,7 @@ import (
 //go:generate counterfeiter -o fakes/fake_users_service.go . UsersService
 type UsersService interface {
 	Get(ctx context.Context, userID string) (*model.User, error)
-	Update(ctx context.Context, userID string, user model.UpdateUser) error
+	Update(ctx context.Context, userID string, user model.UpdateUser) (*model.User, error)
 }
 
 type usersService struct {
@@ -50,23 +50,28 @@ func (s *usersService) Get(ctx context.Context, userID string) (*model.User, err
 	}, nil
 }
 
-func (s *usersService) Update(ctx context.Context, userID string, user model.UpdateUser) error {
+func (s *usersService) Update(ctx context.Context, userID string, user model.UpdateUser) (*model.User, error) {
 	u, err := s.repo.Get(ctx, userID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if u == nil {
 		err := s.repo.Create(ctx, user)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	} else {
 		err := s.repo.Update(ctx, userID, user)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	return nil
+	un, err := s.Get(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return un, nil
 }

@@ -78,18 +78,18 @@ func (r *mutationResolver) EmptyTrash(ctx context.Context) ([]*model.Note, error
 }
 
 // UpdateUser is the resolver for the updateUser field.
-func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUser) (bool, error) {
+func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUser) (*model.User, error) {
 	err := middleware.ValidateUserID(ctx, r.UserID)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
-	err = r.UsersService.Update(ctx, r.UserID, input)
+	user, err := r.UsersService.Update(ctx, r.UserID, input)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
-	return true, nil
+	return user, nil
 }
 
 // Notes is the resolver for the Notes field.

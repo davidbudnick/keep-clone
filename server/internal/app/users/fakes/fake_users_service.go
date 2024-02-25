@@ -23,7 +23,7 @@ type FakeUsersService struct {
 		result1 *model.User
 		result2 error
 	}
-	UpdateStub        func(context.Context, string, model.UpdateUser) error
+	UpdateStub        func(context.Context, string, model.UpdateUser) (*model.User, error)
 	updateMutex       sync.RWMutex
 	updateArgsForCall []struct {
 		arg1 context.Context
@@ -31,10 +31,12 @@ type FakeUsersService struct {
 		arg3 model.UpdateUser
 	}
 	updateReturns struct {
-		result1 error
+		result1 *model.User
+		result2 error
 	}
 	updateReturnsOnCall map[int]struct {
-		result1 error
+		result1 *model.User
+		result2 error
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
@@ -105,7 +107,7 @@ func (fake *FakeUsersService) GetReturnsOnCall(i int, result1 *model.User, resul
 	}{result1, result2}
 }
 
-func (fake *FakeUsersService) Update(arg1 context.Context, arg2 string, arg3 model.UpdateUser) error {
+func (fake *FakeUsersService) Update(arg1 context.Context, arg2 string, arg3 model.UpdateUser) (*model.User, error) {
 	fake.updateMutex.Lock()
 	ret, specificReturn := fake.updateReturnsOnCall[len(fake.updateArgsForCall)]
 	fake.updateArgsForCall = append(fake.updateArgsForCall, struct {
@@ -121,9 +123,9 @@ func (fake *FakeUsersService) Update(arg1 context.Context, arg2 string, arg3 mod
 		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
-		return ret.result1
+		return ret.result1, ret.result2
 	}
-	return fakeReturns.result1
+	return fakeReturns.result1, fakeReturns.result2
 }
 
 func (fake *FakeUsersService) UpdateCallCount() int {
@@ -132,7 +134,7 @@ func (fake *FakeUsersService) UpdateCallCount() int {
 	return len(fake.updateArgsForCall)
 }
 
-func (fake *FakeUsersService) UpdateCalls(stub func(context.Context, string, model.UpdateUser) error) {
+func (fake *FakeUsersService) UpdateCalls(stub func(context.Context, string, model.UpdateUser) (*model.User, error)) {
 	fake.updateMutex.Lock()
 	defer fake.updateMutex.Unlock()
 	fake.UpdateStub = stub
@@ -145,27 +147,30 @@ func (fake *FakeUsersService) UpdateArgsForCall(i int) (context.Context, string,
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeUsersService) UpdateReturns(result1 error) {
+func (fake *FakeUsersService) UpdateReturns(result1 *model.User, result2 error) {
 	fake.updateMutex.Lock()
 	defer fake.updateMutex.Unlock()
 	fake.UpdateStub = nil
 	fake.updateReturns = struct {
-		result1 error
-	}{result1}
+		result1 *model.User
+		result2 error
+	}{result1, result2}
 }
 
-func (fake *FakeUsersService) UpdateReturnsOnCall(i int, result1 error) {
+func (fake *FakeUsersService) UpdateReturnsOnCall(i int, result1 *model.User, result2 error) {
 	fake.updateMutex.Lock()
 	defer fake.updateMutex.Unlock()
 	fake.UpdateStub = nil
 	if fake.updateReturnsOnCall == nil {
 		fake.updateReturnsOnCall = make(map[int]struct {
-			result1 error
+			result1 *model.User
+			result2 error
 		})
 	}
 	fake.updateReturnsOnCall[i] = struct {
-		result1 error
-	}{result1}
+		result1 *model.User
+		result2 error
+	}{result1, result2}
 }
 
 func (fake *FakeUsersService) Invocations() map[string][][]interface{} {
