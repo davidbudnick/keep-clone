@@ -9,6 +9,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import i18n from "i18next";
 import { locales, resources } from "@/locales/i18n";
 import { initReactI18next } from "react-i18next";
+import { DARK } from "@/constants/theme";
+import { UpdateTheme } from "@/lib/theme";
 
 const authLink = new ApolloLink((operation, forward) => {
     const token = localStorage.getItem(AUTH.GOOGLE_CREDENTIAL);
@@ -38,7 +40,9 @@ i18n.use(initReactI18next)
         }
     });
 
+
 export const App = () => {
+    UpdateTheme(DARK);
     return (
         <GoogleOAuthProvider clientId={import.meta.env.VITE_API_CLIENT_ID}>
             <ApolloProvider client={client}>

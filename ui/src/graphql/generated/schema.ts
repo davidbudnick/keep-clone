@@ -1,12 +1,12 @@
-import { gql } from "@apollo/client";
-import * as Apollo from "@apollo/client";
+import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
-export type Incremental<T> = T | { [P in keyof T]?: P extends " $fragmentName" | "__typename" ? T[P] : never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -18,19 +18,19 @@ export type Scalars = {
 };
 
 export type CreateNote = {
-  body: Scalars["String"]["input"];
-  pinned: Scalars["Boolean"]["input"];
-  status: Scalars["String"]["input"];
-  title: Scalars["String"]["input"];
+  body: Scalars['String']['input'];
+  pinned: Scalars['Boolean']['input'];
+  status: Scalars['String']['input'];
+  title: Scalars['String']['input'];
 };
 
 export type Mutation = {
-  __typename?: "Mutation";
+  __typename?: 'Mutation';
   createNote: Note;
-  deleteNote: Scalars["String"]["output"];
+  deleteNote: Scalars['String']['output'];
   emptyTrash: Array<Note>;
   updateNote: Note;
-  updateUser: Scalars["Boolean"]["output"];
+  updateUser: Scalars['Boolean']['output'];
 };
 
 
@@ -40,7 +40,7 @@ export type MutationCreateNoteArgs = {
 
 
 export type MutationDeleteNoteArgs = {
-  id: Scalars["String"]["input"];
+  id: Scalars['String']['input'];
 };
 
 
@@ -54,28 +54,28 @@ export type MutationUpdateUserArgs = {
 };
 
 export type Note = {
-  __typename?: "Note";
-  body: Scalars["String"]["output"];
-  createdAt: Scalars["String"]["output"];
-  deletedAt?: Maybe<Scalars["String"]["output"]>;
-  id: Scalars["String"]["output"];
-  pinned: Scalars["Boolean"]["output"];
-  status: Scalars["String"]["output"];
-  title: Scalars["String"]["output"];
-  updatedAt: Scalars["String"]["output"];
-  userId: Scalars["String"]["output"];
+  __typename?: 'Note';
+  body: Scalars['String']['output'];
+  createdAt: Scalars['String']['output'];
+  deletedAt?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  pinned: Scalars['Boolean']['output'];
+  status: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+  userId: Scalars['String']['output'];
 };
 
 export type Query = {
-  __typename?: "Query";
+  __typename?: 'Query';
   note: Note;
   notes: Array<Note>;
-  user: User;
+  user?: Maybe<User>;
 };
 
 
 export type QueryNoteArgs = {
-  id: Scalars["String"]["input"];
+  id: Scalars['String']['input'];
 };
 
 
@@ -85,60 +85,60 @@ export type QueryNotesArgs = {
 
 
 export type QueryUserArgs = {
-  id: Scalars["String"]["input"];
+  id: Scalars['String']['input'];
 };
 
 export type Settings = {
-  __typename?: "Settings";
-  locale: Scalars["String"]["output"];
-  theme: Scalars["String"]["output"];
+  __typename?: 'Settings';
+  locale: Scalars['String']['output'];
+  theme: Scalars['String']['output'];
 };
 
 export enum Status {
-  Active = "ACTIVE",
-  Archived = "ARCHIVED",
-  Deleted = "DELETED"
+  Active = 'ACTIVE',
+  Archived = 'ARCHIVED',
+  Deleted = 'DELETED'
 }
 
 export type UpdateNote = {
-  body: Scalars["String"]["input"];
-  id: Scalars["String"]["input"];
-  pinned: Scalars["Boolean"]["input"];
-  status: Scalars["String"]["input"];
-  title: Scalars["String"]["input"];
+  body: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  pinned: Scalars['Boolean']['input'];
+  status: Scalars['String']['input'];
+  title: Scalars['String']['input'];
 };
 
 export type UpdateSettings = {
-  locale: Scalars["String"]["input"];
-  theme: Scalars["String"]["input"];
+  locale: Scalars['String']['input'];
+  theme: Scalars['String']['input'];
 };
 
 export type UpdateUser = {
-  email: Scalars["String"]["input"];
-  familyName: Scalars["String"]["input"];
-  givenName: Scalars["String"]["input"];
-  hd: Scalars["String"]["input"];
-  lastLogin: Scalars["String"]["input"];
-  name: Scalars["String"]["input"];
-  picture: Scalars["String"]["input"];
+  email: Scalars['String']['input'];
+  familyName: Scalars['String']['input'];
+  givenName: Scalars['String']['input'];
+  hd: Scalars['String']['input'];
+  lastLogin: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  picture: Scalars['String']['input'];
   settings: UpdateSettings;
-  userId: Scalars["String"]["input"];
+  userId: Scalars['String']['input'];
 };
 
 export type User = {
-  __typename?: "User";
-  createdAt: Scalars["String"]["output"];
-  email: Scalars["String"]["output"];
-  familyName: Scalars["String"]["output"];
-  givenName: Scalars["String"]["output"];
-  hd: Scalars["String"]["output"];
-  id: Scalars["String"]["output"];
-  lastLogin: Scalars["String"]["output"];
-  name: Scalars["String"]["output"];
-  picture: Scalars["String"]["output"];
+  __typename?: 'User';
+  createdAt: Scalars['String']['output'];
+  email: Scalars['String']['output'];
+  familyName: Scalars['String']['output'];
+  givenName: Scalars['String']['output'];
+  hd: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  lastLogin: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  picture: Scalars['String']['output'];
   settings: Settings;
-  updatedAt: Scalars["String"]["output"];
-  userId: Scalars["String"]["output"];
+  updatedAt: Scalars['String']['output'];
+  userId: Scalars['String']['output'];
 };
 
 export type CreateNewNoteMutationVariables = Exact<{
@@ -146,47 +146,47 @@ export type CreateNewNoteMutationVariables = Exact<{
 }>;
 
 
-export type CreateNewNoteMutation = { __typename?: "Mutation", createNote: { __typename?: "Note", id: string, title: string, body: string, status: string, createdAt: string, updatedAt: string, deletedAt?: string | null, userId: string } };
+export type CreateNewNoteMutation = { __typename?: 'Mutation', createNote: { __typename?: 'Note', id: string, title: string, body: string, status: string, createdAt: string, updatedAt: string, deletedAt?: string | null, userId: string } };
 
 export type DeleteNoteMutationVariables = Exact<{
-  id: Scalars["String"]["input"];
+  id: Scalars['String']['input'];
 }>;
 
 
-export type DeleteNoteMutation = { __typename?: "Mutation", deleteNote: string };
+export type DeleteNoteMutation = { __typename?: 'Mutation', deleteNote: string };
 
 export type RemoveDeletedMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RemoveDeletedMutation = { __typename?: "Mutation", emptyTrash: Array<{ __typename?: "Note", id: string, title: string, body: string, status: string, pinned: boolean, createdAt: string, updatedAt: string, userId: string }> };
+export type RemoveDeletedMutation = { __typename?: 'Mutation', emptyTrash: Array<{ __typename?: 'Note', id: string, title: string, body: string, status: string, pinned: boolean, createdAt: string, updatedAt: string, userId: string }> };
 
 export type UpdateNoteMutationVariables = Exact<{
   input: UpdateNote;
 }>;
 
 
-export type UpdateNoteMutation = { __typename?: "Mutation", updateNote: { __typename?: "Note", id: string, title: string, body: string, status: string, pinned: boolean, createdAt: string, updatedAt: string, userId: string } };
+export type UpdateNoteMutation = { __typename?: 'Mutation', updateNote: { __typename?: 'Note', id: string, title: string, body: string, status: string, pinned: boolean, createdAt: string, updatedAt: string, userId: string } };
 
 export type UpdateUserMutationVariables = Exact<{
   input: UpdateUser;
 }>;
 
 
-export type UpdateUserMutation = { __typename?: "Mutation", updateUser: boolean };
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: boolean };
 
 export type GetNotesQueryVariables = Exact<{
   status: Status;
 }>;
 
 
-export type GetNotesQuery = { __typename?: "Query", notes: Array<{ __typename?: "Note", id: string, body: string, title: string, status: string, pinned: boolean, userId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
+export type GetNotesQuery = { __typename?: 'Query', notes: Array<{ __typename?: 'Note', id: string, body: string, title: string, status: string, pinned: boolean, userId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
 
 export type GetUserQueryVariables = Exact<{
-  id: Scalars["String"]["input"];
+  id: Scalars['String']['input'];
 }>;
 
 
-export type GetUserQuery = { __typename?: "Query", user: { __typename?: "User", id: string, userId: string, email: string, name: string, picture: string, givenName: string, familyName: string, hd: string, lastLogin: string, createdAt: string, updatedAt: string, settings: { __typename?: "Settings", theme: string, locale: string } } };
+export type GetUserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, userId: string, email: string, name: string, picture: string, givenName: string, familyName: string, hd: string, lastLogin: string, createdAt: string, updatedAt: string, settings: { __typename?: 'Settings', theme: string, locale: string } } | null };
 
 
 export const CreateNewNoteDocument = gql`
@@ -223,9 +223,9 @@ export type CreateNewNoteMutationFn = Apollo.MutationFunction<CreateNewNoteMutat
  * });
  */
 export function useCreateNewNoteMutation(baseOptions?: Apollo.MutationHookOptions<CreateNewNoteMutation, CreateNewNoteMutationVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useMutation<CreateNewNoteMutation, CreateNewNoteMutationVariables>(CreateNewNoteDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateNewNoteMutation, CreateNewNoteMutationVariables>(CreateNewNoteDocument, options);
+      }
 export type CreateNewNoteMutationHookResult = ReturnType<typeof useCreateNewNoteMutation>;
 export type CreateNewNoteMutationResult = Apollo.MutationResult<CreateNewNoteMutation>;
 export type CreateNewNoteMutationOptions = Apollo.BaseMutationOptions<CreateNewNoteMutation, CreateNewNoteMutationVariables>;
@@ -254,9 +254,9 @@ export type DeleteNoteMutationFn = Apollo.MutationFunction<DeleteNoteMutation, D
  * });
  */
 export function useDeleteNoteMutation(baseOptions?: Apollo.MutationHookOptions<DeleteNoteMutation, DeleteNoteMutationVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useMutation<DeleteNoteMutation, DeleteNoteMutationVariables>(DeleteNoteDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteNoteMutation, DeleteNoteMutationVariables>(DeleteNoteDocument, options);
+      }
 export type DeleteNoteMutationHookResult = ReturnType<typeof useDeleteNoteMutation>;
 export type DeleteNoteMutationResult = Apollo.MutationResult<DeleteNoteMutation>;
 export type DeleteNoteMutationOptions = Apollo.BaseMutationOptions<DeleteNoteMutation, DeleteNoteMutationVariables>;
@@ -293,9 +293,9 @@ export type RemoveDeletedMutationFn = Apollo.MutationFunction<RemoveDeletedMutat
  * });
  */
 export function useRemoveDeletedMutation(baseOptions?: Apollo.MutationHookOptions<RemoveDeletedMutation, RemoveDeletedMutationVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useMutation<RemoveDeletedMutation, RemoveDeletedMutationVariables>(RemoveDeletedDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveDeletedMutation, RemoveDeletedMutationVariables>(RemoveDeletedDocument, options);
+      }
 export type RemoveDeletedMutationHookResult = ReturnType<typeof useRemoveDeletedMutation>;
 export type RemoveDeletedMutationResult = Apollo.MutationResult<RemoveDeletedMutation>;
 export type RemoveDeletedMutationOptions = Apollo.BaseMutationOptions<RemoveDeletedMutation, RemoveDeletedMutationVariables>;
@@ -333,9 +333,9 @@ export type UpdateNoteMutationFn = Apollo.MutationFunction<UpdateNoteMutation, U
  * });
  */
 export function useUpdateNoteMutation(baseOptions?: Apollo.MutationHookOptions<UpdateNoteMutation, UpdateNoteMutationVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useMutation<UpdateNoteMutation, UpdateNoteMutationVariables>(UpdateNoteDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateNoteMutation, UpdateNoteMutationVariables>(UpdateNoteDocument, options);
+      }
 export type UpdateNoteMutationHookResult = ReturnType<typeof useUpdateNoteMutation>;
 export type UpdateNoteMutationResult = Apollo.MutationResult<UpdateNoteMutation>;
 export type UpdateNoteMutationOptions = Apollo.BaseMutationOptions<UpdateNoteMutation, UpdateNoteMutationVariables>;
@@ -364,9 +364,9 @@ export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, U
  * });
  */
 export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserMutation, UpdateUserMutationVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, options);
+      }
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
@@ -403,17 +403,17 @@ export const GetNotesDocument = gql`
  * });
  */
 export function useGetNotesQuery(baseOptions: Apollo.QueryHookOptions<GetNotesQuery, GetNotesQueryVariables> & ({ variables: GetNotesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useQuery<GetNotesQuery, GetNotesQueryVariables>(GetNotesDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetNotesQuery, GetNotesQueryVariables>(GetNotesDocument, options);
+      }
 export function useGetNotesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetNotesQuery, GetNotesQueryVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useLazyQuery<GetNotesQuery, GetNotesQueryVariables>(GetNotesDocument, options);
-}
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetNotesQuery, GetNotesQueryVariables>(GetNotesDocument, options);
+        }
 export function useGetNotesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetNotesQuery, GetNotesQueryVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useSuspenseQuery<GetNotesQuery, GetNotesQueryVariables>(GetNotesDocument, options);
-}
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetNotesQuery, GetNotesQueryVariables>(GetNotesDocument, options);
+        }
 export type GetNotesQueryHookResult = ReturnType<typeof useGetNotesQuery>;
 export type GetNotesLazyQueryHookResult = ReturnType<typeof useGetNotesLazyQuery>;
 export type GetNotesSuspenseQueryHookResult = ReturnType<typeof useGetNotesSuspenseQuery>;
@@ -457,17 +457,17 @@ export const GetUserDocument = gql`
  * });
  */
 export function useGetUserQuery(baseOptions: Apollo.QueryHookOptions<GetUserQuery, GetUserQueryVariables> & ({ variables: GetUserQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
-}
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
+      }
 export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useLazyQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
-}
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
+        }
 export function useGetUserSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useSuspenseQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
-}
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
+        }
 export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserSuspenseQueryHookResult = ReturnType<typeof useGetUserSuspenseQuery>;

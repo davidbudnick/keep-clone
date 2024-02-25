@@ -30,7 +30,12 @@ const Navbar: React.FC = () => {
     const location = useLocation();
     const auth = useAuth();
     const { t } = useTranslation();
-    const [theme, setTheme] = useState(auth.user?.settings.theme);
+    const [theme, setTheme] = React.useState(auth.user?.settings.theme);
+    const [locale, setLocale] = useState(auth.user?.settings.locale);
+
+    useEffect(() => {
+        setLocale(auth.user?.settings.locale);
+    }, [auth.user?.settings.locale]);
 
     useEffect(() => {
         setTheme(auth.user?.settings.theme);
@@ -61,44 +66,53 @@ const Navbar: React.FC = () => {
                     <div className="flex items-center">
                         <div className="flex items-center">
                             <div className="mx-2 hidden md:block">
-                                <Select
-                                    onValueChange={(e) => {
-                                        auth.update({
-                                            settings: {
-                                                theme: theme,
-                                                locale: e
-                                            },
-                                        });
-                                        i18n.changeLanguage(
-                                            e || locales.en
-                                        );
-                                    }}>
-                                    <SelectTrigger className="w-[70px]">
-                                        <SelectValue placeholder={auth.user?.settings.locale || locales.en} />
-                                    </SelectTrigger>
-                                    <SelectContent className="w-[70px]" defaultValue={auth.user?.settings.locale || locales.en} defaultChecked>
-                                        {Object.keys(locales).map((locale) => (
-                                            <SelectItem key={locale} value={locale}>{locale}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                {auth.isAuthenticated &&
+                                    <Select
+                                        onValueChange={(e) => {
+                                            setLocale(e);
+                                            auth.update({
+                                                settings: {
+                                                    theme: theme,
+                                                    locale: e
+                                                },
+                                            });
+                                            i18n.changeLanguage(
+                                                e || locales.en
+                                            );
+                                        }}>
+                                        <SelectTrigger className="w-[70px]">
+                                            <SelectValue placeholder={locale} />
+                                        </SelectTrigger>
+                                        <SelectContent className="w-[70px]" defaultValue={locale} defaultChecked>
+                                            {Object.keys(locales).map((locale) => (
+                                                <SelectItem key={locale} value={locale}>{locale}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                }
                             </div>
                             <div className="mt-1 mx-2">
-                                <Switch
-                                    key={theme}
-                                    checked={theme === DARK}
-                                    onClick={() => {
-                                        const newTheme = theme === DARK ? LIGHT : DARK;
-                                        auth.update({
-                                            settings: {
-                                                theme: newTheme,
-                                                locale: auth.user?.settings.locale,
-                                            },
-                                        });
-                                        UpdateTheme(newTheme);
-                                        setTheme(newTheme);
-                                    }}
-                                />
+                                {auth.isAuthenticated &&
+                                    <Switch
+                                        disabled={!auth.isAuthenticated}
+                                        key={auth.user?.settings.theme}
+                                        checked={
+                                            theme === DARK
+                                        }
+                                        onClick={() => {
+                                            const newTheme = theme === DARK ? LIGHT : DARK;
+                                            setTheme(newTheme);
+                                            auth.update({
+                                                settings: {
+                                                    locale: locale,
+                                                    theme: newTheme,
+                                                },
+                                            });
+                                            UpdateTheme(newTheme);
+                                        }}
+                                    />
+                                }
+
                             </div>
                             <div className='mx-4'>
                                 {
@@ -130,7 +144,7 @@ const Navbar: React.FC = () => {
                                             </PopoverContent>
                                         </Popover>
                                         :
-                                        <GoogleLogin locale={auth.user?.settings.locale || locales.en} onSuccess={auth.login} />
+                                        <GoogleLogin locale={locale || locales.en} onSuccess={auth.login} />
                                 }
                             </div>
                         </div>

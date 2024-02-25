@@ -27,6 +27,10 @@ func (s *usersService) Get(ctx context.Context, userID string) (*model.User, err
 		return nil, err
 	}
 
+	if user == nil {
+		return nil, nil
+	}
+
 	return &model.User{
 		ID:         user.ID.Hex(),
 		UserID:     user.UserID,

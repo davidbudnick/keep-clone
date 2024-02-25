@@ -89,8 +89,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
         skip: !isAuthenticated,
     });
 
-
-
     const login = async (response: CredentialResponse) => {
         localStorage.setItem(AUTH.GOOGLE_CLIENT, response.clientId || "");
         localStorage.setItem(AUTH.GOOGLE_CREDENTIAL, response.credential || "");
@@ -98,16 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
         const googleUser = decodeUser(response.credential || "")
         setGoogleUser(googleUser);
 
-        await update({
-            email: googleUser.email,
-            familyName: googleUser.family_name,
-            givenName: googleUser.given_name,
-            lastLogin: new Date().toISOString(),
-            name: googleUser.name,
-            picture: googleUser.picture,
-            hd: googleUser.hd,
-            userId: googleUser.sub
-        });
+
 
     };
 
@@ -152,6 +141,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
         return JSON.parse(atob(credential?.split(".")[1] || ""));
     }
 
+    const setupUser = async (googleUser: GoogleUser) => {
+        if (!userLoading && userData?.user === null) {
+            await update({
+                email: googleUser.email,
+                familyName: googleUser.family_name,
+                givenName: googleUser.given_name,
+                lastLogin: new Date().toISOString(),
+                name: googleUser.name,
+                picture: googleUser.picture,
+                hd: googleUser.hd,
+                userId: googleUser.sub
+            });
+        } else if (!userLoading && userData?.user) {
+            setUser(userData.user);
+            i18n.changeLanguage(
+                userData.user.settings?.locale
+            );
+            UpdateTheme(userData.user.settings?.theme)
+        }
+
+
+
+    }
+
     useEffect(() => {
         const token = localStorage.getItem(AUTH.GOOGLE_CREDENTIAL);
         if (token) {
@@ -160,13 +173,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
             const googleUser = decodeUser(token)
             setGoogleUser(googleUser);
 
-            if (!userLoading && userData?.user) {
-                setUser(userData.user);
-                i18n.changeLanguage(
-                    userData.user.settings?.locale || locales.en
-                );
-                UpdateTheme(userData.user.settings?.theme || DARK)
-            }
+            setupUser(googleUser);
 
             if (googleUser?.exp) {
                 if (Date.now() > googleUser.exp * 1000) {

@@ -39,7 +39,7 @@ type Settings {
 type Query {
   notes(status: Status): [Note!]!
   note(id: String!): Note!
-  user(id: String!): User!
+  user(id: String!): User
 }
 
 input CreateNote {
