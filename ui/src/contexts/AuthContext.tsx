@@ -3,11 +3,37 @@ import { ROUTES } from "@/constants/routes";
 import { CredentialResponse, googleLogout } from "@react-oauth/google";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { User, useUpdateUserMutation, useGetUserQuery, UpdateUserMutation } from "@/graphql/generated/schema";
+import { format } from "date-fns";
+import { ApolloClient, FetchResult, NormalizedCacheObject } from "@apollo/client";
+import { locales } from "@/locales/i18n";
+import i18n from "i18next";
+import { UpdateTheme } from "@/lib/theme";
+import { DARK } from "@/constants/theme";
+
+
+interface UpdateUser {
+    email?: string,
+    familyName?: string,
+    givenName?: string,
+    lastLogin?: string,
+    name?: string,
+    picture?: string,
+    hd?: string,
+    settings?: {
+        theme?: string,
+        locale?: string
+    },
+    userId?: string
+}
 
 interface AuthContextValue {
     isAuthenticated: boolean;
     login: (response: CredentialResponse) => void;
     logout: () => void;
+    update: (updateUser: UpdateUser
+    ) => void;
+    loading: boolean;
     user?: User;
 }
 
@@ -15,10 +41,12 @@ const AuthContext = createContext<AuthContextValue>({
     isAuthenticated: false,
     login: () => { },
     logout: () => { },
+    update: async () => { return {} as FetchResult<UpdateUserMutation> },
+    loading: false,
     user: undefined
 })
 
-export interface User {
+export interface GoogleUser {
     iss?: string;
     azp?: string;
     aud?: string;
@@ -37,19 +65,54 @@ export interface User {
     jti?: string;
 }
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+type AuthProviderProps = {
+    client: ApolloClient<NormalizedCacheObject>
+    children: React.ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<User>();
+    const [googleUser, setGoogleUser] = useState<GoogleUser>()
     const navigate = useNavigate();
 
-    const login = (response: CredentialResponse) => {
+    const [UpdateUserMutation] = useUpdateUserMutation(
+        {
+            update(cache) {
+                cache.evict({ fieldName: "user" });
+            }
+        }
+    );
+
+    const { loading: userLoading, data: userData } = useGetUserQuery({
+        variables: { id: googleUser?.sub || "" },
+        skip: !isAuthenticated,
+    });
+
+
+
+    const login = async (response: CredentialResponse) => {
         localStorage.setItem(AUTH.GOOGLE_CLIENT, response.clientId || "");
         localStorage.setItem(AUTH.GOOGLE_CREDENTIAL, response.credential || "");
         setIsAuthenticated(true);
-        setUser(decodeUser(response.credential || ""));
+        const googleUser = decodeUser(response.credential || "")
+        setGoogleUser(googleUser);
+
+        await update({
+            email: googleUser.email,
+            familyName: googleUser.family_name,
+            givenName: googleUser.given_name,
+            lastLogin: new Date().toISOString(),
+            name: googleUser.name,
+            picture: googleUser.picture,
+            hd: googleUser.hd,
+            userId: googleUser.sub
+        });
+
     };
 
     const logout = () => {
+        client.resetStore()
         setIsAuthenticated(false);
         localStorage.removeItem(AUTH.GOOGLE_CLIENT);
         localStorage.removeItem(AUTH.GOOGLE_CREDENTIAL);
@@ -58,28 +121,64 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         navigate(ROUTES.HOME);
     };
 
-    const decodeUser = (credential: string) => {
-        const decoded: User = JSON.parse(atob(credential?.split(".")[1] || ""));
-        return decoded;
+    const update = async (updateUser: UpdateUser
+    ) => {
+        await UpdateUserMutation({
+            variables: {
+                input: {
+                    email: updateUser.email || user?.email || "",
+                    familyName: updateUser.familyName || user?.familyName || "",
+                    givenName: updateUser.givenName || user?.givenName || "",
+                    lastLogin: formatLastLogin(updateUser.lastLogin || user?.lastLogin || new Date().toISOString()),
+                    name: updateUser.name || user?.name || "",
+                    picture: updateUser.picture || user?.picture || "",
+                    hd: updateUser.hd || user?.hd || "",
+                    settings: {
+                        theme: updateUser.settings?.theme || user?.settings.theme || DARK,
+                        locale: updateUser.settings?.locale || user?.settings.locale || locales.en
+                    },
+                    userId: updateUser.userId || user?.userId || ""
+                }
+            }
+        });
+    }
+
+    const formatLastLogin = (date: Date | string): string => {
+        const dateObj = typeof date === "string" ? new Date(date) : date;
+        return format(dateObj, "yyyy-MM-dd HH:mm:ss");
+    }
+
+    const decodeUser = (credential: string): GoogleUser => {
+        return JSON.parse(atob(credential?.split(".")[1] || ""));
     }
 
     useEffect(() => {
         const token = localStorage.getItem(AUTH.GOOGLE_CREDENTIAL);
         if (token) {
             setIsAuthenticated(true);
-            setUser(decodeUser(token));
 
-            if (user?.exp) {
-                if (Date.now() > user.exp * 1000) {
+            const googleUser = decodeUser(token)
+            setGoogleUser(googleUser);
+
+            if (!userLoading && userData?.user) {
+                setUser(userData.user);
+                i18n.changeLanguage(
+                    userData.user.settings?.locale || locales.en
+                );
+                UpdateTheme(userData.user.settings?.theme || DARK)
+            }
+
+            if (googleUser?.exp) {
+                if (Date.now() > googleUser.exp * 1000) {
                     logout();
                 }
             }
         }
-    }, [user])
+    }, [user, userLoading])
 
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, user }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, logout, update, user, loading: userLoading }}>
             {children}
         </AuthContext.Provider>
     );

@@ -1,4 +1,3 @@
-import { ThemeProvider } from "@/components/theme-provider"
 import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink, ApolloLink } from "@apollo/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -8,7 +7,7 @@ import { ROUTES } from "@/constants/routes";
 import { AUTH } from "@/constants/auth";
 import { AuthProvider } from "@/contexts/AuthContext";
 import i18n from "i18next";
-import { localStorageKey, locales, resources } from "@/locales/i18n";
+import { locales, resources } from "@/locales/i18n";
 import { initReactI18next } from "react-i18next";
 
 const authLink = new ApolloLink((operation, forward) => {
@@ -32,7 +31,7 @@ const client = new ApolloClient({
 i18n.use(initReactI18next)
     .init({
         resources: resources,
-        lng: localStorage.getItem(localStorageKey) || locales.en,
+        lng: locales.en,
         fallbackLng: locales.en,
         interpolation: {
             escapeValue: false
@@ -40,27 +39,22 @@ i18n.use(initReactI18next)
     });
 
 export const App = () => {
-    console.log("CLIENT_ID", import.meta.env.VITE_API_CLIENT_ID);
-    console.log("API_ENDPOINT", import.meta.env.VITE_API_GRAPHQL_ENDPOINT)
-
     return (
         <GoogleOAuthProvider clientId={import.meta.env.VITE_API_CLIENT_ID}>
             <ApolloProvider client={client}>
-                <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-                    <BrowserRouter>
-                        <AuthProvider>
-                            <Navbar />
-                            <Sidebar />
-                            <div className="pl-14 pt-16 md:pl-20 md:pt-20">
-                                <Routes>
-                                    <Route path={ROUTES.HOME} element={<Home />} />
-                                    <Route path={ROUTES.ARCHIVED} element={<Archived />} />
-                                    <Route path={ROUTES.TRASH} element={<Trash />} />
-                                </Routes>
-                            </div>
-                        </AuthProvider>
-                    </BrowserRouter>
-                </ThemeProvider>
+                <BrowserRouter>
+                    <AuthProvider client={client}>
+                        <Navbar />
+                        <Sidebar />
+                        <div className="pl-14 pt-16 md:pl-20 md:pt-20">
+                            <Routes>
+                                <Route path={ROUTES.HOME} element={<Home />} />
+                                <Route path={ROUTES.ARCHIVED} element={<Archived />} />
+                                <Route path={ROUTES.TRASH} element={<Trash />} />
+                            </Routes>
+                        </div>
+                    </AuthProvider>
+                </BrowserRouter>
             </ApolloProvider>
         </GoogleOAuthProvider>
     )

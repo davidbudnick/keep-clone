@@ -6,6 +6,7 @@ import (
 	"os"
 	"server/graph"
 	"server/internal/app/notes"
+	"server/internal/app/users"
 	"server/internal/config"
 	"server/internal/db"
 	"server/internal/health"
@@ -18,9 +19,6 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
@@ -44,35 +42,6 @@ func main() {
 	}
 	defer databaseService.Client().Disconnect(ctx)
 
-	notesCollection := databaseService.Client().Database(databaseService.Name()).Collection(db.NOTES_COLLECTION)
-	_, err = notesCollection.Indexes().CreateOne(ctx, mongo.IndexModel{
-		Keys: bson.D{
-			{
-				Key:   db.USER_INDEX,
-				Value: 1,
-			},
-			{
-				Key:   db.STATUS_INDEX,
-				Value: 1,
-			},
-		},
-	})
-	if err != nil {
-		slog.ErrorContext(ctx, "Error creating indexes", "error", err)
-	}
-
-	_, err = notesCollection.Indexes().CreateOne(ctx, mongo.IndexModel{
-		Keys: bson.D{
-			{
-				Key:   db.DELETED_AT_INDEX,
-				Value: 1,
-			},
-		}, Options: options.Index().SetExpireAfterSeconds(24 * 60 * 60 * 7),
-	})
-	if err != nil {
-		slog.ErrorContext(ctx, "Error creating deletedAt index", "error", err)
-	}
-
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	r.Use(sloggin.New(l))
@@ -93,6 +62,9 @@ func main() {
 		notes.NewNotesService(
 			notes.NewNotesRepo(databaseService.Client(), databaseService.Name()),
 		),
+		users.NewUsersService(
+			users.NewUsersRepo(databaseService.Client(), databaseService.Name()),
+		),
 	))
 	r.GET("/api/playground", playgroundHandler())
 
@@ -102,12 +74,13 @@ func main() {
 	}
 }
 
-func graphqlHandler(notesService notes.NotesService) gin.HandlerFunc {
+func graphqlHandler(notesService notes.NotesService, usersService users.UsersService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		handler.NewDefaultServer(graph.NewExecutableSchema(
 			graph.Config{
 				Resolvers: &graph.Resolver{
 					NotesService: notesService,
+					UsersService: usersService,
 					UserID:       c.GetString(middleware.USER_ID),
 				},
 			},

@@ -10,17 +10,12 @@ import (
 )
 
 const (
-	USER_INDEX       = "user_id"
-	STATUS_INDEX     = "status"
-	DELETED_AT_INDEX = "deleted_at"
+	NOTES_COLLECTION = "notes"
+	USERS_COLLECTION = "users"
 )
 
 const (
 	SET = "$set"
-)
-
-const (
-	NOTES_COLLECTION = "notes"
 )
 
 type DatabaseService interface {
@@ -40,8 +35,15 @@ func NewDatabaseService(ctx context.Context, cfg *config.Config) (DatabaseServic
 		return nil, err
 	}
 
-	if err := client.Database(cfg.Database.Name).CreateCollection(ctx, NOTES_COLLECTION); err != nil {
-		slog.ErrorContext(ctx, "Error creating notes collection", "error", err)
+	err = notesInit(ctx, cfg, client)
+	if err != nil {
+		slog.ErrorContext(ctx, "Error initializing notes", "error", err)
+		return nil, err
+	}
+
+	err = userInit(ctx, cfg, client)
+	if err != nil {
+		slog.ErrorContext(ctx, "Error initializing users", "error", err)
 		return nil, err
 	}
 

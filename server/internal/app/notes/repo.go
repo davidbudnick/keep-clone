@@ -24,14 +24,14 @@ type NotesRepo interface {
 }
 
 type notesRepo struct {
-	Client *mongo.Client
-	Name   string
+	Client       *mongo.Client
+	DatabaseName string
 }
 
-func NewNotesRepo(client *mongo.Client, name string) NotesRepo {
+func NewNotesRepo(client *mongo.Client, databaseName string) NotesRepo {
 	return &notesRepo{
-		Client: client,
-		Name:   name,
+		Client:       client,
+		DatabaseName: databaseName,
 	}
 }
 
@@ -58,7 +58,7 @@ type ListFilter struct {
 }
 
 func (r *notesRepo) List(ctx context.Context, userID string, status string) ([]Note, error) {
-	cursor, err := r.Client.Database(r.Name).Collection(db.NOTES_COLLECTION).Find(ctx, ListFilter{
+	cursor, err := r.Client.Database(r.DatabaseName).Collection(db.NOTES_COLLECTION).Find(ctx, ListFilter{
 		UserID: userID,
 		Status: status,
 	})
@@ -85,7 +85,7 @@ func (r *notesRepo) Get(ctx context.Context, userID string, noteID string) (*Not
 	}
 
 	var note Note
-	err = r.Client.Database(r.Name).Collection(db.NOTES_COLLECTION).FindOne(ctx,
+	err = r.Client.Database(r.DatabaseName).Collection(db.NOTES_COLLECTION).FindOne(ctx,
 		GetFilter{
 			ID:     objectId,
 			UserID: userID,
@@ -106,7 +106,7 @@ func (r *notesRepo) Create(ctx context.Context, userID string, note model.Create
 		deletedAt = &now
 	}
 
-	notesCollection := r.Client.Database(r.Name).Collection(db.NOTES_COLLECTION)
+	notesCollection := r.Client.Database(r.DatabaseName).Collection(db.NOTES_COLLECTION)
 	res, err := notesCollection.InsertOne(ctx, Note{
 		ID:        primitive.NewObjectID(),
 		UserID:    userID,
@@ -126,7 +126,7 @@ func (r *notesRepo) Create(ctx context.Context, userID string, note model.Create
 	return res, nil
 }
 
-type UpdateFilter struct {
+type UpdateSet struct {
 	Tilte     string     `bson:"title"`
 	Body      string     `bson:"body"`
 	Status    string     `bson:"status"`
@@ -136,7 +136,7 @@ type UpdateFilter struct {
 }
 
 func (r *notesRepo) Update(ctx context.Context, userID string, note model.UpdateNote) error {
-	notesCollection := r.Client.Database(r.Name).Collection(db.NOTES_COLLECTION)
+	notesCollection := r.Client.Database(r.DatabaseName).Collection(db.NOTES_COLLECTION)
 
 	objectId, err := primitive.ObjectIDFromHex(note.ID)
 	if err != nil {
@@ -154,7 +154,7 @@ func (r *notesRepo) Update(ctx context.Context, userID string, note model.Update
 		ID:     objectId,
 		UserID: userID,
 	}, bson.M{
-		db.SET: UpdateFilter{
+		db.SET: UpdateSet{
 			Tilte:     note.Title,
 			Body:      note.Body,
 			Status:    note.Status,
@@ -178,7 +178,7 @@ func (r *notesRepo) Delete(ctx context.Context, userID string, noteID string) (*
 		return nil, err
 	}
 
-	notesCollection := r.Client.Database(r.Name).Collection(db.NOTES_COLLECTION)
+	notesCollection := r.Client.Database(r.DatabaseName).Collection(db.NOTES_COLLECTION)
 	_, err = notesCollection.DeleteOne(ctx, GetFilter{
 		ID:     objectId,
 		UserID: userID,
@@ -197,7 +197,7 @@ type RemoveDeletedFilter struct {
 }
 
 func (r *notesRepo) RemoveDeleted(ctx context.Context, userID string) error {
-	_, err := r.Client.Database(r.Name).Collection(db.NOTES_COLLECTION).DeleteMany(ctx, RemoveDeletedFilter{
+	_, err := r.Client.Database(r.DatabaseName).Collection(db.NOTES_COLLECTION).DeleteMany(ctx, RemoveDeletedFilter{
 		UserID: userID,
 		Status: model.StatusDeleted.String(),
 	})

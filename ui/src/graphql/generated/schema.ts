@@ -30,6 +30,7 @@ export type Mutation = {
   deleteNote: Scalars["String"]["output"];
   emptyTrash: Array<Note>;
   updateNote: Note;
+  updateUser: Scalars["Boolean"]["output"];
 };
 
 
@@ -45,6 +46,11 @@ export type MutationDeleteNoteArgs = {
 
 export type MutationUpdateNoteArgs = {
   input: UpdateNote;
+};
+
+
+export type MutationUpdateUserArgs = {
+  input: UpdateUser;
 };
 
 export type Note = {
@@ -64,6 +70,7 @@ export type Query = {
   __typename?: "Query";
   note: Note;
   notes: Array<Note>;
+  user: User;
 };
 
 
@@ -74,6 +81,17 @@ export type QueryNoteArgs = {
 
 export type QueryNotesArgs = {
   status?: InputMaybe<Status>;
+};
+
+
+export type QueryUserArgs = {
+  id: Scalars["String"]["input"];
+};
+
+export type Settings = {
+  __typename?: "Settings";
+  locale: Scalars["String"]["output"];
+  theme: Scalars["String"]["output"];
 };
 
 export enum Status {
@@ -88,6 +106,39 @@ export type UpdateNote = {
   pinned: Scalars["Boolean"]["input"];
   status: Scalars["String"]["input"];
   title: Scalars["String"]["input"];
+};
+
+export type UpdateSettings = {
+  locale: Scalars["String"]["input"];
+  theme: Scalars["String"]["input"];
+};
+
+export type UpdateUser = {
+  email: Scalars["String"]["input"];
+  familyName: Scalars["String"]["input"];
+  givenName: Scalars["String"]["input"];
+  hd: Scalars["String"]["input"];
+  lastLogin: Scalars["String"]["input"];
+  name: Scalars["String"]["input"];
+  picture: Scalars["String"]["input"];
+  settings: UpdateSettings;
+  userId: Scalars["String"]["input"];
+};
+
+export type User = {
+  __typename?: "User";
+  createdAt: Scalars["String"]["output"];
+  email: Scalars["String"]["output"];
+  familyName: Scalars["String"]["output"];
+  givenName: Scalars["String"]["output"];
+  hd: Scalars["String"]["output"];
+  id: Scalars["String"]["output"];
+  lastLogin: Scalars["String"]["output"];
+  name: Scalars["String"]["output"];
+  picture: Scalars["String"]["output"];
+  settings: Settings;
+  updatedAt: Scalars["String"]["output"];
+  userId: Scalars["String"]["output"];
 };
 
 export type CreateNewNoteMutationVariables = Exact<{
@@ -116,12 +167,26 @@ export type UpdateNoteMutationVariables = Exact<{
 
 export type UpdateNoteMutation = { __typename?: "Mutation", updateNote: { __typename?: "Note", id: string, title: string, body: string, status: string, pinned: boolean, createdAt: string, updatedAt: string, userId: string } };
 
+export type UpdateUserMutationVariables = Exact<{
+  input: UpdateUser;
+}>;
+
+
+export type UpdateUserMutation = { __typename?: "Mutation", updateUser: boolean };
+
 export type GetNotesQueryVariables = Exact<{
   status: Status;
 }>;
 
 
 export type GetNotesQuery = { __typename?: "Query", notes: Array<{ __typename?: "Note", id: string, body: string, title: string, status: string, pinned: boolean, userId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
+
+export type GetUserQueryVariables = Exact<{
+  id: Scalars["String"]["input"];
+}>;
+
+
+export type GetUserQuery = { __typename?: "Query", user: { __typename?: "User", id: string, userId: string, email: string, name: string, picture: string, givenName: string, familyName: string, hd: string, lastLogin: string, createdAt: string, updatedAt: string, settings: { __typename?: "Settings", theme: string, locale: string } } };
 
 
 export const CreateNewNoteDocument = gql`
@@ -274,6 +339,37 @@ export function useUpdateNoteMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateNoteMutationHookResult = ReturnType<typeof useUpdateNoteMutation>;
 export type UpdateNoteMutationResult = Apollo.MutationResult<UpdateNoteMutation>;
 export type UpdateNoteMutationOptions = Apollo.BaseMutationOptions<UpdateNoteMutation, UpdateNoteMutationVariables>;
+export const UpdateUserDocument = gql`
+    mutation UpdateUser($input: UpdateUser!) {
+  updateUser(input: $input)
+}
+    `;
+export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, UpdateUserMutationVariables>;
+
+/**
+ * __useUpdateUserMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserMutation, { data, loading, error }] = useUpdateUserMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserMutation, UpdateUserMutationVariables>) {
+    const options = {...defaultOptions, ...baseOptions}
+    return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, options);
+}
+export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
+export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
+export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
 export const GetNotesDocument = gql`
     query GetNotes($status: Status!) {
   notes(status: $status) {
@@ -306,7 +402,7 @@ export const GetNotesDocument = gql`
  *   },
  * });
  */
-export function useGetNotesQuery(baseOptions: Apollo.QueryHookOptions<GetNotesQuery, GetNotesQueryVariables>) {
+export function useGetNotesQuery(baseOptions: Apollo.QueryHookOptions<GetNotesQuery, GetNotesQueryVariables> & ({ variables: GetNotesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
     const options = {...defaultOptions, ...baseOptions}
     return Apollo.useQuery<GetNotesQuery, GetNotesQueryVariables>(GetNotesDocument, options);
 }
@@ -322,3 +418,57 @@ export type GetNotesQueryHookResult = ReturnType<typeof useGetNotesQuery>;
 export type GetNotesLazyQueryHookResult = ReturnType<typeof useGetNotesLazyQuery>;
 export type GetNotesSuspenseQueryHookResult = ReturnType<typeof useGetNotesSuspenseQuery>;
 export type GetNotesQueryResult = Apollo.QueryResult<GetNotesQuery, GetNotesQueryVariables>;
+export const GetUserDocument = gql`
+    query GetUser($id: String!) {
+  user(id: $id) {
+    id
+    userId
+    email
+    name
+    picture
+    givenName
+    familyName
+    hd
+    settings {
+      theme
+      locale
+    }
+    lastLogin
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useGetUserQuery__
+ *
+ * To run a query within a React component, call `useGetUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetUserQuery(baseOptions: Apollo.QueryHookOptions<GetUserQuery, GetUserQueryVariables> & ({ variables: GetUserQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+    const options = {...defaultOptions, ...baseOptions}
+    return Apollo.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
+}
+export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
+    const options = {...defaultOptions, ...baseOptions}
+    return Apollo.useLazyQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
+}
+export function useGetUserSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
+    const options = {...defaultOptions, ...baseOptions}
+    return Apollo.useSuspenseQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
+}
+export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
+export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
+export type GetUserSuspenseQueryHookResult = ReturnType<typeof useGetUserSuspenseQuery>;
+export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;

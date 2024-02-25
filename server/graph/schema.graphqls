@@ -16,9 +16,30 @@ enum Status {
   DELETED
 }
 
+type User {
+  id: String!
+  userId: String!
+  email: String!
+  name: String!
+  picture: String!
+  givenName: String!
+  familyName: String!
+  hd: String!
+  settings: Settings!
+  lastLogin: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Settings {
+  theme: String!
+  locale: String!
+}
+
 type Query {
   notes(status: Status): [Note!]!
   note(id: String!): Note!
+  user(id: String!): User!
 }
 
 input CreateNote {
@@ -36,9 +57,27 @@ input UpdateNote {
   pinned: Boolean!
 }
 
+input UpdateUser{
+  userId: String!
+  email: String!
+  name: String!
+  picture: String!
+  givenName: String!
+  familyName: String!
+  hd: String!
+  settings: UpdateSettings!
+  lastLogin: String!
+}
+
+input UpdateSettings {
+  theme: String!
+  locale: String!
+}
+
 type Mutation {
   createNote(input: CreateNote!): Note!
   updateNote(input: UpdateNote!): Note!
   deleteNote(id: String!): String!
   emptyTrash: [Note!]!
+  updateUser(input: UpdateUser!): Boolean!
 }

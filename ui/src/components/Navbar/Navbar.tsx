@@ -1,6 +1,6 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { Switch } from "@/components/ui/switch"
-import { useTheme, DARK, LIGHT } from "@/components/theme-provider"
+import { DARK, LIGHT } from "@/constants/theme";
 import { ROUTES } from "@/constants/routes";
 import { Link, useLocation } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
@@ -21,13 +21,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { localStorageKey, locales } from "@/locales/i18n";
+import { locales } from "@/locales/i18n";
+import i18n from "i18next";
+import { UpdateTheme } from "@/lib/theme";
+
 
 const Navbar: React.FC = () => {
-    const { setTheme, theme } = useTheme()
     const location = useLocation();
-    const { user, isAuthenticated, logout, login } = useAuth();
-    const { t, i18n } = useTranslation();
+    const auth = useAuth();
+    const { t } = useTranslation();
+    const [theme, setTheme] = useState(auth.user?.settings.theme);
+
+    useEffect(() => {
+        setTheme(auth.user?.settings.theme);
+    }, [auth.user?.settings.theme]);
 
     const GetPageName = () => {
         if (location.pathname === ROUTES.HOME) {
@@ -47,21 +54,29 @@ const Navbar: React.FC = () => {
                         <Link to={ROUTES.HOME} className="ml-2 flex">
                             <img alt="logo" src="/logo.png" width={48} height={48} className="h-10 w-10" />
                             <span className="ml-3 mt-1 self-center whitespace-nowrap font-mono text-xl dark:text-white">
-                                {isAuthenticated && GetPageName()}
+                                {auth.isAuthenticated && GetPageName()}
                             </span>
                         </Link>
                     </div>
                     <div className="flex items-center">
                         <div className="flex items-center">
                             <div className="mx-2 hidden md:block">
-                                <Select onValueChange={(e) => {
-                                    i18n.changeLanguage(e);
-                                    localStorage.setItem(localStorageKey, e);
-                                }}>
+                                <Select
+                                    onValueChange={(e) => {
+                                        auth.update({
+                                            settings: {
+                                                theme: theme,
+                                                locale: e
+                                            },
+                                        });
+                                        i18n.changeLanguage(
+                                            e || locales.en
+                                        );
+                                    }}>
                                     <SelectTrigger className="w-[70px]">
-                                        <SelectValue placeholder={localStorage.getItem(localStorageKey) || locales.en} />
+                                        <SelectValue placeholder={auth.user?.settings.locale || locales.en} />
                                     </SelectTrigger>
-                                    <SelectContent className="w-[70px]" defaultValue={localStorage.getItem(localStorageKey) || locales.en} defaultChecked>
+                                    <SelectContent className="w-[70px]" defaultValue={auth.user?.settings.locale || locales.en} defaultChecked>
                                         {Object.keys(locales).map((locale) => (
                                             <SelectItem key={locale} value={locale}>{locale}</SelectItem>
                                         ))}
@@ -69,31 +84,45 @@ const Navbar: React.FC = () => {
                                 </Select>
                             </div>
                             <div className="mt-1 mx-2">
-                                <Switch checked={theme === DARK} onClick={() => setTheme(theme === DARK ? LIGHT : DARK)} />
+                                <Switch
+                                    key={theme}
+                                    checked={theme === DARK}
+                                    onClick={() => {
+                                        const newTheme = theme === DARK ? LIGHT : DARK;
+                                        auth.update({
+                                            settings: {
+                                                theme: newTheme,
+                                                locale: auth.user?.settings.locale,
+                                            },
+                                        });
+                                        UpdateTheme(newTheme);
+                                        setTheme(newTheme);
+                                    }}
+                                />
                             </div>
                             <div className='mx-4'>
                                 {
-                                    isAuthenticated ?
+                                    auth.isAuthenticated ?
                                         <Popover>
                                             <PopoverTrigger asChild className="cursor-pointer">
                                                 <Avatar>
-                                                    <AvatarImage className='h-10 w-10' src={user?.picture} />
-                                                    <AvatarFallback className='h-10 w-10'>{`${user?.given_name?.charAt(0)}${user?.family_name?.charAt(0)}`}</AvatarFallback>
+                                                    <AvatarImage className='h-10 w-10' src={auth.user?.picture} />
+                                                    <AvatarFallback className='h-10 w-10'>{`${auth.user?.givenName?.charAt(0) || ""}${auth.user?.familyName?.charAt(0) || ""}`}</AvatarFallback>
                                                 </Avatar>
                                             </PopoverTrigger>
                                             <PopoverContent className="z-10 mt-2 w-80 rounded-lg border border-gray-300 bg-white p-4 shadow-lg dark:border-gray-700 dark:bg-black">
                                                 <div className="grid gap-4">
                                                     <div className="space-y-2 text-center">
-                                                        <p className="text-xs font-bold">{user?.email}</p>
-                                                        <p className="text-xs">{t("navbar.managed_by")} {user?.hd}</p>
+                                                        <p className="text-xs font-bold">{auth.user?.email}</p>
+                                                        <p className="text-xs">{t("navbar.managed_by")} {auth.user?.hd}</p>
                                                         <div className='flex justify-center'>
                                                             <Avatar className='mt-3'>
-                                                                <AvatarImage className='h-20 w-20' src={user?.picture} />
-                                                                <AvatarFallback className='h-20 w-20 text-xl'>{`${user?.given_name?.charAt(0)}${user?.family_name?.charAt(0)}`}</AvatarFallback>
+                                                                <AvatarImage className='h-20 w-20' src={auth.user?.picture} />
+                                                                <AvatarFallback className='h-20 w-20 text-xl'>{`${auth.user?.givenName?.charAt(0)}${auth.user?.familyName?.charAt(0)}`}</AvatarFallback>
                                                             </Avatar>
                                                         </div>
-                                                        <div className="pb-2 pt-1 text-xl font-light">{t("navbar.hi")}, {user?.given_name} {user?.family_name}!</div>
-                                                        <Button onClick={logout}>
+                                                        <div className="pb-2 pt-1 text-xl font-light">{t("navbar.hi")}, {auth.user?.givenName} {auth.user?.familyName}!</div>
+                                                        <Button onClick={auth.logout}>
                                                             <LogOut className="mr-2 h-4 w-4" /> {t("navbar.logout")}
                                                         </Button>
                                                     </div>
@@ -101,9 +130,8 @@ const Navbar: React.FC = () => {
                                             </PopoverContent>
                                         </Popover>
                                         :
-                                        <GoogleLogin locale={localStorage.getItem(localStorageKey) || locales.en} onSuccess={login} />
+                                        <GoogleLogin locale={auth.user?.settings.locale || locales.en} onSuccess={auth.login} />
                                 }
-
                             </div>
                         </div>
                     </div>

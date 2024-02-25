@@ -33,12 +33,49 @@ type Note struct {
 type Query struct {
 }
 
+type Settings struct {
+	Theme  string `json:"theme"`
+	Locale string `json:"locale"`
+}
+
 type UpdateNote struct {
 	ID     string `json:"id"`
 	Title  string `json:"title"`
 	Body   string `json:"body"`
 	Status string `json:"status"`
 	Pinned bool   `json:"pinned"`
+}
+
+type UpdateSettings struct {
+	Theme  string `json:"theme"`
+	Locale string `json:"locale"`
+}
+
+type UpdateUser struct {
+	UserID     string          `json:"userId"`
+	Email      string          `json:"email"`
+	Name       string          `json:"name"`
+	Picture    string          `json:"picture"`
+	GivenName  string          `json:"givenName"`
+	FamilyName string          `json:"familyName"`
+	Hd         string          `json:"hd"`
+	Settings   *UpdateSettings `json:"settings"`
+	LastLogin  string          `json:"lastLogin"`
+}
+
+type User struct {
+	ID         string    `json:"id"`
+	UserID     string    `json:"userId"`
+	Email      string    `json:"email"`
+	Name       string    `json:"name"`
+	Picture    string    `json:"picture"`
+	GivenName  string    `json:"givenName"`
+	FamilyName string    `json:"familyName"`
+	Hd         string    `json:"hd"`
+	Settings   *Settings `json:"settings"`
+	LastLogin  string    `json:"lastLogin"`
+	CreatedAt  string    `json:"createdAt"`
+	UpdatedAt  string    `json:"updatedAt"`
 }
 
 type Status string
