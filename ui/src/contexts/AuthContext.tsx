@@ -71,7 +71,7 @@ type AuthProviderProps = {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [user, setUser] = useState<User>();
     const [googleUser, setGoogleUser] = useState<GoogleUser>()
     const navigate = useNavigate();
@@ -172,7 +172,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
                 }
             }
         }
-    }, [userLoading])
+    }, [user, userLoading])
 
 
     return (

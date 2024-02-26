@@ -67,7 +67,7 @@ const Navbar: React.FC = () => {
                     <div className="flex items-center">
                         <div className="flex items-center">
                             <div className="mx-2">
-                                {auth.isAuthenticated &&
+                                {auth.isAuthenticated && !auth.loading &&
                                     <>
                                         {isSelectOpen && isMobile && (
                                             <div
@@ -85,16 +85,14 @@ const Navbar: React.FC = () => {
                                         )}
                                         <Select
                                             onValueChange={(e) => {
-                                                if (auth.isAuthenticated) {
-                                                    auth.update({
-                                                        settings: {
-                                                            locale: e
-                                                        },
-                                                    });
-                                                    i18n.changeLanguage(
-                                                        e || locales.en
-                                                    );
-                                                }
+                                                auth.update({
+                                                    settings: {
+                                                        locale: e
+                                                    },
+                                                });
+                                                i18n.changeLanguage(
+                                                    e || locales.en
+                                                );
                                             }}
                                             onOpenChange={setIsSelectOpen}
                                         >
@@ -111,7 +109,7 @@ const Navbar: React.FC = () => {
                                 }
                             </div>
                             <div className="mt-1 mx-2">
-                                {auth.isAuthenticated &&
+                                {auth.isAuthenticated && !auth.loading &&
                                     <Switch
                                         disabled={!auth.isAuthenticated}
                                         key={auth.user?.settings.theme}
@@ -135,7 +133,7 @@ const Navbar: React.FC = () => {
                             </div>
                             <div className='mx-4'>
                                 {
-                                    auth.isAuthenticated ?
+                                    auth.isAuthenticated && !auth.loading ?
                                         <Popover>
                                             <PopoverTrigger asChild className="cursor-pointer">
                                                 <Avatar>
