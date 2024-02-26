@@ -23,13 +23,11 @@ const DeletedCard: React.FC<CardProps> = ({ note }) => {
         },
     });
 
-    const [deleteNote] = useDeleteNoteMutation(
-        {
-            update(cache) {
-                cache.evict({ id: `Note:${note.id}` });
-            }
-        }
-    );
+    const [deleteNote] = useDeleteNoteMutation({
+        update(cache) {
+            cache.evict({ fieldName: "notes" });
+        },
+    });
 
     return (
         <div key={note.id} className="group relative m-2 flex min-h-64 w-64 max-w-xs cursor-pointer flex-col items-start justify-between rounded-lg border border-gray-200 p-5 shadow">
