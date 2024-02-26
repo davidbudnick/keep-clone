@@ -146,7 +146,7 @@ export type CreateNewNoteMutationVariables = Exact<{
 }>;
 
 
-export type CreateNewNoteMutation = { __typename?: 'Mutation', createNote: { __typename?: 'Note', id: string, title: string, body: string, status: string, createdAt: string, updatedAt: string, deletedAt?: string | null, userId: string } };
+export type CreateNewNoteMutation = { __typename?: 'Mutation', createNote: { __typename?: 'Note', id: string, title: string, body: string, status: string, pinned: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null, userId: string } };
 
 export type DeleteNoteMutationVariables = Exact<{
   id: Scalars['String']['input'];
@@ -165,7 +165,7 @@ export type UpdateNoteMutationVariables = Exact<{
 }>;
 
 
-export type UpdateNoteMutation = { __typename?: 'Mutation', updateNote: { __typename?: 'Note', id: string, title: string, body: string, status: string, pinned: boolean, createdAt: string, updatedAt: string, userId: string } };
+export type UpdateNoteMutation = { __typename?: 'Mutation', updateNote: { __typename?: 'Note', id: string, title: string, body: string, status: string, pinned: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null, userId: string } };
 
 export type UpdateUserMutationVariables = Exact<{
   input: UpdateUser;
@@ -196,6 +196,7 @@ export const CreateNewNoteDocument = gql`
     title
     body
     status
+    pinned
     createdAt
     updatedAt
     deletedAt
@@ -309,6 +310,7 @@ export const UpdateNoteDocument = gql`
     pinned
     createdAt
     updatedAt
+    deletedAt
     userId
   }
 }

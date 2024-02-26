@@ -17,18 +17,16 @@ interface CardProps {
 
 const DeletedCard: React.FC<CardProps> = ({ note }) => {
     const { t } = useTranslation();
-    const [updateNote] = useUpdateNoteMutation(
-        {
-            update(cache) {
-                cache.evict({ fieldName: "notes" });
-            }
-        }
-    );
+    const [updateNote] = useUpdateNoteMutation({
+        update(cache) {
+            cache.evict({ fieldName: "notes" });
+        },
+    });
 
     const [deleteNote] = useDeleteNoteMutation(
         {
             update(cache) {
-                cache.evict({ fieldName: "notes" });
+                cache.evict({ id: `Note:${note.id}` });
             }
         }
     );

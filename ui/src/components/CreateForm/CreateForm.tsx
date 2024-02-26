@@ -20,13 +20,11 @@ interface CreateFormProps {
 const CreateForm: React.FC<CreateFormProps> = ({ setOpen }) => {
     const { t } = useTranslation();
     const isMobile = useMediaQuery({ maxWidth: DEFUALT_MOBILE_WIDTH });
-    const [createNote] = useCreateNewNoteMutation(
-        {
-            update(cache) {
-                cache.evict({ fieldName: "notes" });
-            }
-        }
-    );
+    const [createNote] = useCreateNewNoteMutation({
+        update(cache) {
+            cache.evict({ fieldName: "notes" });
+        },
+    });
 
     const { control, handleSubmit, reset } = useForm<IFormInput>({
         defaultValues: {

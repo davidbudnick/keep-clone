@@ -20,7 +20,7 @@ const Archived: React.FC = () => {
         );
     }
 
-    if (data?.notes?.length === 0) {
+    if (data?.notes?.filter((note) => note.status === Status.Archived)?.length === 0) {
         return (
             <>
                 <div className="mt-4">
@@ -34,7 +34,7 @@ const Archived: React.FC = () => {
     return (
         <>
             <div className="flex flex-wrap items-center justify-center sm:items-start sm:justify-start mt-4">
-                {data?.notes?.map((note) => (
+                {data?.notes?.filter((note) => note.status === Status.Archived).map((note) => (
                     <ArchivedCard key={note.id} note={note} />
                 ))}
             </div>

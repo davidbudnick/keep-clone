@@ -26,6 +26,7 @@ import i18n from "i18next";
 import { UpdateTheme } from "@/lib/theme";
 import { DEFUALT_MOBILE_WIDTH } from "@/constants/mobile";
 import { useMediaQuery } from "react-responsive";
+import { MdNote } from "react-icons/md";
 
 
 const Navbar: React.FC = () => {
@@ -58,9 +59,9 @@ const Navbar: React.FC = () => {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center justify-start">
                         <Link to={ROUTES.HOME} className="ml-2 flex">
-                            <img alt="logo" src="/logo.png" width={48} height={48} className="h-10 w-10" />
+                            <MdNote size={40} className="text-gray-500" />
                             <span className="ml-3 mt-1 self-center whitespace-nowrap font-mono text-xl dark:text-white">
-                                {auth.isAuthenticated && GetPageName()}
+                                {GetPageName()}
                             </span>
                         </Link>
                     </div>

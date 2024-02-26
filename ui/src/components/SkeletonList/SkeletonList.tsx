@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 const SkeletonList = () => {
     return (
-        <div className="ml-10 mt-24 p-4">
+        <div className="mt-6">
             <div className='mx-6 mt-6 flex flex-wrap'>
                 {Array.from({ length: 4 }, (_, index) => (
                     <div key={index} className="m-4 flex min-h-64 w-64 max-w-xs cursor-pointer flex-col items-start justify-between rounded-lg border border-gray-200 p-6 shadow">

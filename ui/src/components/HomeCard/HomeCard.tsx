@@ -17,13 +17,11 @@ interface CardProps {
 
 const HomeCard: React.FC<CardProps> = ({ note }) => {
     const { t } = useTranslation();
-    const [updateNote] = useUpdateNoteMutation(
-        {
-            update(cache) {
-                cache.evict({ fieldName: "notes" });
-            }
-        }
-    );
+    const [updateNote] = useUpdateNoteMutation({
+        update(cache) {
+            cache.evict({ fieldName: "notes" });
+        },
+    });
 
     return (
         <div key={note.id} className="group relative m-2 flex min-h-64 w-64 max-w-xs cursor-pointer flex-col items-start justify-between rounded-lg border border-gray-200 p-5 shadow">

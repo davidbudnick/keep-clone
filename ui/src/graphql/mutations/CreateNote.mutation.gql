@@ -4,6 +4,7 @@ mutation CreateNewNote($input: CreateNote!) {
     title
     body
     status
+    pinned
     createdAt
     updatedAt
     deletedAt

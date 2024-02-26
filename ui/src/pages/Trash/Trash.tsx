@@ -11,6 +11,11 @@ const Trash: React.FC = () => {
     const { toast } = useToast()
     const auth = useAuth();
     const { t } = useTranslation();
+    const { loading, error, data } = useGetNotesQuery({
+        variables: { status: Status.Deleted },
+        skip: !auth.isAuthenticated
+    });
+
     const [removeDeleted] = useRemoveDeletedMutation(
         {
             update(cache) {
@@ -19,18 +24,15 @@ const Trash: React.FC = () => {
         }
     );
 
-    const { loading, error, data } = useGetNotesQuery({
-        variables: { status: Status.Deleted },
-        skip: !auth.isAuthenticated
-    });
-
     if (loading || error) {
         return (
             <SkeletonList />
         );
     }
 
-    if (data?.notes?.length === 0) {
+    if (data?.notes?.filter(
+        (note) => note.status === Status.Deleted
+    )?.length === 0) {
         return (
             <>
                 <div className="mt-4">
@@ -46,10 +48,14 @@ const Trash: React.FC = () => {
         <>
             <div className="flex flex-col sm:flex-row justify-center items-center mx-2 my-4">
                 <p className="bold text-center sm:text-left">{t("pages.trash.auto_delete")}</p>
-                {data?.notes?.length !== 0 &&
+                {data?.notes?.filter(
+                    (note) => note.status === Status.Deleted
+                )?.length !== 0 &&
                     <Button
                         variant="outline"
-                        disabled={data?.notes?.length === 0}
+                        disabled={data?.notes?.filter(
+                            (note) => note.status === Status.Deleted
+                        )?.length === 0}
                         onClick={() => {
                             removeDeleted();
                             toast({
@@ -63,9 +69,11 @@ const Trash: React.FC = () => {
                 }
             </div>
             <div className="flex flex-wrap items-center justify-center sm:items-start sm:justify-start">
-                {data?.notes?.map((note) => (
-                    <DeletedCard key={note.id} note={note} />
-                ))}
+                {data?.notes?.filter(
+                    (note) => note.status === Status.Deleted)
+                    .map((note) => (
+                        <DeletedCard key={note.id} note={note} />
+                    ))}
             </div>
         </>
     )

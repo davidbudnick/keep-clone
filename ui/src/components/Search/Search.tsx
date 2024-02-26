@@ -30,9 +30,7 @@ const Search: React.FC = () => {
         reset,
     } = useForm<SearchValues>({ resolver })
     const onSubmit = handleSubmit((data) => {
-        //TODO: Implement search
         console.log(data.query)
-        // router.push(`?search?${data.query}`)
         reset()
     })
     const { t } = useTranslation();

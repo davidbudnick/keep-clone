@@ -11,7 +11,7 @@ const Home: React.FC = () => {
     const { t } = useTranslation();
     const { loading, error, data } = useGetNotesQuery({
         variables: { status: Status.Active },
-        skip: !auth.isAuthenticated
+        skip: !auth.isAuthenticated,
     });
 
     if (loading || error) {
@@ -33,7 +33,7 @@ const Home: React.FC = () => {
         )
     }
 
-    if (data?.notes?.length === 0) {
+    if (data?.notes.filter((note) => note.status === Status.Active)?.length === 0) {
         return (
             <>
                 <div>
@@ -57,9 +57,10 @@ const Home: React.FC = () => {
                     <div className="mb-4">
                         <p className="text-grey-500 ml-2 p-1 text-xs font-semibold">{t("pages.home.pinned")}</p>
                         <div className="flex flex-wrap items-center justify-center sm:items-start sm:justify-start">
-                            {data?.notes?.filter((note) => note.pinned).map((note) => (
-                                <HomeCard key={note.id} note={note} />
-                            ))}
+                            {data?.notes?.filter((note) => note.pinned).filter((note) => note.status === Status.Active)
+                                .map((note) => (
+                                    <HomeCard key={note.id} note={note} />
+                                ))}
                         </div>
 
                     </div>
@@ -72,9 +73,10 @@ const Home: React.FC = () => {
                         <p className="text-grey-500 ml-2 p-1 text-xs font-semibold"> {t("pages.home.others")}</p>
                     }
                     <div className="flex flex-wrap items-center justify-center sm:items-start sm:justify-start">
-                        {data?.notes?.filter((note) => !note.pinned).map((note) => (
-                            <HomeCard key={note.id} note={note} />
-                        ))}
+                        {data?.notes?.filter((note) => !note.pinned).filter((note) => note.status === Status.Active)
+                            .map((note) => (
+                                <HomeCard key={note.id} note={note} />
+                            ))}
                     </div>
                 </div>
             }

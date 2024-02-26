@@ -166,8 +166,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
 
             setupUser(googleUser);
 
-            if (googleUser?.exp) {
-                if (Date.now() > googleUser.exp * 1000) {
+            if (googleUser.exp) {
+                if (new Date().getTime() > googleUser.exp * 1000) {
                     logout();
                 }
             }
