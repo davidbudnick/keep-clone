@@ -146,7 +146,9 @@ const Navbar: React.FC = () => {
                                                 <div className="grid gap-4">
                                                     <div className="space-y-2 text-center">
                                                         <p className="text-xs font-bold">{auth.user?.email}</p>
-                                                        <p className="text-xs">{t("navbar.managed_by")} {auth.user?.hd}</p>
+                                                        {auth.user?.hd &&
+                                                            <p className="text-xs">{t("navbar.managed_by")} {auth.user?.hd}</p>
+                                                        }
                                                         <div className='flex justify-center'>
                                                             <Avatar className='mt-3'>
                                                                 <AvatarImage className='h-20 w-20' src={auth.user?.picture} />
