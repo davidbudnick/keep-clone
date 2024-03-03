@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"server/internal/config"
 
+	"go.mongodb.org/mongo-driver/event"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -28,8 +29,12 @@ type databaseService struct {
 	config *config.Config
 }
 
-func NewDatabaseService(ctx context.Context, cfg *config.Config) (DatabaseService, error) {
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(cfg.Database.Connection).SetServerAPIOptions(options.ServerAPI(options.ServerAPIVersion1)))
+func NewDatabaseService(ctx context.Context, cfg *config.Config, nrMon *event.CommandMonitor) (DatabaseService, error) {
+	client, err := mongo.Connect(ctx, options.Client().
+		ApplyURI(cfg.Database.Connection).
+		SetServerAPIOptions(options.ServerAPI(options.ServerAPIVersion1)).
+		SetMonitor(nrMon),
+	)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error creating database connection", "error", err)
 		return nil, err

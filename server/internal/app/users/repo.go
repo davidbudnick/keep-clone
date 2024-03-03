@@ -8,6 +8,7 @@ import (
 	"server/internal/db"
 	"time"
 
+	"github.com/newrelic/go-agent/v3/newrelic"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -23,12 +24,14 @@ type UsersRepo interface {
 type usersRepo struct {
 	Client       *mongo.Client
 	DatabaseName string
+	NewrelicApp  *newrelic.Application
 }
 
-func NewUsersRepo(client *mongo.Client, databaseName string) UsersRepo {
+func NewUsersRepo(client *mongo.Client, databaseName string, newrelicApp *newrelic.Application) UsersRepo {
 	return &usersRepo{
 		Client:       client,
 		DatabaseName: databaseName,
+		NewrelicApp:  newrelicApp,
 	}
 }
 
@@ -57,6 +60,8 @@ type GetFilter struct {
 }
 
 func (r *usersRepo) Get(ctx context.Context, userID string) (*User, error) {
+	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Get User"))
+
 	var user *User
 	err := r.Client.Database(r.DatabaseName).Collection(db.USERS_COLLECTION).FindOne(ctx,
 		GetFilter{
@@ -71,6 +76,8 @@ func (r *usersRepo) Get(ctx context.Context, userID string) (*User, error) {
 }
 
 func (r *usersRepo) Create(ctx context.Context, user model.UpdateUser) error {
+	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Create User"))
+
 	usersColection := r.Client.Database(r.DatabaseName).Collection(db.USERS_COLLECTION)
 	_, err := usersColection.InsertOne(ctx, User{
 		ID:         primitive.NewObjectID(),
@@ -105,6 +112,8 @@ type UpdateSet struct {
 }
 
 func (r *usersRepo) Update(ctx context.Context, userID string, user model.UpdateUser) error {
+	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Update User"))
+
 	lastLogin, err := parseISOTime(user.LastLogin)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error parsing last login", "error", err)

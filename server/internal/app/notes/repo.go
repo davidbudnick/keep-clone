@@ -7,6 +7,7 @@ import (
 	"server/internal/db"
 	"time"
 
+	"github.com/newrelic/go-agent/v3/newrelic"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -26,12 +27,14 @@ type NotesRepo interface {
 type notesRepo struct {
 	Client       *mongo.Client
 	DatabaseName string
+	NewrelicApp  *newrelic.Application
 }
 
-func NewNotesRepo(client *mongo.Client, databaseName string) NotesRepo {
+func NewNotesRepo(client *mongo.Client, databaseName string, newrelicApp *newrelic.Application) NotesRepo {
 	return &notesRepo{
 		Client:       client,
 		DatabaseName: databaseName,
+		NewrelicApp:  newrelicApp,
 	}
 }
 
@@ -58,6 +61,8 @@ type ListFilter struct {
 }
 
 func (r *notesRepo) List(ctx context.Context, userID string, status string) ([]Note, error) {
+	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo List Notes"))
+
 	cursor, err := r.Client.Database(r.DatabaseName).Collection(db.NOTES_COLLECTION).Find(ctx, ListFilter{
 		UserID: userID,
 		Status: status,
@@ -78,6 +83,8 @@ func (r *notesRepo) List(ctx context.Context, userID string, status string) ([]N
 }
 
 func (r *notesRepo) Get(ctx context.Context, userID string, noteID string) (*Note, error) {
+	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Get Note"))
+
 	objectId, err := primitive.ObjectIDFromHex(noteID)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error decoding NoteID", "error", err)
@@ -100,6 +107,8 @@ func (r *notesRepo) Get(ctx context.Context, userID string, noteID string) (*Not
 }
 
 func (r *notesRepo) Create(ctx context.Context, userID string, note model.CreateNote) (*mongo.InsertOneResult, error) {
+	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Create Note"))
+
 	var deletedAt *time.Time
 	if note.Status == model.StatusDeleted.String() {
 		now := time.Now()
@@ -136,6 +145,8 @@ type UpdateSet struct {
 }
 
 func (r *notesRepo) Update(ctx context.Context, userID string, note model.UpdateNote) error {
+	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Update Note"))
+
 	notesCollection := r.Client.Database(r.DatabaseName).Collection(db.NOTES_COLLECTION)
 
 	objectId, err := primitive.ObjectIDFromHex(note.ID)
@@ -172,6 +183,8 @@ func (r *notesRepo) Update(ctx context.Context, userID string, note model.Update
 }
 
 func (r *notesRepo) Delete(ctx context.Context, userID string, noteID string) (*primitive.ObjectID, error) {
+	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Delete Note"))
+
 	objectId, err := primitive.ObjectIDFromHex(noteID)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error decoding NoteID", "error", err)
@@ -197,6 +210,8 @@ type RemoveDeletedFilter struct {
 }
 
 func (r *notesRepo) RemoveDeleted(ctx context.Context, userID string) error {
+	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Remove Deleted Notes"))
+
 	_, err := r.Client.Database(r.DatabaseName).Collection(db.NOTES_COLLECTION).DeleteMany(ctx, RemoveDeletedFilter{
 		UserID: userID,
 		Status: model.StatusDeleted.String(),

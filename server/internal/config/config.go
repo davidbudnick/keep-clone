@@ -15,6 +15,12 @@ type Config struct {
 	Database    Database
 	Ports       Ports
 	JWT         JWT
+	Newrelic    Newrelic
+}
+
+type Newrelic struct {
+	Name string
+	Key  string
 }
 
 type Database struct {
@@ -46,8 +52,7 @@ const (
 	Development Env = "development"
 )
 
-func GetConfig(ctx context.Context, fileName string) (*Config, error) {
-
+func GetConfig(ctx context.Context) (*Config, error) {
 	if os.Getenv("ENV") != string(Staging) && os.Getenv("ENV") != string(Production) {
 		err := godotenv.Load()
 		if err != nil {
@@ -69,6 +74,10 @@ func GetConfig(ctx context.Context, fileName string) (*Config, error) {
 		},
 		JWT{
 			ClientID: os.Getenv("JWT_CLIENT_ID"),
+		},
+		Newrelic{
+			Name: os.Getenv("NEWRELIC_NAME"),
+			Key:  os.Getenv("NEWRELIC_KEY"),
 		},
 	}
 

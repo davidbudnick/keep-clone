@@ -18,13 +18,16 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	nrgin "github.com/newrelic/go-agent/v3/integrations/nrgin"
+	"github.com/newrelic/go-agent/v3/integrations/nrmongo"
+	"github.com/newrelic/go-agent/v3/newrelic"
 	sloggin "github.com/samber/slog-gin"
 )
 
 func main() {
 	ctx := context.Background()
 
-	cfg, err := config.GetConfig(ctx, "config.yml")
+	cfg, err := config.GetConfig(ctx)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error getting config", "error", err)
 		panic(err)
@@ -35,7 +38,16 @@ func main() {
 	}))
 	slog.SetDefault(l)
 
-	databaseService, err := db.NewDatabaseService(ctx, cfg)
+	app, err := newrelic.NewApplication(
+		newrelic.ConfigAppName(cfg.Newrelic.Name),
+		newrelic.ConfigLicense(cfg.Newrelic.Key),
+		newrelic.ConfigAppLogForwardingEnabled(true),
+	)
+	if err != nil {
+		slog.ErrorContext(ctx, "Error creating newrelic application", "error", err)
+	}
+
+	databaseService, err := db.NewDatabaseService(ctx, cfg, nrmongo.NewCommandMonitor(nil))
 	if err != nil {
 		slog.ErrorContext(ctx, "Error creating database service", "error", err)
 		panic(err)
@@ -46,6 +58,7 @@ func main() {
 	r := gin.New()
 	r.Use(sloggin.New(l))
 	r.Use(gin.Recovery())
+	r.Use(nrgin.Middleware(app))
 
 	config := cors.DefaultConfig()
 
@@ -60,10 +73,10 @@ func main() {
 
 	r.POST("/api/query", graphqlHandler(
 		notes.NewNotesService(
-			notes.NewNotesRepo(databaseService.Client(), databaseService.Name()),
+			notes.NewNotesRepo(databaseService.Client(), databaseService.Name(), app),
 		),
 		users.NewUsersService(
-			users.NewUsersRepo(databaseService.Client(), databaseService.Name()),
+			users.NewUsersRepo(databaseService.Client(), databaseService.Name(), app),
 		),
 	))
 	r.GET("/api/playground", playgroundHandler())
@@ -76,6 +89,7 @@ func main() {
 
 func graphqlHandler(notesService notes.NotesService, usersService users.UsersService) gin.HandlerFunc {
 	return func(c *gin.Context) {
+
 		handler.NewDefaultServer(graph.NewExecutableSchema(
 			graph.Config{
 				Resolvers: &graph.Resolver{

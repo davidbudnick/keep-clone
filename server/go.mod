@@ -7,6 +7,8 @@ require (
 	github.com/gin-contrib/cors v1.5.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/joho/godotenv v1.5.1
+	github.com/newrelic/go-agent/v3 v3.30.0
+	github.com/newrelic/go-agent/v3/integrations/nrgin v1.2.1
 	github.com/samber/slog-gin v1.10.2
 	github.com/vektah/gqlparser/v2 v2.5.11
 	go.mongodb.org/mongo-driver v1.14.0
@@ -60,6 +62,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
+	github.com/newrelic/go-agent/v3/integrations/nrmongo v1.1.3 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
