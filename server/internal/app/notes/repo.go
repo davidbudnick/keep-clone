@@ -61,7 +61,10 @@ type ListFilter struct {
 }
 
 func (r *notesRepo) List(ctx context.Context, userID string, status string) ([]Note, error) {
-	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo List Notes"))
+	txn := r.NewrelicApp.StartTransaction("Mongo List Notes")
+	defer txn.End()
+
+	ctx = newrelic.NewContext(ctx, txn)
 
 	cursor, err := r.Client.Database(r.DatabaseName).Collection(db.NOTES_COLLECTION).Find(ctx, ListFilter{
 		UserID: userID,
@@ -83,7 +86,10 @@ func (r *notesRepo) List(ctx context.Context, userID string, status string) ([]N
 }
 
 func (r *notesRepo) Get(ctx context.Context, userID string, noteID string) (*Note, error) {
-	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Get Note"))
+	txn := r.NewrelicApp.StartTransaction("Mongo Get Note")
+	defer txn.End()
+
+	ctx = newrelic.NewContext(ctx, txn)
 
 	objectId, err := primitive.ObjectIDFromHex(noteID)
 	if err != nil {
@@ -107,7 +113,10 @@ func (r *notesRepo) Get(ctx context.Context, userID string, noteID string) (*Not
 }
 
 func (r *notesRepo) Create(ctx context.Context, userID string, note model.CreateNote) (*mongo.InsertOneResult, error) {
-	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Create Note"))
+	txn := r.NewrelicApp.StartTransaction("Mongo Create Note")
+	defer txn.End()
+
+	ctx = newrelic.NewContext(ctx, txn)
 
 	var deletedAt *time.Time
 	if note.Status == model.StatusDeleted.String() {
@@ -145,7 +154,10 @@ type UpdateSet struct {
 }
 
 func (r *notesRepo) Update(ctx context.Context, userID string, note model.UpdateNote) error {
-	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Update Note"))
+	txn := r.NewrelicApp.StartTransaction("Mongo Update Note")
+	defer txn.End()
+
+	ctx = newrelic.NewContext(ctx, txn)
 
 	notesCollection := r.Client.Database(r.DatabaseName).Collection(db.NOTES_COLLECTION)
 
@@ -183,7 +195,10 @@ func (r *notesRepo) Update(ctx context.Context, userID string, note model.Update
 }
 
 func (r *notesRepo) Delete(ctx context.Context, userID string, noteID string) (*primitive.ObjectID, error) {
-	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Delete Note"))
+	txn := r.NewrelicApp.StartTransaction("Mongo Delete Note")
+	defer txn.End()
+
+	ctx = newrelic.NewContext(ctx, txn)
 
 	objectId, err := primitive.ObjectIDFromHex(noteID)
 	if err != nil {
@@ -210,7 +225,10 @@ type RemoveDeletedFilter struct {
 }
 
 func (r *notesRepo) RemoveDeleted(ctx context.Context, userID string) error {
-	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Remove Deleted Notes"))
+	txn := r.NewrelicApp.StartTransaction("Mongo Remove Deleted Notes")
+	defer txn.End()
+
+	ctx = newrelic.NewContext(ctx, txn)
 
 	_, err := r.Client.Database(r.DatabaseName).Collection(db.NOTES_COLLECTION).DeleteMany(ctx, RemoveDeletedFilter{
 		UserID: userID,

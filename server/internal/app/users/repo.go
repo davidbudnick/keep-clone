@@ -60,7 +60,10 @@ type GetFilter struct {
 }
 
 func (r *usersRepo) Get(ctx context.Context, userID string) (*User, error) {
-	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Get User"))
+	txn := r.NewrelicApp.StartTransaction("Mongo Get User")
+	defer txn.End()
+
+	ctx = newrelic.NewContext(ctx, txn)
 
 	var user *User
 	err := r.Client.Database(r.DatabaseName).Collection(db.USERS_COLLECTION).FindOne(ctx,
@@ -76,7 +79,10 @@ func (r *usersRepo) Get(ctx context.Context, userID string) (*User, error) {
 }
 
 func (r *usersRepo) Create(ctx context.Context, user model.UpdateUser) error {
-	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Create User"))
+	txn := r.NewrelicApp.StartTransaction("Mongo Create User")
+	defer txn.End()
+
+	ctx = newrelic.NewContext(ctx, txn)
 
 	usersColection := r.Client.Database(r.DatabaseName).Collection(db.USERS_COLLECTION)
 	_, err := usersColection.InsertOne(ctx, User{
@@ -112,7 +118,8 @@ type UpdateSet struct {
 }
 
 func (r *usersRepo) Update(ctx context.Context, userID string, user model.UpdateUser) error {
-	ctx = newrelic.NewContext(ctx, r.NewrelicApp.StartTransaction("Mongo Update User"))
+	txn := r.NewrelicApp.StartTransaction("Mongo Update User")
+	defer txn.End()
 
 	lastLogin, err := parseISOTime(user.LastLogin)
 	if err != nil {
