@@ -27,6 +27,7 @@ import { UpdateTheme } from "@/lib/theme";
 import { DEFUALT_MOBILE_WIDTH } from "@/constants/mobile";
 import { useMediaQuery } from "react-responsive";
 import { MdNote } from "react-icons/md";
+import { User } from "@/graphql/generated/schema";
 
 
 const Navbar: React.FC = () => {
@@ -35,6 +36,7 @@ const Navbar: React.FC = () => {
     const { t } = useTranslation();
     const [theme, setTheme] = useState<string>(auth.user?.settings.theme || DARK);
     const [locale, setLocale] = useState<string>(auth.user?.settings.locale || "");
+    const [user, setUser] = useState<User | undefined>(auth.user);
     const [isSelectOpen, setIsSelectOpen] = useState(false);
     const isMobile = useMediaQuery({ maxWidth: DEFUALT_MOBILE_WIDTH });
 
@@ -42,6 +44,11 @@ const Navbar: React.FC = () => {
         setTheme(auth.user?.settings.theme || DARK);
         setLocale(auth.user?.settings.locale || "");
     }, [auth.user?.settings.locale, auth.user?.settings.theme]);
+
+    useEffect(() => {
+        setUser(auth.user);
+    }, [auth.user]);
+
 
     const GetPageName = () => {
         if (location.pathname === ROUTES.HOME) {
@@ -88,7 +95,8 @@ const Navbar: React.FC = () => {
                                             onValueChange={(e) => {
                                                 auth.update({
                                                     settings: {
-                                                        locale: e
+                                                        locale: e,
+                                                        theme: theme,
                                                     },
                                                 });
                                                 i18n.changeLanguage(
@@ -113,7 +121,7 @@ const Navbar: React.FC = () => {
                                 {auth.isAuthenticated && !auth.loading &&
                                     <Switch
                                         disabled={!auth.isAuthenticated}
-                                        key={auth.user?.settings.theme}
+                                        key={theme}
                                         checked={
                                             theme === DARK
                                         }
@@ -138,24 +146,24 @@ const Navbar: React.FC = () => {
                                         <Popover>
                                             <PopoverTrigger asChild className="cursor-pointer">
                                                 <Avatar>
-                                                    <AvatarImage className='h-10 w-10' src={auth.user?.picture} />
-                                                    <AvatarFallback className='h-10 w-10'>{`${auth.user?.givenName?.charAt(0) || ""}${auth.user?.familyName?.charAt(0) || ""}`}</AvatarFallback>
+                                                    <AvatarImage className='h-10 w-10' src={user?.picture} />
+                                                    <AvatarFallback className='h-10 w-10'>{`${user?.givenName?.charAt(0) || ""}${user?.familyName?.charAt(0) || ""}`}</AvatarFallback>
                                                 </Avatar>
                                             </PopoverTrigger>
                                             <PopoverContent className="z-10 mt-2 w-80 rounded-lg border border-gray-300 bg-white p-4 shadow-lg dark:border-gray-700 dark:bg-black">
                                                 <div className="grid gap-4">
                                                     <div className="space-y-2 text-center">
-                                                        <p className="text-xs font-bold">{auth.user?.email}</p>
-                                                        {auth.user?.hd &&
-                                                            <p className="text-xs">{t("navbar.managed_by")} {auth.user?.hd}</p>
+                                                        <p className="text-xs font-bold">{user?.email}</p>
+                                                        {user?.hd &&
+                                                            <p className="text-xs">{t("navbar.managed_by")} {user?.hd}</p>
                                                         }
                                                         <div className='flex justify-center'>
                                                             <Avatar className='mt-3'>
-                                                                <AvatarImage className='h-20 w-20' src={auth.user?.picture} />
-                                                                <AvatarFallback className='h-20 w-20 text-xl'>{`${auth.user?.givenName?.charAt(0)}${auth.user?.familyName?.charAt(0)}`}</AvatarFallback>
+                                                                <AvatarImage className='h-20 w-20' src={user?.picture} />
+                                                                <AvatarFallback className='h-20 w-20 text-xl'>{`${user?.givenName?.charAt(0)}${user?.familyName?.charAt(0)}`}</AvatarFallback>
                                                             </Avatar>
                                                         </div>
-                                                        <div className="pb-2 pt-1 text-xl font-light">{t("navbar.hi")}, {auth.user?.givenName} {auth.user?.familyName}!</div>
+                                                        <div className="pb-2 pt-1 text-xl font-light">{t("navbar.hi")}, {user?.givenName} {user?.familyName}!</div>
                                                         <Button onClick={auth.logout}>
                                                             <LogOut className="mr-2 h-4 w-4" /> {t("navbar.logout")}
                                                         </Button>
