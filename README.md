@@ -16,6 +16,8 @@ Purpose of this project is to create a clone of the [Google Keep](https://keep.g
 - [Shadcn/ui](https://ui.shadcn.com/)
 - [Terraform](https://www.terraform.io/)
 - [AWS](https://aws.amazon.com/)
+- [GitHub Actions](https://github.com/features/actions)
+- [New Relic](https://newrelic.com/)
 
 ---
 ![image](./.assets/images/desktop.png)
