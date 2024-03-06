@@ -8,6 +8,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/joho/godotenv v1.5.1
 	github.com/newrelic/go-agent/v3 v3.30.0
+	github.com/newrelic/go-agent/v3/integrations/logcontext-v2/nrslog v1.0.0
 	github.com/newrelic/go-agent/v3/integrations/nrgin v1.2.1
 	github.com/newrelic/go-agent/v3/integrations/nrmongo v1.1.3
 	github.com/samber/slog-gin v1.10.2

@@ -18,6 +18,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/newrelic/go-agent/v3/integrations/logcontext-v2/nrslog"
 	nrgin "github.com/newrelic/go-agent/v3/integrations/nrgin"
 	"github.com/newrelic/go-agent/v3/integrations/nrmongo"
 	"github.com/newrelic/go-agent/v3/newrelic"
@@ -33,11 +34,6 @@ func main() {
 		panic(err)
 	}
 
-	l := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.LevelDebug,
-	}))
-	slog.SetDefault(l)
-
 	app, err := newrelic.NewApplication(
 		newrelic.ConfigAppName(cfg.Newrelic.Name),
 		newrelic.ConfigLicense(cfg.Newrelic.Key),
@@ -46,6 +42,11 @@ func main() {
 	if err != nil {
 		slog.ErrorContext(ctx, "Error creating newrelic application", "error", err)
 	}
+
+	l := slog.New(nrslog.JSONHandler(app, os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	}))
+	slog.SetDefault(l)
 
 	databaseService, err := db.NewDatabaseService(ctx, cfg, nrmongo.NewCommandMonitor(nil))
 	if err != nil {
