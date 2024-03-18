@@ -11,7 +11,7 @@ require (
 	github.com/newrelic/go-agent/v3/integrations/logcontext-v2/nrslog v1.0.0
 	github.com/newrelic/go-agent/v3/integrations/nrgin v1.2.1
 	github.com/newrelic/go-agent/v3/integrations/nrmongo v1.1.3
-	github.com/samber/slog-gin v1.10.2
+	github.com/samber/slog-gin v1.10.3
 	github.com/vektah/gqlparser/v2 v2.5.11
 	go.mongodb.org/mongo-driver v1.14.0
 	google.golang.org/api v0.167.0
@@ -80,6 +80,6 @@ require (
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.17.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
-	google.golang.org/protobuf v1.32.0 // indirect
+	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
