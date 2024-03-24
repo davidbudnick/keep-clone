@@ -1,8 +1,10 @@
-package health
+package handlers_test
 
 import (
 	"net/http"
 	"net/http/httptest"
+	"server/constants"
+	"server/internal/handlers"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -21,20 +23,20 @@ func TestRegister(t *testing.T) {
 	}{
 		{
 			name:           "TestRegisterInternalEndpoint",
-			args:           args{INTERNAL_ENDPOINT, gin.Default()},
+			args:           args{constants.ENDPOINT_HEALTH_INTERNAL, gin.Default()},
 			expectedStatus: http.StatusOK,
 			expectedBody:   `{"status":"ok"}`,
 		},
 		{
 			name:           "TestRegisterExternalEndpoint",
-			args:           args{EXTERNAL_ENDPOINT, gin.Default()},
+			args:           args{constants.ENDPOINT_HEALTH_EXTERNAL, gin.Default()},
 			expectedStatus: http.StatusOK,
 			expectedBody:   `{"status":"ok"}`,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			Register(tt.args.endpoint, tt.args.r)
+			handlers.Register(tt.args.endpoint, tt.args.r)
 
 			w := httptest.NewRecorder()
 			req, _ := http.NewRequest("GET", tt.args.endpoint, nil)

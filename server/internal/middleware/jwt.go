@@ -3,22 +3,17 @@ package middleware
 import (
 	"context"
 	"log/slog"
+	"server/constants"
 	"server/internal/config"
-	"server/internal/health"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/api/idtoken"
 )
 
-const (
-	USER_ID = "user_id"
-	SUB     = "sub"
-)
-
 func JWT(ctx context.Context, conf *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if c.Request.URL.Path == health.EXTERNAL_ENDPOINT || c.Request.URL.Path == health.INTERNAL_ENDPOINT {
+		if c.Request.URL.Path == "/health" || c.Request.URL.Path == "/api/health" {
 			c.Next()
 			return
 		}
@@ -37,7 +32,7 @@ func JWT(ctx context.Context, conf *config.Config) gin.HandlerFunc {
 		}
 
 		if payload != nil {
-			c.Set(USER_ID, payload.Claims[SUB])
+			c.Set(constants.USER_ID, payload.Claims[constants.SUB])
 		}
 
 		c.Next()

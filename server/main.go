@@ -4,18 +4,16 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"server/graph"
+	"server/constants"
 	"server/internal/app/notes"
 	"server/internal/app/users"
 	"server/internal/config"
 	"server/internal/db"
-	"server/internal/health"
+	"server/internal/handlers"
 	"server/internal/middleware"
 
 	"log/slog"
 
-	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/newrelic/go-agent/v3/integrations/logcontext-v2/nrslog"
@@ -69,10 +67,10 @@ func main() {
 	r.Use(cors.New(config))
 	r.Use(middleware.JWT(ctx, cfg))
 
-	health.Register(health.EXTERNAL_ENDPOINT, r)
-	health.Register(health.INTERNAL_ENDPOINT, r)
+	handlers.Register(constants.ENDPOINT_HEALTH_EXTERNAL, r)
+	handlers.Register(constants.ENDPOINT_HEALTH_INTERNAL, r)
 
-	r.POST("/api/query", graphqlHandler(
+	r.POST(constants.ENDPOINT_GRAPHQL, handlers.GraphqlHandler(
 		notes.NewNotesService(
 			notes.NewNotesRepo(databaseService.Client(), databaseService.Name(), app),
 		),
@@ -80,31 +78,10 @@ func main() {
 			users.NewUsersRepo(databaseService.Client(), databaseService.Name(), app),
 		),
 	))
-	r.GET("/api/playground", playgroundHandler())
+	r.GET(constants.ENDPOINT_GRAPHQL_PLAYGROUND, handlers.PlaygroundHandler())
 
 	slog.InfoContext(ctx, "Starting GIN server", "port", cfg.Ports.HTTP)
 	if err = r.Run(fmt.Sprintf(":%s", cfg.Ports.HTTP)); err != nil {
 		slog.ErrorContext(ctx, "Error starting GIN server", "error", err)
-	}
-}
-
-func graphqlHandler(notesService notes.NotesService, usersService users.UsersService) gin.HandlerFunc {
-	return func(c *gin.Context) {
-
-		handler.NewDefaultServer(graph.NewExecutableSchema(
-			graph.Config{
-				Resolvers: &graph.Resolver{
-					NotesService: notesService,
-					UsersService: usersService,
-					UserID:       c.GetString(middleware.USER_ID),
-				},
-			},
-		)).ServeHTTP(c.Writer, c.Request)
-	}
-}
-
-func playgroundHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		playground.Handler("GraphQL", "/api/query").ServeHTTP(c.Writer, c.Request)
 	}
 }
