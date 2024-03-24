@@ -13,7 +13,7 @@ import (
 
 func JWT(ctx context.Context, conf *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if c.Request.URL.Path == "/health" || c.Request.URL.Path == "/api/health" {
+		if c.Request.URL.Path == constants.ENDPOINT_HEALTH_INTERNAL || c.Request.URL.Path == constants.ENDPOINT_HEALTH_EXTERNAL {
 			c.Next()
 			return
 		}
