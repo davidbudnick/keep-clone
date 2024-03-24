@@ -1,6 +1,7 @@
 package handlers_test
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"server/constants"
@@ -15,6 +16,13 @@ func TestRegister(t *testing.T) {
 		endpoint string
 		r        *gin.Engine
 	}
+
+	jsonBytes, err := json.Marshal(handlers.HealthResponse{Status: handlers.OK})
+	if err != nil {
+		t.Errorf("Error marshalling json: %v", err)
+		return
+	}
+
 	tests := []struct {
 		name           string
 		args           args
@@ -25,13 +33,13 @@ func TestRegister(t *testing.T) {
 			name:           "TestRegisterInternalEndpoint",
 			args:           args{constants.ENDPOINT_HEALTH_INTERNAL, gin.Default()},
 			expectedStatus: http.StatusOK,
-			expectedBody:   `{"status":"ok"}`,
+			expectedBody:   string(jsonBytes),
 		},
 		{
 			name:           "TestRegisterExternalEndpoint",
 			args:           args{constants.ENDPOINT_HEALTH_EXTERNAL, gin.Default()},
 			expectedStatus: http.StatusOK,
-			expectedBody:   `{"status":"ok"}`,
+			expectedBody:   string(jsonBytes),
 		},
 	}
 	for _, tt := range tests {

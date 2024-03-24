@@ -12,7 +12,6 @@ import (
 
 func GraphqlHandler(notesService notes.NotesService, usersService users.UsersService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-
 		handler.NewDefaultServer(graph.NewExecutableSchema(
 			graph.Config{
 				Resolvers: &graph.Resolver{
