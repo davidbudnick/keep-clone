@@ -14,7 +14,7 @@ require (
 	github.com/samber/slog-gin v1.11.0
 	github.com/vektah/gqlparser/v2 v2.5.11
 	go.mongodb.org/mongo-driver v1.14.0
-	google.golang.org/api v0.170.0
+	google.golang.org/api v0.172.0
 )
 
 require (
