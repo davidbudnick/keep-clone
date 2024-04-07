@@ -1,7 +1,4 @@
-# keep-clone [![Server](https://github.com/davidbudnick/keep-clone/actions/workflows/server.yml/badge.svg)](https://github.com/davidbudnick/keep-clone/actions/workflows/server.yml) [![UI](https://github.com/davidbudnick/keep-clone/actions/workflows/ui.yml/badge.svg)](https://github.com/davidbudnick/keep-clone/actions/workflows/ui.yml) [![Amazon AWS](https://img.shields.io/badge/Amazon_AWS-FF9900?style=flat-square&logo=amazonaws&logoColor=white)](https://staging.budnick.io/)
-
-[![Try](https://img.shields.io/badge/🚀%20Try%20it%20out!-blue?style=for-the-badge&logo=)](https://staging.budnick.io/)
-
+# keep-clone [![Server](https://github.com/davidbudnick/keep-clone/actions/workflows/server.yml/badge.svg)](https://github.com/davidbudnick/keep-clone/actions/workflows/server.yml) [![UI](https://github.com/davidbudnick/keep-clone/actions/workflows/ui.yml/badge.svg)](https://github.com/davidbudnick/keep-clone/actions/workflows/ui.yml)
 
 
 ## Description
