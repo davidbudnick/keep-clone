@@ -9,3 +9,8 @@ const (
 	ENDPOINT_GRAPHQL            = "/api/query"
 	ENDPOINT_GRAPHQL_PLAYGROUND = "/playground"
 )
+
+const (
+	ENDPOINT_AUTH_LOGIN   = "/api/auth/login"
+	ENDPOINT_AUTH_REFRESH = "/api/auth/refresh"
+)

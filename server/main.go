@@ -58,6 +58,7 @@ func main() {
 	r.Use(sloggin.New(l))
 	r.Use(gin.Recovery())
 	r.Use(nrgin.Middleware(app))
+	r.Use(middleware.AuthMiddleware())
 
 	config := cors.DefaultConfig()
 
@@ -65,8 +66,6 @@ func main() {
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 
 	r.Use(cors.New(config))
-	r.Use(middleware.JWT(ctx, cfg))
-
 	handlers.Register(constants.ENDPOINT_HEALTH_EXTERNAL, r)
 	handlers.Register(constants.ENDPOINT_HEALTH_INTERNAL, r)
 
@@ -77,8 +76,8 @@ func main() {
 		users.NewUsersService(
 			users.NewUsersRepo(databaseService.Client(), databaseService.Name(), app),
 		),
+		cfg.JWT,
 	))
-	r.GET(constants.ENDPOINT_GRAPHQL_PLAYGROUND, handlers.PlaygroundHandler())
 
 	slog.InfoContext(ctx, "Starting GIN server", "port", cfg.Ports.HTTP)
 	if err = r.Run(fmt.Sprintf(":%s", cfg.Ports.HTTP)); err != nil {

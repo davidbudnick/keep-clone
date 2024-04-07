@@ -13,7 +13,7 @@ import { DARK } from "@/constants/theme";
 import { UpdateTheme } from "@/lib/theme";
 
 const authLink = new ApolloLink((operation, forward) => {
-    const token = localStorage.getItem(AUTH.GOOGLE_CREDENTIAL);
+    const token = localStorage.getItem(AUTH.GOOGLE_ACCESS_TOKEN);
     operation.setContext({
         headers: {
             authorization: token ? `Bearer ${token}` : "",

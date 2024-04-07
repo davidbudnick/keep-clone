@@ -1,4 +1,5 @@
 export const AUTH = {
-    GOOGLE_CLIENT: "google_client",
-    GOOGLE_CREDENTIAL: "google_credential",
+    GOOGLE_ACCESS_TOKEN: "google_access_token",
+    GOOGLE_REFRESH_TOKEN: "google_refresh_token",
+    GOOGLE_TOKEN_EXPIRY: "google_token_expiry",
 }

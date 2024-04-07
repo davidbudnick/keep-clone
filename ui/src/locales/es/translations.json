@@ -45,6 +45,7 @@
         "managed_by": "Gestionado por",
         "hi": "Hola",
         "search": "Buscar",
-        "refresh": "Actualizar"
+        "refresh": "Actualizar",
+        "sign_in_with_google": "Iniciar sesión con Google"
     }
 }

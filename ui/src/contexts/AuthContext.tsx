@@ -1,14 +1,13 @@
 import { AUTH } from "@/constants/auth";
 import { ROUTES } from "@/constants/routes";
-import { CredentialResponse, googleLogout } from "@react-oauth/google";
-import { createContext, useContext, useEffect, useState } from "react";
+import { CredentialResponse, googleLogout, useGoogleLogin } from "@react-oauth/google";
+import { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, useUpdateUserMutation, useGetUserQuery, UpdateUserMutation } from "@/graphql/generated/schema";
+import { User, useUpdateUserMutation, UpdateUserMutation, useAuthLoginLazyQuery } from "@/graphql/generated/schema";
 import { format } from "date-fns";
 import { ApolloClient, FetchResult, NormalizedCacheObject } from "@apollo/client";
 import { locales } from "@/locales/i18n";
 import i18n from "i18next";
-import { UpdateTheme } from "@/lib/theme";
 import { DARK } from "@/constants/theme";
 
 
@@ -33,7 +32,6 @@ interface AuthContextValue {
     logout: () => void;
     update: (updateUser: UpdateUser
     ) => Promise<FetchResult<UpdateUserMutation>>;
-    loading: boolean;
     user?: User;
 }
 
@@ -42,28 +40,8 @@ const AuthContext = createContext<AuthContextValue>({
     login: () => { },
     logout: () => { },
     update: async () => { return {} as FetchResult<UpdateUserMutation> },
-    loading: false,
     user: undefined
 })
-
-export interface GoogleUser {
-    iss?: string;
-    azp?: string;
-    aud?: string;
-    sub?: string;
-    hd?: string;
-    email?: string;
-    email_verified?: boolean;
-    nbf?: number;
-    name?: string;
-    picture?: string;
-    given_name?: string;
-    family_name?: string;
-    locale?: string;
-    iat?: number;
-    exp?: number;
-    jti?: string;
-}
 
 type AuthProviderProps = {
     client: ApolloClient<NormalizedCacheObject>
@@ -73,30 +51,35 @@ type AuthProviderProps = {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [user, setUser] = useState<User>();
-    const [googleUser, setGoogleUser] = useState<GoogleUser>()
     const navigate = useNavigate();
-
     const [UpdateUserMutation] = useUpdateUserMutation();
+    const [getCode] = useAuthLoginLazyQuery();
 
-    const { loading: userLoading, data: userData } = useGetUserQuery({
-        variables: { id: googleUser?.sub || "" },
-        skip: !isAuthenticated,
+    const login = useGoogleLogin({
+        flow: "auth-code",
+        onSuccess: async (codeResponse) => {
+            const data = await getCode({
+                variables: {
+                    code: codeResponse.code
+                }
+            })
+
+            localStorage.setItem(AUTH.GOOGLE_ACCESS_TOKEN, data.data?.authLogin.tokens.accessToken || "");
+            localStorage.setItem(AUTH.GOOGLE_REFRESH_TOKEN, data.data?.authLogin.tokens.refreshToken || "");
+            localStorage.setItem(AUTH.GOOGLE_TOKEN_EXPIRY, data.data?.authLogin.tokens.exp || "");
+
+            setUser(data.data?.authLogin.user);
+            setIsAuthenticated(true);
+        },
+        onError: errorResponse => console.log(errorResponse),
     });
-
-    const login = async (response: CredentialResponse) => {
-        localStorage.setItem(AUTH.GOOGLE_CLIENT, response.clientId || "");
-        localStorage.setItem(AUTH.GOOGLE_CREDENTIAL, response.credential || "");
-        setIsAuthenticated(true);
-        const googleUser = decodeUser(response.credential || "")
-        setGoogleUser(googleUser);
-    };
 
     const logout = () => {
         client.resetStore()
         i18n.changeLanguage(locales.en)
         setIsAuthenticated(false);
-        localStorage.removeItem(AUTH.GOOGLE_CLIENT);
-        localStorage.removeItem(AUTH.GOOGLE_CREDENTIAL);
+        localStorage.removeItem(AUTH.GOOGLE_ACCESS_TOKEN);
+        localStorage.removeItem(AUTH.GOOGLE_REFRESH_TOKEN);
         googleLogout();
         setUser(undefined);
         navigate(ROUTES.HOME);
@@ -130,53 +113,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, client }) 
         return format(dateObj, "yyyy-MM-dd HH:mm:ss");
     }
 
-    const decodeUser = (credential: string): GoogleUser => {
-        return JSON.parse(atob(credential?.split(".")[1] || ""));
-    }
 
-    const setupUser = async (googleUser: GoogleUser) => {
-        if (!userLoading && userData?.user === null) {
-            const nu = await update({
-                email: googleUser.email,
-                familyName: googleUser.family_name,
-                givenName: googleUser.given_name,
-                lastLogin: new Date().toISOString(),
-                name: googleUser.name,
-                picture: googleUser.picture,
-                hd: googleUser.hd,
-                userId: googleUser.sub
-            });
-            setUser(nu.data?.updateUser);
-        } else if (!userLoading && userData?.user) {
-            setUser(userData.user);
-            i18n.changeLanguage(
-                userData.user.settings?.locale
-            );
-            UpdateTheme(userData.user.settings?.theme)
-        }
-    }
-
-    useEffect(() => {
-        const token = localStorage.getItem(AUTH.GOOGLE_CREDENTIAL);
-        if (token) {
-            setIsAuthenticated(true);
-
-            const googleUser = decodeUser(token)
-            setGoogleUser(googleUser);
-
-            setupUser(googleUser);
-
-            if (googleUser.exp) {
-                if (new Date().getTime() > googleUser.exp * 1000) {
-                    logout();
-                }
-            }
-        }
-    }, [user, userLoading])
+    //TODO: add refresh logic
+    // useEffect(() => {
+    // 2024-03-24T22:33:24-05:00
+    //time is formatted like this
+    // const exp = localStorage.getItem(AUTH.GOOGLE_TOKEN_EXPIRY);
+    // if (exp) {
+    //     if (new Date().getTime() > Number(exp) * 1000) {
+    //         //TODO: refresh token
+    //         logout();
+    //     }
+    // }
+    // }, [isAuthenticated])
 
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, update, user, loading: userLoading }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, logout, update, user }}>
             {children}
         </AuthContext.Provider>
     );

@@ -3,7 +3,6 @@ import { Switch } from "@/components/ui/switch"
 import { DARK, LIGHT } from "@/constants/theme";
 import { ROUTES } from "@/constants/routes";
 import { Link, useLocation } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -27,7 +26,7 @@ import { UpdateTheme } from "@/lib/theme";
 import { DEFUALT_MOBILE_WIDTH } from "@/constants/mobile";
 import { useMediaQuery } from "react-responsive";
 import { MdNote } from "react-icons/md";
-
+import GoogleLogin from "@/components/GoogleLogin/GoogleLogin";
 
 const Navbar: React.FC = () => {
     const location = useLocation();
@@ -71,7 +70,7 @@ const Navbar: React.FC = () => {
                     <div className="flex items-center">
                         <div className="flex items-center">
                             <div className="mx-2">
-                                {auth.user && auth.isAuthenticated && !auth.loading &&
+                                {auth.user && auth.isAuthenticated &&
                                     <>
                                         {isSelectOpen && isMobile && (
                                             <div
@@ -114,7 +113,7 @@ const Navbar: React.FC = () => {
                                 }
                             </div>
                             <div className="mt-1 mx-2">
-                                {auth.user && auth.isAuthenticated && !auth.loading &&
+                                {auth.user && auth.isAuthenticated &&
                                     <Switch
                                         disabled={!auth.isAuthenticated}
                                         key={theme}
@@ -137,7 +136,7 @@ const Navbar: React.FC = () => {
 
                             </div>
                             <div className='mx-4'>
-                                {auth.user && auth.isAuthenticated && !auth.loading ?
+                                {auth.user && auth.isAuthenticated ?
                                     <Popover>
                                         <PopoverTrigger asChild className="cursor-pointer">
                                             <Avatar>
@@ -167,7 +166,7 @@ const Navbar: React.FC = () => {
                                         </PopoverContent>
                                     </Popover>
                                     :
-                                    <GoogleLogin locale={locale || locales.en} onSuccess={auth.login} />
+                                    <GoogleLogin />
                                 }
                             </div>
                         </div>

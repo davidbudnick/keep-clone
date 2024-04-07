@@ -45,6 +45,7 @@
         "managed_by": "管理者:",
         "hi": "こんにちは",
         "search": "検索",
-        "refresh": "更新"
+        "refresh": "更新",
+        "sign_in_with_google": "Googleでログイン"
     }
 }

@@ -62,6 +62,13 @@ func (s *usersService) Update(ctx context.Context, userID string, user model.Upd
 			return nil, err
 		}
 	} else {
+		if user.Settings == nil {
+			user.Settings = &model.UpdateSettings{
+				Theme:  u.Settings.Theme,
+				Locale: u.Settings.Locale,
+			}
+		}
+
 		err := s.repo.Update(ctx, userID, user)
 		if err != nil {
 			return nil, err

@@ -121,7 +121,7 @@ func (r *usersRepo) Update(ctx context.Context, userID string, user model.Update
 	txn := r.NewrelicApp.StartTransaction("Mongo Update User")
 	defer txn.End()
 
-	lastLogin, err := parseISOTime(user.LastLogin)
+	lastLogin, err := time.Parse(time.RFC3339, user.LastLogin)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error parsing last login", "error", err)
 		return err
@@ -150,14 +150,4 @@ func (r *usersRepo) Update(ctx context.Context, userID string, user model.Update
 	}
 
 	return nil
-}
-
-func parseISOTime(isoTimeStr string) (time.Time, error) {
-	var parsedTime time.Time
-	parsedTime, err := time.Parse("2006-01-02 15:04:05", isoTimeStr)
-	if err != nil {
-		return parsedTime, err
-	}
-
-	return parsedTime, nil
 }

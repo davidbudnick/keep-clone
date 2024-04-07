@@ -1,0 +1,26 @@
+query AuthLogin($code: String!) {
+  authLogin(code: $code) {
+    tokens {
+      accessToken
+      refreshToken
+      exp
+    }
+    user {
+      id
+      userId
+      email
+      name
+      picture
+      givenName
+      familyName
+      hd
+      settings {
+        theme
+        locale
+      }
+      lastLogin
+      createdAt
+      updatedAt
+    }
+  }
+}

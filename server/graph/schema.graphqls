@@ -36,10 +36,23 @@ type Settings {
   locale: String!
 }
 
+type AuthLoginTokens {
+  accessToken: String!
+  refreshToken: String!
+  exp: String!
+}
+
+type AuthUser{
+  tokens: AuthLoginTokens!
+  user: User!
+}
+
 type Query {
   notes(status: Status): [Note!]!
   note(id: String!): Note!
   user(id: String!): User
+  authLogin(code: String!): AuthUser!
+  authRefreshToken(refreshToken: String!): String!
 }
 
 input CreateNote {

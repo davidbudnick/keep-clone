@@ -1,0 +1,3 @@
+query AuthRefreshToken($refreshToken: String!) {
+  authRefreshToken(refreshToken: $refreshToken)
+}

@@ -17,6 +17,19 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type AuthLoginTokens = {
+  __typename?: 'AuthLoginTokens';
+  accessToken: Scalars['String']['output'];
+  exp: Scalars['String']['output'];
+  refreshToken: Scalars['String']['output'];
+};
+
+export type AuthUser = {
+  __typename?: 'AuthUser';
+  tokens: AuthLoginTokens;
+  user: User;
+};
+
 export type CreateNote = {
   body: Scalars['String']['input'];
   pinned: Scalars['Boolean']['input'];
@@ -68,9 +81,21 @@ export type Note = {
 
 export type Query = {
   __typename?: 'Query';
+  authLogin: AuthUser;
+  authRefreshToken: Scalars['String']['output'];
   note: Note;
   notes: Array<Note>;
   user?: Maybe<User>;
+};
+
+
+export type QueryAuthLoginArgs = {
+  code: Scalars['String']['input'];
+};
+
+
+export type QueryAuthRefreshTokenArgs = {
+  refreshToken: Scalars['String']['input'];
 };
 
 
@@ -127,6 +152,7 @@ export type UpdateUser = {
 
 export type User = {
   __typename?: 'User';
+  accessToken?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['String']['output'];
   email: Scalars['String']['output'];
   familyName: Scalars['String']['output'];
@@ -136,6 +162,7 @@ export type User = {
   lastLogin: Scalars['String']['output'];
   name: Scalars['String']['output'];
   picture: Scalars['String']['output'];
+  refreshToken?: Maybe<Scalars['String']['output']>;
   settings: Settings;
   updatedAt: Scalars['String']['output'];
   userId: Scalars['String']['output'];
@@ -173,6 +200,20 @@ export type UpdateUserMutationVariables = Exact<{
 
 
 export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, userId: string, email: string, name: string, picture: string, givenName: string, familyName: string, hd: string, lastLogin: string, createdAt: string, updatedAt: string, settings: { __typename?: 'Settings', theme: string, locale: string } } };
+
+export type AuthLoginQueryVariables = Exact<{
+  code: Scalars['String']['input'];
+}>;
+
+
+export type AuthLoginQuery = { __typename?: 'Query', authLogin: { __typename?: 'AuthUser', tokens: { __typename?: 'AuthLoginTokens', accessToken: string, refreshToken: string, exp: string }, user: { __typename?: 'User', id: string, userId: string, email: string, name: string, picture: string, givenName: string, familyName: string, hd: string, lastLogin: string, createdAt: string, updatedAt: string, settings: { __typename?: 'Settings', theme: string, locale: string } } } };
+
+export type AuthRefreshTokenQueryVariables = Exact<{
+  refreshToken: Scalars['String']['input'];
+}>;
+
+
+export type AuthRefreshTokenQuery = { __typename?: 'Query', authRefreshToken: string };
 
 export type GetNotesQueryVariables = Exact<{
   status: Status;
@@ -388,6 +429,105 @@ export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
+export const AuthLoginDocument = gql`
+    query AuthLogin($code: String!) {
+  authLogin(code: $code) {
+    tokens {
+      accessToken
+      refreshToken
+      exp
+    }
+    user {
+      id
+      userId
+      email
+      name
+      picture
+      givenName
+      familyName
+      hd
+      settings {
+        theme
+        locale
+      }
+      lastLogin
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useAuthLoginQuery__
+ *
+ * To run a query within a React component, call `useAuthLoginQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAuthLoginQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAuthLoginQuery({
+ *   variables: {
+ *      code: // value for 'code'
+ *   },
+ * });
+ */
+export function useAuthLoginQuery(baseOptions: Apollo.QueryHookOptions<AuthLoginQuery, AuthLoginQueryVariables> & ({ variables: AuthLoginQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AuthLoginQuery, AuthLoginQueryVariables>(AuthLoginDocument, options);
+      }
+export function useAuthLoginLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AuthLoginQuery, AuthLoginQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AuthLoginQuery, AuthLoginQueryVariables>(AuthLoginDocument, options);
+        }
+export function useAuthLoginSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<AuthLoginQuery, AuthLoginQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<AuthLoginQuery, AuthLoginQueryVariables>(AuthLoginDocument, options);
+        }
+export type AuthLoginQueryHookResult = ReturnType<typeof useAuthLoginQuery>;
+export type AuthLoginLazyQueryHookResult = ReturnType<typeof useAuthLoginLazyQuery>;
+export type AuthLoginSuspenseQueryHookResult = ReturnType<typeof useAuthLoginSuspenseQuery>;
+export type AuthLoginQueryResult = Apollo.QueryResult<AuthLoginQuery, AuthLoginQueryVariables>;
+export const AuthRefreshTokenDocument = gql`
+    query AuthRefreshToken($refreshToken: String!) {
+  authRefreshToken(refreshToken: $refreshToken)
+}
+    `;
+
+/**
+ * __useAuthRefreshTokenQuery__
+ *
+ * To run a query within a React component, call `useAuthRefreshTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAuthRefreshTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAuthRefreshTokenQuery({
+ *   variables: {
+ *      refreshToken: // value for 'refreshToken'
+ *   },
+ * });
+ */
+export function useAuthRefreshTokenQuery(baseOptions: Apollo.QueryHookOptions<AuthRefreshTokenQuery, AuthRefreshTokenQueryVariables> & ({ variables: AuthRefreshTokenQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AuthRefreshTokenQuery, AuthRefreshTokenQueryVariables>(AuthRefreshTokenDocument, options);
+      }
+export function useAuthRefreshTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AuthRefreshTokenQuery, AuthRefreshTokenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AuthRefreshTokenQuery, AuthRefreshTokenQueryVariables>(AuthRefreshTokenDocument, options);
+        }
+export function useAuthRefreshTokenSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<AuthRefreshTokenQuery, AuthRefreshTokenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<AuthRefreshTokenQuery, AuthRefreshTokenQueryVariables>(AuthRefreshTokenDocument, options);
+        }
+export type AuthRefreshTokenQueryHookResult = ReturnType<typeof useAuthRefreshTokenQuery>;
+export type AuthRefreshTokenLazyQueryHookResult = ReturnType<typeof useAuthRefreshTokenLazyQuery>;
+export type AuthRefreshTokenSuspenseQueryHookResult = ReturnType<typeof useAuthRefreshTokenSuspenseQuery>;
+export type AuthRefreshTokenQueryResult = Apollo.QueryResult<AuthRefreshTokenQuery, AuthRefreshTokenQueryVariables>;
 export const GetNotesDocument = gql`
     query GetNotes($status: Status!) {
   notes(status: $status) {

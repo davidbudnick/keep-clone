@@ -33,7 +33,9 @@ type Ports struct {
 }
 
 type JWT struct {
-	ClientID string
+	ClientID     string
+	ClientSecret string
+	RedirectURL  string
 }
 
 var (
@@ -73,7 +75,9 @@ func GetConfig(ctx context.Context) (*Config, error) {
 			HTTP: os.Getenv("PORT"),
 		},
 		JWT{
-			ClientID: os.Getenv("JWT_CLIENT_ID"),
+			ClientID:     os.Getenv("JWT_CLIENT_ID"),
+			ClientSecret: os.Getenv("JWT_CLIENT_SECRET"),
+			RedirectURL:  os.Getenv("JWT_REDIRECT_URL"),
 		},
 		Newrelic{
 			Name: os.Getenv("NEWRELIC_NAME"),

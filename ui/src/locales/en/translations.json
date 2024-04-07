@@ -45,6 +45,7 @@
         "managed_by": "Managed by",
         "hi": "Hi",
         "search": "Search",
-        "refresh": "Refresh"
+        "refresh": "Refresh",
+        "sign_in_with_google": "Sign in with Google"
     }
 }
