@@ -4,10 +4,10 @@ updates:
   - package-ecosystem: "gomod"
     directory: "/server"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
 
   # Configuration for npm (React)
   - package-ecosystem: "npm"
     directory: "/ui"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
